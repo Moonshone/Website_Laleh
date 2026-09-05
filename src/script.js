@@ -25,12 +25,10 @@ document.addEventListener('keydown', (event) => {
 });
 
 const homeImages = [
-  { src: 'assets/images/home/home-01.svg', alt: 'Abstract artwork in mineral blue and sand tones' },
-  { src: 'assets/images/home/home-02.svg', alt: 'Abstract artwork in ochre and charcoal tones' },
-  { src: 'assets/images/home/home-03.svg', alt: 'Abstract artwork in blue-grey tones' },
-  { src: 'assets/images/home/home-04.svg', alt: 'Abstract artwork in red tones' },
-  { src: 'assets/images/home/home-05.svg', alt: 'Abstract artwork in green and earth tones' },
-  { src: 'assets/images/home/home-06.svg', alt: 'Abstract artwork in violet and pale tones' },
+  { src: 'assets/images/home/06.jpeg', alt: '' },
+  { src: 'assets/images/home/04.jpeg', alt: '' },
+  { src: 'assets/images/home/03F.jpeg', alt: '' },
+  { src: 'assets/images/home/02.jpeg', alt: '' },
 ];
 const galleryImage = document.querySelector('.home-gallery-image');
 const galleryStatus = document.querySelector('[data-gallery-status]');
