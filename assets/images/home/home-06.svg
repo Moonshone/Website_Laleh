@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" role="img" aria-labelledby="title description">
+  <title id="title">Artwork placeholder</title>
+  <desc id="description">Abstract color study to be replaced with artwork by Laleh Barzegar.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#968ba3"/>
+      <stop offset="1" stop-color="#d9cfc9"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="36"/></filter>
+  </defs>
+  <rect width="800" height="900" fill="url(#background)"/>
+  <ellipse cx="448" cy="342" rx="248" ry="243" fill="#504b5e" opacity=".72" filter="url(#soft)"/>
+  <ellipse cx="488" cy="648" rx="184" ry="279" fill="#968ba3" opacity=".52" filter="url(#soft)"/>
+  <path d="M 0 522 C 200 387, 544 729, 800 549 L 800 900 L 0 900 Z" fill="#504b5e" opacity=".35"/>
+</svg>
