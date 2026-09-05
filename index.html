@@ -7,14 +7,14 @@
 <title>Laleh Barzegar — Artist</title>
 <link rel="stylesheet" href="styles/style.css">
 </head>
-<body id="top">
-<a class="site-mark" href="index.html" aria-current="page">Laleh Barzegar</a>
+<body class="home-page">
+<header class="site-header">
+<p class="site-mark">Laleh Barzegar</p>
 <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
-<span>
-</span>
-<span>
-</span>
+<span></span>
+<span></span>
 </button>
+</header>
 <div class="menu-overlay" id="site-menu" aria-hidden="true">
 <nav aria-label="Main navigation">
 <ul>
@@ -37,63 +37,13 @@
 </nav>
 </div>
 <main>
-<h1 class="home-title">
-<span>Laleh</span>
-<span>Barzegar</span>
-</h1>
-<section class="home-flow" aria-label="Selected works">
-<article class="art-block art-wide reveal">
-<a href="painting.html">
-<figure>
-<img src="assets/images/home/home-01.svg" alt="Abstract painting in mineral blue and sand tones">
-<figcaption>Untitled Field, 2025</figcaption>
-</figure>
-</a>
-</article>
-<div class="art-pair art-block reveal">
-<figure>
-<a href="painting.html">
-<img src="assets/images/home/home-02.svg" alt="Layered abstract painting in ochre and charcoal">
-<figcaption>Where the Dust Settles, 2024</figcaption>
-</a>
-</figure>
-<figure>
-<a href="films.html">
-<img src="assets/images/home/home-03.svg" alt="Atmospheric film still with a solitary figure">
-<figcaption>Between Two Silences, 2025 — film still</figcaption>
-</a>
-</figure>
-</div>
-<article class="art-block art-right reveal">
-<a href="painting.html">
-<figure>
-<img src="assets/images/home/home-04.svg" alt="Vertical abstract work with deep red gestures">
-<figcaption>Red Memory, 2023</figcaption>
-</figure>
-</a>
-</article>
-<article class="art-block art-left reveal">
-<a href="films.html">
-<figure>
-<img src="assets/images/home/home-05.svg" alt="Quiet cinematic landscape in muted green">
-<figcaption>The Shape of Waiting, 2024 — film still</figcaption>
-</figure>
-</a>
-</article>
-<article class="art-block art-center reveal">
-<a href="painting.html">
-<figure>
-<img src="assets/images/home/home-06.svg" alt="Textured abstract composition in pale violet">
-<figcaption>Soft Boundary, 2025</figcaption>
-</figure>
-</a>
-</article>
+<section class="home-gallery" aria-label="Selected works">
+<button class="home-gallery-trigger" type="button" aria-label="Show next artwork">
+<img class="home-gallery-image" src="assets/images/home/home-01.svg" alt="Abstract painting in mineral blue and sand tones">
+</button>
+<p class="visually-hidden" data-gallery-status aria-live="polite">Artwork 1 of 6</p>
 </section>
 </main>
-<footer class="site-footer">
-<span>© <span data-year>2026</span> Laleh Barzegar</span>
-<a href="#top">Back to top</a>
-</footer>
 <script src="src/script.js">
 </script>
 </body>
