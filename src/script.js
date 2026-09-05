@@ -1,25 +1,22 @@
 const body = document.body;
 const toggle = document.querySelector('.menu-toggle');
 const overlay = document.querySelector('.menu-overlay');
-let menuWasOpened = false;
 
 function setMenu(open) {
   body.classList.toggle('menu-open', open);
   toggle?.setAttribute('aria-expanded', String(open));
   toggle?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   overlay?.setAttribute('aria-hidden', String(!open));
-  if (open) {
-    menuWasOpened = true;
-    overlay?.querySelector('a')?.focus();
-  } else if (menuWasOpened) {
-    toggle?.focus();
-    menuWasOpened = false;
-  }
 }
 
 toggle?.addEventListener('click', () => setMenu(!body.classList.contains('menu-open')));
 overlay?.addEventListener('click', (event) => {
-  if (event.target === overlay || event.target.closest('a')) setMenu(false);
+  if (event.target.closest('a')) setMenu(false);
+});
+document.addEventListener('click', (event) => {
+  if (body.classList.contains('menu-open') && !overlay?.contains(event.target) && !toggle?.contains(event.target)) {
+    setMenu(false);
+  }
 });
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && body.classList.contains('menu-open')) {
