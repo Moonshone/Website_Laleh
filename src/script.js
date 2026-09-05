@@ -25,10 +25,10 @@ document.addEventListener('keydown', (event) => {
 });
 
 const homeImages = [
-  { src: 'assets/images/home/01.jpeg', alt: '' },
-  { src: 'assets/images/home/02.jpeg', alt: '' },
-  { src: 'assets/images/home/03.jpeg', alt: '' },
+  { src: 'assets/images/home/06.jpeg', alt: '' },
   { src: 'assets/images/home/04.jpeg', alt: '' },
+  { src: 'assets/images/home/03F.jpeg', alt: '' },
+  { src: 'assets/images/home/02.jpeg', alt: '' },
 ];
 const galleryTrigger = document.querySelector('.home-gallery-trigger');
 const galleryImage = document.querySelector('.home-gallery-image');
