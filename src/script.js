@@ -100,11 +100,35 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 
 const form = document.querySelector('.contact-form');
-form?.addEventListener('submit', (event) => {
+form?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const note = form.querySelector('.form-note');
-  if (note) note.textContent = 'Thank you. This demo form is ready to be connected to your email service.';
-  form.reset();
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  if (!form.reportValidity()) return;
+
+  if (note) note.textContent = 'Sending…';
+  if (submitButton) submitButton.disabled = true;
+
+  try {
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { Accept: 'application/json' },
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Your message could not be sent. Please try again.');
+    }
+
+    if (note) note.textContent = result.message;
+    form.reset();
+  } catch (error) {
+    if (note) note.textContent = error.message || 'Your message could not be sent. Please try again.';
+  } finally {
+    if (submitButton) submitButton.disabled = false;
+  }
 });
 
 document.querySelectorAll('[data-year]').forEach((element) => { element.textContent = new Date().getFullYear(); });
