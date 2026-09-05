@@ -25,12 +25,10 @@ document.addEventListener('keydown', (event) => {
 });
 
 const homeImages = [
-  { src: 'assets/images/home/home-01.svg', alt: 'Abstract painting in mineral blue and sand tones' },
-  { src: 'assets/images/home/home-02.svg', alt: 'Layered abstract painting in ochre and charcoal' },
-  { src: 'assets/images/home/home-03.svg', alt: 'Atmospheric film still with a solitary figure' },
-  { src: 'assets/images/home/home-04.svg', alt: 'Vertical abstract work with deep red gestures' },
-  { src: 'assets/images/home/home-05.svg', alt: 'Quiet cinematic landscape in muted green' },
-  { src: 'assets/images/home/home-06.svg', alt: 'Textured abstract composition in pale violet' }
+  { src: 'assets/images/home/01.jpeg', alt: '' },
+  { src: 'assets/images/home/02.jpeg', alt: '' },
+  { src: 'assets/images/home/03.jpeg', alt: '' },
+  { src: 'assets/images/home/04.jpeg', alt: '' },
 ];
 const galleryTrigger = document.querySelector('.home-gallery-trigger');
 const galleryImage = document.querySelector('.home-gallery-image');
