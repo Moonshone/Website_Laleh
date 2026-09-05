@@ -104,11 +104,15 @@ form?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const note = form.querySelector('.form-note');
   const submitButton = form.querySelector('button[type="submit"]');
+  const submitLabel = submitButton?.textContent;
 
   if (!form.reportValidity()) return;
 
   if (note) note.textContent = 'Sending…';
-  if (submitButton) submitButton.disabled = true;
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending…';
+  }
 
   try {
     const response = await fetch(form.action, {
@@ -116,18 +120,40 @@ form?.addEventListener('submit', async (event) => {
       body: new FormData(form),
       headers: { Accept: 'application/json' },
     });
-    const result = await response.json().catch(() => ({}));
+    const responseText = await response.text();
+    let result;
 
-    if (!response.ok) {
+    try {
+      result = JSON.parse(responseText);
+    } catch (error) {
+      console.error('Contact form returned invalid JSON.', {
+        endpoint: response.url,
+        status: response.status,
+        response: responseText,
+        error,
+      });
+      throw new Error('Your message could not be sent. Please try again later.');
+    }
+
+    if (!response.ok || result.success !== true) {
+      console.error('Contact form request failed.', {
+        endpoint: response.url,
+        status: response.status,
+        response: result,
+      });
       throw new Error(result.message || 'Your message could not be sent. Please try again.');
     }
 
     if (note) note.textContent = result.message;
     form.reset();
   } catch (error) {
+    console.error('Contact form submission failed.', error);
     if (note) note.textContent = error.message || 'Your message could not be sent. Please try again.';
   } finally {
-    if (submitButton) submitButton.disabled = false;
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = submitLabel;
+    }
   }
 });
 
