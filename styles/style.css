@@ -188,6 +188,8 @@ main { min-height: 80vh; }
 .contact-form input:focus, .contact-form textarea:focus { border-color: var(--ink); }
 .contact-form textarea { min-height: 8rem; resize: vertical; }
 .contact-form button { padding: .8rem 0; border: 0; border-bottom: 1px solid var(--ink); background: transparent; cursor: pointer; }
+.contact-form button:disabled { cursor: wait; opacity: .55; }
+.form-website { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .form-note { min-height: 1.5rem; margin-top: 1.5rem; color: var(--muted); }
 
 .site-footer { display: flex; justify-content: space-between; padding: 2rem var(--gutter); border-top: 1px solid rgba(20,20,20,.2); font-size: .65rem; letter-spacing: .05em; text-transform: uppercase; }
