@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title description">
+  <title id="title">Artist portrait placeholder</title>
+  <desc id="description">A neutral studio portrait placeholder to be replaced with a portrait of Laleh Barzegar.</desc>
+  <defs>
+    <linearGradient id="studio" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#beb5a5"/><stop offset="1" stop-color="#686b62"/></linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="24"/></filter>
+  </defs>
+  <rect width="900" height="1200" fill="url(#studio)"/>
+  <circle cx="460" cy="400" r="125" fill="#292b28" opacity=".86" filter="url(#soft)"/>
+  <path d="M180 1200V870c0-210 125-345 280-345s280 135 280 345v330Z" fill="#242623" opacity=".88" filter="url(#soft)"/>
+</svg>
