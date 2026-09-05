@@ -90,7 +90,7 @@ main { min-height: 80vh; }
   margin: 0;
   padding: clamp(9rem, 19vh, 14rem) var(--gutter) clamp(5rem, 12vh, 10rem);
   font-family: var(--serif);
-  font-size: clamp(4.15rem, 12.4vw, 12.5rem);
+  font-size: clamp(2.075rem, 6.2vw, 6.25rem);
   font-weight: 400;
   letter-spacing: -.065em;
   line-height: .75;
