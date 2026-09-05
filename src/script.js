@@ -25,37 +25,66 @@ document.addEventListener('keydown', (event) => {
 });
 
 const homeImages = [
-  { src: 'assets/images/home/06.jpeg', alt: '' },
-  { src: 'assets/images/home/04.jpeg', alt: '' },
-  { src: 'assets/images/home/03F.jpeg', alt: '' },
-  { src: 'assets/images/home/02.jpeg', alt: '' },
+  { src: 'assets/images/home/home-01.svg', alt: 'Abstract artwork in mineral blue and sand tones' },
+  { src: 'assets/images/home/home-02.svg', alt: 'Abstract artwork in ochre and charcoal tones' },
+  { src: 'assets/images/home/home-03.svg', alt: 'Abstract artwork in blue-grey tones' },
+  { src: 'assets/images/home/home-04.svg', alt: 'Abstract artwork in red tones' },
+  { src: 'assets/images/home/home-05.svg', alt: 'Abstract artwork in green and earth tones' },
+  { src: 'assets/images/home/home-06.svg', alt: 'Abstract artwork in violet and pale tones' },
 ];
-const galleryTrigger = document.querySelector('.home-gallery-trigger');
 const galleryImage = document.querySelector('.home-gallery-image');
 const galleryStatus = document.querySelector('[data-gallery-status]');
+const galleryPrevious = document.querySelector('.home-gallery-arrow--previous');
+const galleryNext = document.querySelector('.home-gallery-arrow--next');
+const galleryDots = document.querySelector('.home-gallery-dots');
 let homeImageIndex = 0;
-let galleryChangeTimer;
+let slideshowTimer;
 
 function showHomeImage(index) {
   if (!galleryImage) return;
   homeImageIndex = (index + homeImages.length) % homeImages.length;
-  galleryImage.classList.add('is-changing');
-  window.clearTimeout(galleryChangeTimer);
-  galleryChangeTimer = window.setTimeout(() => {
-    const image = homeImages[homeImageIndex];
-    galleryImage.src = image.src;
-    galleryImage.alt = image.alt;
-    galleryImage.classList.remove('is-changing');
-    if (galleryStatus) galleryStatus.textContent = `Artwork ${homeImageIndex + 1} of ${homeImages.length}`;
-  }, 160);
+  const image = homeImages[homeImageIndex];
+  galleryImage.src = image.src;
+  galleryImage.alt = image.alt;
+  galleryDots?.querySelectorAll('.home-gallery-dot').forEach((dot, dotIndex) => {
+    dot.setAttribute('aria-current', String(dotIndex === homeImageIndex));
+  });
+  if (galleryStatus) galleryStatus.textContent = `Artwork ${homeImageIndex + 1} of ${homeImages.length}`;
 }
 
-galleryTrigger?.addEventListener('click', () => showHomeImage(homeImageIndex + 1));
+function startSlideshow() {
+  window.clearTimeout(slideshowTimer);
+  if (!galleryImage || homeImages.length < 2) return;
+  slideshowTimer = window.setTimeout(() => {
+    showHomeImage(homeImageIndex + 1);
+    startSlideshow();
+  }, 7000);
+}
+
+function selectHomeImage(index) {
+  showHomeImage(index);
+  startSlideshow();
+}
+
+homeImages.forEach((image, index) => {
+  const dot = document.createElement('button');
+  dot.className = 'home-gallery-dot';
+  dot.type = 'button';
+  dot.setAttribute('aria-label', `Show artwork ${index + 1}`);
+  dot.setAttribute('aria-current', String(index === homeImageIndex));
+  dot.addEventListener('click', () => selectHomeImage(index));
+  galleryDots?.append(dot);
+});
+
+galleryPrevious?.addEventListener('click', () => selectHomeImage(homeImageIndex - 1));
+galleryNext?.addEventListener('click', () => selectHomeImage(homeImageIndex + 1));
 document.addEventListener('keydown', (event) => {
   if (!galleryImage || body.classList.contains('menu-open')) return;
-  if (event.key === 'ArrowRight') showHomeImage(homeImageIndex + 1);
-  if (event.key === 'ArrowLeft') showHomeImage(homeImageIndex - 1);
+  if (event.key === 'ArrowRight') selectHomeImage(homeImageIndex + 1);
+  if (event.key === 'ArrowLeft') selectHomeImage(homeImageIndex - 1);
 });
+
+startSlideshow();
 
 homeImages.slice(1).forEach(({ src }) => {
   const image = new Image();
