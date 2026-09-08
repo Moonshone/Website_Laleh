@@ -78,7 +78,9 @@ try {
         $statement->execute(['id' => $editId]);
         $editing = $statement->fetch() ?: $editing;
     }
-    $posts = db()->query('SELECT id, title, image, status, published_at, updated_at FROM news ORDER BY created_at DESC')->fetchAll();
+    $listStatement = db()->prepare('SELECT id, title, image, status, published_at, updated_at FROM news ORDER BY created_at DESC');
+    $listStatement->execute();
+    $posts = $listStatement->fetchAll();
 } catch (Throwable $exception) {
     error_log($exception->getMessage());
     $error = $exception instanceof RuntimeException ? $exception->getMessage() : 'The database request could not be completed.';
