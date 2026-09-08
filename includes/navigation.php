@@ -5,6 +5,7 @@ declare(strict_types=1);
 function render_navigation(string $current = ''): void
 {
     $items = [
+        'home' => ['HOME', 'index.html'],
         'films' => ['FILMS', 'films.html'],
         'paintings' => ['PAINTINGS', 'paintings.html'],
         'writing' => ['WRITING', 'writing.html'],
