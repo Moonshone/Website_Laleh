@@ -19,7 +19,7 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 img { display: block; width: 100%; height: auto; }
-button, input, textarea { font: inherit; }
+button, input, textarea, select { font: inherit; }
 
 .site-mark {
   position: fixed;
@@ -192,6 +192,37 @@ main { min-height: 80vh; }
 .form-website { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .form-note { min-height: 1.5rem; margin-top: 1.5rem; color: var(--muted); }
 
+.news-list { max-width: 72rem; padding: 0 var(--gutter) 12vw; }
+.news-post { padding-bottom: clamp(6rem, 11vw, 11rem); }
+.news-post time, .admin-eyebrow, .admin-post-meta { color: var(--muted); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.news-post h2 { max-width: 54rem; margin: .75rem 0 2.5rem; font-family: var(--serif); font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 400; line-height: .95; }
+.news-post img { max-width: 58rem; max-height: 80vh; margin-bottom: 2rem; object-fit: contain; object-position: left center; }
+.news-content { max-width: 44rem; font-size: 1rem; line-height: 1.7; }
+.news-empty { margin: 0 0 8rem; color: var(--muted); }
+
+.admin-page { min-height: 100vh; }
+.admin-shell { width: min(100% - 2 * var(--gutter), 88rem); margin: 0 auto; padding: clamp(3rem, 7vw, 7rem) 0; }
+.admin-login { max-width: 34rem; }
+.admin-shell h1 { margin: .3rem 0 3rem; font-family: var(--serif); font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 400; line-height: .95; }
+.admin-shell h2 { margin: 0 0 2rem; font-family: var(--serif); font-size: 2rem; font-weight: 400; }
+.admin-header { display: flex; justify-content: space-between; gap: 2rem; align-items: flex-start; }
+.admin-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, .8fr); gap: clamp(4rem, 8vw, 9rem); }
+.admin-form label { display: block; margin-bottom: 1.7rem; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.admin-form label span { color: var(--muted); text-transform: none; }
+.admin-form input, .admin-form textarea, .admin-form select { display: block; width: 100%; margin-top: .45rem; padding: .75rem 0; border: 0; border-bottom: 1px solid #9b9891; border-radius: 0; outline: 0; background: transparent; color: inherit; }
+.admin-form textarea { resize: vertical; line-height: 1.6; }
+.admin-form input:focus, .admin-form textarea:focus, .admin-form select:focus { border-color: var(--ink); }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
+.admin-actions button, .admin-actions a, .text-button, .admin-post-actions button, .admin-post-actions a { padding: .5rem 0; border: 0; border-bottom: 1px solid currentColor; background: transparent; font-size: .68rem; letter-spacing: .06em; cursor: pointer; }
+.admin-message { margin: 0 0 2rem; padding: .8rem 0; border-block: 1px solid rgba(20,20,20,.25); }
+.admin-error { color: #8b1a1a; }
+.admin-image-preview { width: auto; max-width: 16rem; max-height: 12rem; margin: -1rem 0 2rem; object-fit: contain; }
+.admin-post { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1rem 0; border-top: 1px solid rgba(20,20,20,.2); }
+.admin-post h3 { margin: .25rem 0 0; font-family: var(--serif); font-size: 1.25rem; font-weight: 400; }
+.admin-post-meta { margin: 0; }
+.admin-post-actions { display: flex; gap: 1rem; align-items: flex-start; }
+.admin-post-actions form { margin: 0; }
+
 .site-footer { display: flex; justify-content: space-between; padding: 2rem var(--gutter); border-top: 1px solid rgba(20,20,20,.2); font-size: .65rem; letter-spacing: .05em; text-transform: uppercase; }
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
 .reveal.is-visible { opacity: 1; transform: none; }
@@ -204,6 +235,8 @@ main { min-height: 80vh; }
   .film, .film:nth-child(even) { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 8rem; }
   .film:nth-child(even) .film-image { order: 0; }
   .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
+  .admin-grid { grid-template-columns: 1fr; }
+  .admin-header, .admin-post { align-items: flex-start; }
   .about-copy { padding-top: 0; }
   .site-footer { align-items: flex-end; }
 }
