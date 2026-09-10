@@ -4,8 +4,9 @@ The CMS uses PHP, PDO, MySQL, PHP sessions, and the existing site styles. It doe
 
 ## Files created and changed
 
-- `config.php` loads private environment variables or `config.local.php` and creates the PDO connection.
-- `config.local.example.php` is a safe template containing no password.
+- `config.php` loads `config/database.local.php` and creates the shared PDO connection used by setup and admin login.
+- `config/database.local.example.php` is the safe database template containing no real password.
+- `config.local.example.php` remains the separate template for application URL and mail settings.
 - `database/schema.sql` creates the complete `admins`, `password_resets`, and `news_posts` tables on a new installation.
 - `database/add-password-recovery.sql` adds administrator email addresses and reset tokens to an existing installation.
 - `database/add-admin-role.sql` safely adds roles to a pre-existing role-less `admins` table and makes its oldest account a superadmin. Run this migration **only if** that table already exists without `role`; do not run it after `schema.sql`.
@@ -30,28 +31,28 @@ For a new CMS installation, open DreamHost phpMyAdmin for `neweshtaniha`, select
 
 `CREATE TABLE IF NOT EXISTS` does not alter existing tables. For an existing CMS, follow `database/add-password-recovery.sql`: add the nullable email column, assign a real and unique email to every existing administrator, and only then apply its `NOT NULL`/unique constraint and create `password_resets`. If the older `admins` table also lacks `role`, run `database/add-admin-role.sql` first. Back up the database before migrations and never rerun an `ALTER` migration after it succeeds.
 
-## 2. Enter the two private DreamHost values
+## 2. Create the private DreamHost database configuration
 
-The preferred method is to define server-side environment variables in DreamHost/PHP:
+On the DreamHost server, create **`/config/database.local.php` inside the deployed website root** (for example, if the site root is `/home/USERNAME/example.com`, the full path is `/home/USERNAME/example.com/config/database.local.php`). The committed `config/database.local.example.php` is the template.
 
-```text
-DB_HOST=the exact MySQL hostname shown in the DreamHost panel
-DB_PORT=3306
-DB_NAME=neweshtaniha
-DB_USER=laleh
-DB_PASSWORD=your real MySQL password
-APP_URL=https://YOUR-DOMAIN
-MAIL_FROM=website@YOUR-DOMAIN
+Enter exactly this PHP, replacing only the password placeholder with the real MySQL password for the DreamHost user `laleh`:
+
+```php
+<?php
+
+return [
+    'host' => 'mysql.lalehbarzegar.com',
+    'dbname' => 'neweshtaniha',
+    'user' => 'laleh',
+    'password' => 'THE_REAL_MYSQL_PASSWORD',
+];
 ```
 
-If the hosting configuration cannot provide environment variables, copy `config.local.example.php` to **`config.local.php` in the website root, directly beside `config.php`**. In that private copy only:
+The connection therefore targets the DreamHost host **`mysql.lalehbarzegar.com`**, database **`neweshtaniha`**, and user **`laleh`**. Do not put the MySQL password in `config.php`, an HTML or JavaScript file, a shell command, a support ticket, or this documentation.
 
-- enter the exact DreamHost MySQL hostname as the value of `DB_HOST`;
-- enter the MySQL user's real password as the value of `DB_PASSWORD`.
-- set `APP_URL` to the public HTTPS site origin with no trailing slash;
-- set `MAIL_FROM` to a valid mailbox on the DreamHost-hosted domain.
+`config/database.local.php` is excluded by the repository's root `.gitignore` and **must never be committed or pushed to GitHub**. Keep its `.php` extension and use file permission `600` if DreamHost supports that permission for the PHP process. The application reports only `DB_PASSWORD is not configured.` when the file or password is missing and never displays the password.
 
-`config.local.php` is excluded by the root `.gitignore`. Keep its `.php` extension and use file permission `600` if supported. Never commit it or put either value in HTML, JavaScript, the API, or a public text file. A leaked database password permits unauthorized data access. The committed application deliberately does not guess a hostname or password.
+For password-reset email, separately copy the root `config.local.example.php` to root `config.local.php` and enter `APP_URL` and `MAIL_FROM`; that file does not contain database credentials.
 
 ## 3. Prepare uploads
 
@@ -135,7 +136,7 @@ Never type a plain-text password directly into the database. Login uses `passwor
 ## Remaining DreamHost configuration
 
 - Import the appropriate SQL described above.
-- Supply the real `DB_HOST` and `DB_PASSWORD` privately; these were intentionally not provided and therefore the live connection cannot be tested from this repository.
+- Create `/config/database.local.php` on DreamHost and supply the real `password` privately; it was intentionally not provided, so the live connection cannot be tested from this repository. The host is already fixed as `mysql.lalehbarzegar.com`.
 - Supply private `APP_URL` and `MAIL_FROM` values and test DreamHost PHP email delivery.
 - Use a supported PHP release with PDO MySQL and Fileinfo.
 - Ensure `uploads/news/` is writable and `.htaccess` rules are permitted.

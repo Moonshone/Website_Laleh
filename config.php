@@ -26,6 +26,19 @@ function app_setting(string $name, string $default = ''): string
     return (string) (private_config()[$name] ?? $default);
 }
 
+function database_config(): array
+{
+    static $databaseConfig;
+    if (is_array($databaseConfig)) {
+        return $databaseConfig;
+    }
+
+    $privateConfig = __DIR__ . '/config/database.local.php';
+    $databaseConfig = is_file($privateConfig) ? require $privateConfig : [];
+
+    return is_array($databaseConfig) ? $databaseConfig : [];
+}
+
 function db(): PDO
 {
     static $connection;
@@ -33,17 +46,16 @@ function db(): PDO
         return $connection;
     }
 
-    $local = private_config();
+    $local = database_config();
+    $host = (string) ($local['host'] ?? 'mysql.lalehbarzegar.com');
+    $name = (string) ($local['dbname'] ?? 'neweshtaniha');
+    $user = (string) ($local['user'] ?? 'laleh');
+    $password = (string) ($local['password'] ?? '');
 
-    $host = getenv('DB_HOST') ?: ($local['DB_HOST'] ?? '');
-    $port = getenv('DB_PORT') ?: ($local['DB_PORT'] ?? '3306');
-    $name = getenv('DB_NAME') ?: ($local['DB_NAME'] ?? 'neweshtaniha');
-    $user = getenv('DB_USER') ?: ($local['DB_USER'] ?? 'laleh');
-    $password = getenv('DB_PASSWORD') ?: ($local['DB_PASSWORD'] ?? '');
-    if ($host === '' || $password === '') {
-        throw new RuntimeException('Database configuration is incomplete.');
+    if ($password === '') {
+        throw new RuntimeException('DB_PASSWORD is not configured.');
     }
-    $dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
+    $dsn = "mysql:host={$host};dbname={$name};charset=utf8mb4";
 
     $connection = new PDO($dsn, $user, $password, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

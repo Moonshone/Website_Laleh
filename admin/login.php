@@ -27,11 +27,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: dashboard.php');
                 exit;
             }
+        } catch (RuntimeException $exception) {
+            error_log($exception->getMessage());
+            if ($exception->getMessage() === 'DB_PASSWORD is not configured.') {
+                $error = 'DB_PASSWORD is not configured.';
+            }
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
         }
     }
-    $error = 'Invalid username or password.';
+    if ($error === '') {
+        $error = 'Invalid username or password.';
+    }
 }
 ?>
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>News administration — Laleh Barzegar</title><link rel="stylesheet" href="../styles/style.css"></head>
