@@ -1,10 +1,13 @@
 :root {
   --paper: #f4f1ea;
+  --artwork-frame: #dcd9d3;
+  --artwork-border: #cbc8c2;
   --ink: #141414;
   --muted: #6b6964;
   --gutter: clamp(1.25rem, 3.1vw, 3.75rem);
   --serif: Georgia, "Times New Roman", serif;
   --sans: Arial, Helvetica, sans-serif;
+  --avenir: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -20,17 +23,12 @@ body {
 a { color: inherit; text-decoration: none; }
 img { display: block; width: 100%; height: auto; }
 button, input, textarea, select { font: inherit; }
-
-.site-mark {
-  position: fixed;
-  z-index: 40;
-  top: 1.65rem;
-  left: var(--gutter);
-  font-size: .72rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-.site-header p.site-mark { margin: 0; }
+body:not(.admin-page) h1,
+body:not(.admin-page) h2,
+body:not(.admin-page) h3,
+body:not(.admin-page) h4,
+body:not(.admin-page) h5,
+body:not(.admin-page) h6 { font-family: var(--avenir) !important; }
 .menu-toggle {
   position: fixed;
   z-index: 60;
@@ -83,7 +81,7 @@ button, input, textarea, select { font: inherit; }
 .menu-overlay a:hover, .menu-overlay a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
 
 main { min-height: 80vh; }
-.home-page { overflow-x: hidden; overflow-y: auto; font-family: Aptos, "Segoe UI", Arial, sans-serif; }
+.home-page { overflow-x: hidden; overflow-y: auto; font-family: var(--avenir); }
 .home-page main { min-height: 100svh; }
 .home-content { padding-bottom: clamp(6rem, 11vw, 11rem); }
 .home-hero {
@@ -111,7 +109,7 @@ main { min-height: 80vh; }
   margin: 0;
   padding-inline: 2.5vw;
   color: #fff;
-  font-family: Aptos, "Segoe UI", Arial, sans-serif;
+  font-family: var(--avenir);
   font-size: clamp(3.5rem, 10.9vw, 12rem);
   font-weight: 400;
   letter-spacing: -.055em;
@@ -130,35 +128,45 @@ main { min-height: 80vh; }
 }
 .home-scroll-cue svg { display: block; width: 100%; overflow: visible; }
 .home-scroll-cue path { fill: none; stroke: currentColor; stroke-width: 2; vector-effect: non-scaling-stroke; }
-.home-image { width: 95vw; margin: 0 auto; }
-.home-image img { width: 100%; height: auto; object-fit: contain; opacity: 1; }
-.home-text {
-  display: grid;
-  grid-template-columns: minmax(8rem, .45fr) minmax(0, 1.55fr);
-  gap: clamp(2rem, 8vw, 10rem);
-  padding: clamp(8rem, 15vw, 16rem) var(--gutter);
+.home-sequence {
+  padding-top: clamp(5rem, 9vw, 9rem);
 }
-.home-eyebrow {
-  margin: .4rem 0 0;
+.home-artwork {
+  width: 86vw;
+  margin: 0 auto clamp(7rem, 12vw, 13rem);
+  overflow: hidden;
+  border: 1px solid var(--artwork-border);
+  background: var(--artwork-frame);
+}
+.home-artwork:last-child { margin-bottom: 0; }
+.home-artwork-image { padding: clamp(1rem, 2.4vw, 2.75rem); }
+.home-artwork-image img { width: 100%; height: auto; object-fit: contain; opacity: 1; }
+.home-artwork-caption {
+  padding: clamp(2.25rem, 4.5vw, 5rem) clamp(1.5rem, 8vw, 9rem);
+  border-top: 1px solid var(--artwork-border);
+  text-align: center;
+}
+.home-artwork-caption--empty { min-height: clamp(3.5rem, 6vw, 6rem); padding: 0; }
+.home-artwork-eyebrow {
+  margin: 0 0 clamp(1rem, 1.8vw, 1.75rem);
   color: var(--muted);
   font-size: .68rem;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-.home-text-body { max-width: 58rem; }
-.home-text-body h2 {
+.home-artwork-caption h2 {
   margin: 0;
-  font-family: Aptos, "Segoe UI", Arial, sans-serif;
-  font-size: clamp(2.7rem, 5.7vw, 6.5rem);
+  font-size: clamp(1.75rem, 3.1vw, 3.75rem);
   font-weight: 400;
-  letter-spacing: -.04em;
-  line-height: .95;
+  letter-spacing: -.025em;
+  line-height: 1.05;
 }
-.home-text-body p { max-width: 45rem; margin: 2rem 0 0 auto; font-size: clamp(1rem, 1.35vw, 1.3rem); line-height: 1.65; }
-.home-sequence { padding-top: clamp(3rem, 7vw, 8rem); }
-.home-sequence .home-image { margin-bottom: clamp(7rem, 14vw, 15rem); }
-.home-sequence .home-image:last-child { margin-bottom: 0; }
-.home-text--statement { padding-top: 0; }
+.home-artwork-caption > p:not(.home-artwork-eyebrow) {
+  max-width: 48rem;
+  margin: clamp(1.25rem, 2vw, 2rem) auto 0;
+  font-size: clamp(.95rem, 1.15vw, 1.15rem);
+  line-height: 1.7;
+}
 .home-footer {
   display: flex;
   justify-content: space-between;
@@ -166,7 +174,7 @@ main { min-height: 80vh; }
   gap: 2rem;
   padding: clamp(2rem, 4vw, 4rem) 2.5vw;
   border-top: 1px solid rgba(20,20,20,.2);
-  font-family: Aptos, "Segoe UI", Arial, sans-serif;
+  font-family: var(--avenir);
   font-size: .72rem;
   letter-spacing: .04em;
   text-transform: uppercase;
@@ -280,7 +288,6 @@ main { min-height: 80vh; }
 .reveal.is-visible { opacity: 1; transform: none; }
 
 @media (max-width: 720px) {
-  .site-mark { top: 1.35rem; }
   .menu-toggle { top: .75rem; }
   .gallery-item, .gallery-item:nth-child(n) { width: auto; margin: 0 0 7rem; }
   .gallery-item:nth-child(even) { margin-left: 14vw; }
@@ -293,11 +300,11 @@ main { min-height: 80vh; }
   .site-footer { align-items: flex-end; }
   .home-hero h1 { padding-inline: 1rem; font-size: clamp(2.4rem, 11.6vw, 5rem); letter-spacing: -.045em; }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
-  .home-text { grid-template-columns: 1fr; gap: 1.75rem; }
-  .home-text { padding-block: 7rem; }
-  .home-text-body h2 { font-size: clamp(2.6rem, 12vw, 4.5rem); }
-  .home-text-body p { margin-top: 1.5rem; }
-  .home-sequence .home-image { margin-bottom: 7rem; }
+  .home-sequence { padding-top: 4rem; }
+  .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }
+  .home-artwork-image { padding: clamp(.75rem, 3.5vw, 1.25rem); }
+  .home-artwork-caption { padding: 2.25rem 1.25rem 2.5rem; }
+  .home-artwork-caption--empty { min-height: 3.5rem; padding: 0; }
   .home-footer { align-items: flex-end; }
 }
 
