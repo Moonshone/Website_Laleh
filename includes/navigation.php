@@ -10,7 +10,6 @@ function render_navigation(string $current = ''): void
         'paintings' => ['PAINTINGS', 'paintings.html'],
         'writing' => ['WRITING', 'writing.html'],
         'about' => ['ABOUT', 'about.html'],
-        'cv' => ['CV', 'cv.html'],
         'news' => ['NEWS', 'news.php'],
         'contact' => ['CONTACT', 'contact.html'],
     ];
