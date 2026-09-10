@@ -108,10 +108,11 @@ function admin_navigation(): void
     <nav class="admin-navigation" aria-label="Administration">
         <a href="/admin/dashboard.php">Dashboard</a>
         <a href="/admin/news.php">NEWS Posts</a>
-        <a href="/admin/account.php">Account</a>
+        <a href="/news.html" target="_blank" rel="noopener noreferrer">View News Page</a>
         <?php if (($_SESSION['role'] ?? '') === 'superadmin'): ?>
             <a href="/admin/manage-admins.php">Manage Admins</a>
         <?php endif; ?>
+        <a href="/admin/account.php">Account</a>
         <form action="logout.php" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><button class="text-button" type="submit">LOG OUT</button></form>
     </nav>
     <?php
