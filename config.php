@@ -6,6 +6,26 @@ declare(strict_types=1);
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 
+function private_config(): array
+{
+    static $local;
+    if (is_array($local)) {
+        return $local;
+    }
+    $privateConfig = __DIR__ . '/config.local.php';
+    $local = is_file($privateConfig) ? require $privateConfig : [];
+    return is_array($local) ? $local : [];
+}
+
+function app_setting(string $name, string $default = ''): string
+{
+    $environmentValue = getenv($name);
+    if ($environmentValue !== false && $environmentValue !== '') {
+        return $environmentValue;
+    }
+    return (string) (private_config()[$name] ?? $default);
+}
+
 function db(): PDO
 {
     static $connection;
@@ -13,11 +33,7 @@ function db(): PDO
         return $connection;
     }
 
-    $privateConfig = __DIR__ . '/config.local.php';
-    $local = is_file($privateConfig) ? require $privateConfig : [];
-    if (!is_array($local)) {
-        $local = [];
-    }
+    $local = private_config();
 
     $host = getenv('DB_HOST') ?: ($local['DB_HOST'] ?? '');
     $port = getenv('DB_PORT') ?: ($local['DB_PORT'] ?? '3306');
