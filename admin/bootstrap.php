@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/config.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
+    ini_set('session.use_strict_mode', '1');
     session_name('laleh_admin');
     session_set_cookie_params([
         'httponly' => true,
@@ -43,6 +44,48 @@ function require_admin(): void
         header('Location: /admin/login.php');
         exit;
     }
+    try {
+        $statement = db()->prepare('SELECT username, role FROM admins WHERE id = :id LIMIT 1');
+        $statement->execute(['id' => (int) $_SESSION['admin_id']]);
+        $admin = $statement->fetch();
+    } catch (Throwable $exception) {
+        error_log($exception->getMessage());
+        http_response_code(503);
+        exit('Administration is temporarily unavailable.');
+    }
+    if (!$admin || !in_array($admin['role'], ['superadmin', 'admin'], true)) {
+        $_SESSION = [];
+        session_regenerate_id(true);
+        header('Location: /admin/login.php');
+        exit;
+    }
+    // Refresh authorization on every protected request so role changes and
+    // deleted accounts take effect without waiting for the session to expire.
+    $_SESSION['username'] = (string) $admin['username'];
+    $_SESSION['role'] = (string) $admin['role'];
+}
+
+function require_superadmin(): void
+{
+    require_admin();
+    if (($_SESSION['role'] ?? '') !== 'superadmin') {
+        http_response_code(403);
+        exit('Access denied.');
+    }
+}
+
+function admin_navigation(): void
+{
+    ?>
+    <nav class="admin-navigation" aria-label="Administration">
+        <a href="/admin/dashboard.php">Dashboard</a>
+        <a href="/admin/news.php">NEWS Posts</a>
+        <?php if (($_SESSION['role'] ?? '') === 'superadmin'): ?>
+            <a href="/admin/manage-admins.php">Manage Admins</a>
+        <?php endif; ?>
+        <form action="logout.php" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><button class="text-button" type="submit">LOG OUT</button></form>
+    </nav>
+    <?php
 }
 
 function delete_news_image(?string $path): void

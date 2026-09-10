@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
 
 if (!empty($_SESSION['admin_id'])) {
-    header('Location: news.php');
+    header('Location: dashboard.php');
     exit;
 }
 
@@ -15,21 +15,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = (string) ($_POST['password'] ?? '');
     if ($username !== '' && $password !== '') {
         try {
-            $statement = db()->prepare('SELECT id, password_hash FROM admins WHERE username = :username LIMIT 1');
+            $statement = db()->prepare('SELECT id, username, password_hash, role FROM admins WHERE username = :username LIMIT 1');
             $statement->execute(['username' => $username]);
             $admin = $statement->fetch();
             if ($admin && password_verify($password, $admin['password_hash'])) {
                 session_regenerate_id(true);
                 $_SESSION['admin_id'] = (int) $admin['id'];
+                $_SESSION['username'] = (string) $admin['username'];
+                $_SESSION['role'] = (string) $admin['role'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                header('Location: news.php');
+                header('Location: dashboard.php');
                 exit;
             }
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
         }
     }
-    $error = 'The username or password is incorrect.';
+    $error = 'Invalid username or password.';
 }
 ?>
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>News administration — Laleh Barzegar</title><link rel="stylesheet" href="../styles/style.css"></head>
