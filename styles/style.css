@@ -110,7 +110,7 @@ main { min-height: 80vh; }
   padding-inline: 2.5vw;
   color: #fff;
   font-family: var(--avenir);
-  font-size: clamp(3.5rem, 10.9vw, 12rem);
+  font-size: clamp(2.45rem, 7.63vw, 8.4rem);
   font-weight: 400;
   letter-spacing: -.055em;
   line-height: .9;
@@ -200,7 +200,7 @@ main { min-height: 80vh; }
 .page-header { padding: clamp(9rem, 18vh, 13rem) var(--gutter) clamp(5rem, 9vw, 9rem); }
 .page-header h1 {
   max-width: 90%; margin: 0;
-  font-family: var(--serif); font-size: clamp(4rem, 11vw, 10rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
+  font-family: var(--serif); font-size: clamp(2.8rem, 7.7vw, 7rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
 }
 .page-header p { max-width: 30rem; margin: 2.5rem 0 0 auto; color: var(--muted); }
 .news-admin-back { display: inline-block; margin-top: 2.5rem; border-bottom: 1px solid currentColor; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
@@ -219,13 +219,13 @@ main { min-height: 80vh; }
 .film:nth-child(even) { grid-template-columns: minmax(14rem, .55fr) minmax(0, 1.45fr); }
 .film:nth-child(even) .film-image { order: 2; }
 .film-copy { padding-top: .35rem; }
-.film-copy h2 { margin: 0 0 1rem; font-family: var(--serif); font-size: clamp(2rem, 4vw, 4.2rem); font-weight: 400; line-height: .95; }
+.film-copy h2 { margin: 0 0 1rem; font-family: var(--serif); font-size: clamp(1.4rem, 2.8vw, 2.94rem); font-weight: 400; line-height: .95; }
 .film-copy .year { font-size: .68rem; letter-spacing: .06em; }
 .film-copy p:last-child { max-width: 23rem; margin-top: 2.5rem; color: var(--muted); }
 
 .about-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(3rem, 9vw, 11rem); align-items: start; padding: 0 var(--gutter) 12vw; }
 .about-copy { padding-top: 8vw; }
-.about-copy h2 { margin: 0 0 3rem; font-family: var(--serif); font-size: clamp(2.7rem, 5vw, 5.4rem); font-weight: 400; line-height: .95; }
+.about-copy h2 { margin: 0 0 3rem; font-family: var(--serif); font-size: clamp(1.89rem, 3.5vw, 3.78rem); font-weight: 400; line-height: .95; }
 .about-copy p { max-width: 36rem; margin: 0 0 1.5rem; }
 
 .contact-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 10vw; padding: 0 var(--gutter) 12vw; }
@@ -298,7 +298,7 @@ main { min-height: 80vh; }
   .admin-header, .admin-post { align-items: flex-start; }
   .about-copy { padding-top: 0; }
   .site-footer { align-items: flex-end; }
-  .home-hero h1 { padding-inline: 1rem; font-size: clamp(2.4rem, 11.6vw, 5rem); letter-spacing: -.045em; }
+  .home-hero h1 { padding-inline: 1rem; font-size: clamp(1.68rem, 8.12vw, 3.5rem); letter-spacing: -.045em; }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
   .home-sequence { padding-top: 4rem; }
   .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }
