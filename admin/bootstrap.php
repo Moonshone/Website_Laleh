@@ -124,7 +124,7 @@ function admin_navigation(): void
     <nav class="admin-navigation" aria-label="Administration">
         <a href="/admin/dashboard.php">Dashboard</a>
         <a href="/admin/news.php">NEWS Posts</a>
-        <a href="/news.php?from=admin" target="_blank" rel="noopener noreferrer">View News Page</a>
+        <a href="/news.php?from=admin">View News Page</a>
         <?php if (($_SESSION['role'] ?? '') === 'superadmin'): ?>
             <a href="/admin/manage-admins.php">Manage Admins</a>
         <?php endif; ?>
