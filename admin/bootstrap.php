@@ -66,22 +66,38 @@ function send_password_reset_email(string $recipient, string $token): bool
     return mail($recipient, $subject, $message, implode("\r\n", $headers));
 }
 
+function authenticated_admin(): ?array
+{
+    if (empty($_SESSION['admin_id'])) {
+        return null;
+    }
+
+    $statement = db()->prepare('SELECT username, role FROM admins WHERE id = :id LIMIT 1');
+    $statement->execute(['id' => (int) $_SESSION['admin_id']]);
+    $admin = $statement->fetch();
+
+    if (!$admin || !in_array($admin['role'], ['superadmin', 'admin'], true)) {
+        return null;
+    }
+
+    return $admin;
+}
+
 function require_admin(): void
 {
     if (empty($_SESSION['admin_id'])) {
         header('Location: /admin/login.php');
         exit;
     }
+
     try {
-        $statement = db()->prepare('SELECT username, role FROM admins WHERE id = :id LIMIT 1');
-        $statement->execute(['id' => (int) $_SESSION['admin_id']]);
-        $admin = $statement->fetch();
+        $admin = authenticated_admin();
     } catch (Throwable $exception) {
         error_log($exception->getMessage());
         http_response_code(503);
         exit('Administration is temporarily unavailable.');
     }
-    if (!$admin || !in_array($admin['role'], ['superadmin', 'admin'], true)) {
+    if (!$admin) {
         $_SESSION = [];
         session_regenerate_id(true);
         header('Location: /admin/login.php');
@@ -108,7 +124,7 @@ function admin_navigation(): void
     <nav class="admin-navigation" aria-label="Administration">
         <a href="/admin/dashboard.php">Dashboard</a>
         <a href="/admin/news.php">NEWS Posts</a>
-        <a href="/news.php" target="_blank" rel="noopener noreferrer">View News Page</a>
+        <a href="/news.php?from=admin" target="_blank" rel="noopener noreferrer">View News Page</a>
         <?php if (($_SESSION['role'] ?? '') === 'superadmin'): ?>
             <a href="/admin/manage-admins.php">Manage Admins</a>
         <?php endif; ?>
