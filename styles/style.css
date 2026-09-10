@@ -156,6 +156,7 @@ main { min-height: 80vh; }
   font-family: var(--serif); font-size: clamp(4rem, 11vw, 10rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
 }
 .page-header p { max-width: 30rem; margin: 2.5rem 0 0 auto; color: var(--muted); }
+.news-admin-back { display: inline-block; margin-top: 2.5rem; border-bottom: 1px solid currentColor; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
 .gallery { padding: 0 var(--gutter) 12vw; }
 .gallery-item { margin: 0 0 clamp(7rem, 14vw, 14rem); }
 .gallery-item figure { margin: 0; }
