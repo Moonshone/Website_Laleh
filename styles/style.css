@@ -111,12 +111,15 @@ main { min-height: 80vh; }
   opacity: .5;
 }
 .home-hero h1 {
+  position: absolute;
+  top: 70%;
+  transform: translateY(-50%);
   width: 100%;
   margin: 0;
   padding-inline: 2.5vw;
   color: #fff;
   font-family: var(--avenir);
-  font-size: clamp(2.45rem, 7.63vw, 8.4rem);
+  font-size: clamp(1.96rem, 6.104vw, 6.72rem);
   font-weight: 400;
   letter-spacing: -.055em;
   line-height: .9;
@@ -304,7 +307,7 @@ main { min-height: 80vh; }
   .admin-header, .admin-post { align-items: flex-start; }
   .about-copy { padding-top: 0; }
   .site-footer { align-items: flex-end; }
-  .home-hero h1 { padding-inline: 1rem; font-size: clamp(1.68rem, 8.12vw, 3.5rem); letter-spacing: -.045em; }
+  .home-hero h1 { padding-inline: 1rem; font-size: clamp(1.344rem, 6.496vw, 2.8rem); letter-spacing: -.045em; }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
   .home-sequence { padding-top: 4rem; }
   .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }
