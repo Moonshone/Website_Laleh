@@ -1,32 +1,36 @@
 # NEWS CMS setup on DreamHost
 
-This CMS uses PHP, PDO, MySQL, and the existing website styles. The public NEWS page remains `news.php`; the administration starts at `/admin/`.
+The CMS uses PHP, PDO, MySQL, PHP sessions, and the existing site styles. It does not require Node.js or ongoing programming. The public page is `news.php`; administration starts at `/admin/`.
 
-## Files
+## Files created and changed
 
-The CMS consists of:
+- `config.php` loads private environment variables or `config.local.php` and creates the PDO connection.
+- `config.local.example.php` is a safe template containing no password.
+- `database/schema.sql` creates the complete `admins` and `news_posts` tables on a new installation.
+- `database/add-admin-role.sql` safely adds roles to a pre-existing role-less `admins` table and makes its oldest account a superadmin. Run this migration **only if** that table already exists without `role`; do not run it after `schema.sql`.
+- `setup/create-admin.php` creates only the first administrator; `setup/.gitignore` keeps its generated lock private.
+- `admin/` contains login, logout, dashboard, NEWS editing, administrator management, authentication, authorization, CSRF, and upload code.
+- `api/news.php` is the read-only published NEWS JSON endpoint.
+- `news.php` is the public NEWS page in the existing design.
+- `uploads/news/.htaccess` blocks script execution; `.gitignore` excludes uploaded media.
+- `styles/style.css` contains the related public NEWS and administration styles.
 
-- `config.php`: server-only PDO connection loader.
-- `config.local.example.php`: safe configuration template with no password.
-- `database/schema.sql`: creates `admins` and `news_posts`.
-- `admin/index.php`, `admin/login.php`, `admin/logout.php`, `admin/news.php`, and `admin/bootstrap.php`: login, session protection, editor, post management, CSRF checks, and upload handling.
-- `admin/create_admin.php`: command-line-only first-admin tool (web requests receive 404).
-- `api/news.php`: JSON endpoint containing published posts only.
-- `uploads/news/.htaccess`: prevents uploaded files from being executed as scripts on Apache-compatible hosting.
-- `news.php`: the public NEWS page, using the site's existing design.
+No unrelated page, image filename, menu behavior, gallery, or contact code is changed by this setup.
 
-## 1. Create the database tables
+## 1. Import the database SQL
 
-The database name is **`neweshtaniha`** and the MySQL username is **`laleh`**. In the DreamHost panel, open phpMyAdmin for `neweshtaniha`, select the **Import** tab, select `database/schema.sql`, and run the import. It creates:
+The existing database is **`neweshtaniha`** and its MySQL username is **`laleh`**.
 
-- `admins`: administrator usernames and one-way hashes created with `password_hash()`.
-- `news_posts`: titles, long article text, optional image paths, draft/published status, publication dates, and timestamps.
+For a new CMS installation, open DreamHost phpMyAdmin for `neweshtaniha`, select **Import**, choose `database/schema.sql`, and run it. This creates:
 
-No MySQL password or NEWS administrator password is included in the SQL file.
+- `admins`: unique username, one-way `password_hash`, `superadmin`/`admin` role, and creation time.
+- `news_posts`: title, long article content, optional public image path, draft/published status, publication date, and timestamps.
 
-## 2. Add the private database settings
+`CREATE TABLE IF NOT EXISTS` does not erase existing data. If an older `admins` table already exists but lacks `role`, import `database/add-admin-role.sql` instead. It preserves accounts and promotes the oldest one. Never run that migration if `role` already exists.
 
-The preferred method is DreamHost server environment variables named `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD`. Set:
+## 2. Enter the two private DreamHost values
+
+The preferred method is to define server-side environment variables in DreamHost/PHP:
 
 ```text
 DB_HOST=the exact MySQL hostname shown in the DreamHost panel
@@ -36,46 +40,56 @@ DB_USER=laleh
 DB_PASSWORD=your real MySQL password
 ```
 
-If environment variables are not available on the hosting plan, copy `config.local.example.php` to **`config.local.php` in the website root, beside `config.php`**. Enter the DreamHost MySQL hostname at `DB_HOST` and the MySQL password at `DB_PASSWORD` in that private copy. `config.local.php` is ignored by Git. Leave the committed example password blank. Since the private file sits in the served tree, keep its `.php` extension, use permissions `600` if DreamHost permits, and never rename it to `.txt`.
+If the hosting configuration cannot provide environment variables, copy `config.local.example.php` to **`config.local.php` in the website root, directly beside `config.php`**. In that private copy only:
 
-Do not put either value in HTML, browser JavaScript, `api/news.php`, or GitHub. `config.php` deliberately has no `localhost` fallback. It uses `neweshtaniha` and `laleh` as safe defaults, while host and password must be supplied privately.
+- enter the exact DreamHost MySQL hostname as the value of `DB_HOST`;
+- enter the MySQL user's real password as the value of `DB_PASSWORD`.
 
-## 3. Make the upload directory writable
+`config.local.php` is excluded by the root `.gitignore`. Keep its `.php` extension and use file permission `600` if supported. Never commit it or put either value in HTML, JavaScript, the API, or a public text file. A leaked database password permits unauthorized data access. The committed application deliberately does not guess a hostname or password.
 
-Upload `uploads/news/`, including its `.htaccess`. Through DreamHost's file manager or SSH, give the directory permissions that allow the site PHP process to write to it (normally `755`; use the least permissive setting that works). Do not grant executable permission to uploaded files.
+## 3. Prepare uploads
 
-## 4. Create the first NEWS administrator
+Upload `uploads/news/` with its `.htaccess`. Ensure the PHP process can write there (normally directory permission `755`; use the least permissive working setting). Confirm DreamHost honors `.htaccess` and has PHP Fileinfo enabled. The CMS accepts actual JPEG, PNG, and WEBP data up to 8 MB, generates random filenames, and rejects other MIME types.
 
-The NEWS administrator login is separate from the MySQL login. Choose a unique username and a password of at least 12 characters. From SSH, change to the website root and run:
+## 4. Create the first superadmin
 
-```bash
-php admin/create_admin.php 'your-admin-username'
-```
+1. After importing the SQL and configuring the database, open **`https://YOUR-DOMAIN/setup/create-admin.php`**.
+2. Choose the first NEWS admin username and a password of at least 12 characters, confirm it, and click **Create Admin**.
+3. The server hashes the password with `password_hash()` and automatically assigns `superadmin`. This password is separate from the MySQL password.
+4. A successful submission creates `setup/.setup-complete` when filesystem permissions allow. The page also checks the database, so it refuses creation whenever any admin exists even without the lock.
+5. Immediately **delete the complete `/setup/` directory from the production server** after success.
 
-The command securely prompts for the password without displaying it or putting it in shell history. The password is converted with `password_hash()` before insertion; plain text is not stored. The script only runs from the command line and returns 404 through the web, so there is no temporary setup page to disable. You may delete `admin/create_admin.php` from the production server after creating the account for additional defense; keep or delete it locally as desired.
+Empty values and mismatched or short passwords are rejected. Neither the password nor its hash is displayed.
 
-## 5. Use the CMS
+## 5. Log in and manage NEWS
 
-1. Open **`https://YOUR-DOMAIN/admin/`**. Logged-out visitors are sent to the login screen.
-2. Enter the NEWS administrator username and password created above. A successful login regenerates the PHP session ID.
-3. Enter a title, multi-paragraph text, and a publication date/time. An image is optional.
-4. Upload only JPG/JPEG, PNG, or WEBP images, up to 8 MB. The server checks actual MIME type and creates a random filename; it never trusts the original name.
-5. Click **SAVE DRAFT** to keep the article private. Drafts never appear publicly.
-6. Click **PUBLISH** to publish it. Published posts appear newest-first on `news.php` (future-dated posts remain hidden until their date).
-7. Under **Existing posts**, click **EDIT** to load an article into the editor. Saving it as a draft unpublishes it; publishing saves it as published.
-8. Use **PUBLISH** or **UNPUBLISH** beside an existing post for a quick status change.
-9. Click **DELETE** and accept the browser confirmation to permanently delete a post and its uploaded image. Deletion is a CSRF-protected POST request.
-10. Click **LOG OUT** to destroy the authenticated session.
+1. Open **`https://YOUR-DOMAIN/admin/`** and enter the NEWS administrator credentials. Login regenerates the session ID. Incorrect credentials receive one generic error.
+2. Open **NEWS Posts**. Enter a title, normal multi-paragraph article text, publication date/time, and optionally an image.
+3. **Save Draft** keeps the post private. **Publish** makes it public at its intended publication time. Future-dated posts remain hidden until that time.
+4. Existing-post **Edit** reloads its content. **Publish/Unpublish** changes visibility. **Delete** asks for confirmation and permanently removes the post and its CMS-owned image.
+5. Public posts appear newest-first on `/news.php`. Drafts never appear. `/api/news.php` returns only required public fields.
+6. Use **Log Out** to destroy the authenticated session.
 
-The read-only endpoint is `/api/news.php`. It returns only the public post fields for currently published posts, never drafts, admin records, hashes, or database settings.
+All state changes use CSRF-protected POST requests. Database queries use native prepared statements, public/admin output is escaped, and protected pages check authentication server-side.
 
-## DreamHost checklist
+## 6. Create and manage additional administrators
 
-- Confirm the domain is running a currently supported PHP version with PDO MySQL and Fileinfo enabled.
-- Import `database/schema.sql` into `neweshtaniha`.
-- Supply the exact DreamHost MySQL hostname and password using environment variables or private `config.local.php` as described above.
-- Ensure PHP can write to `uploads/news/` and that DreamHost honors its `.htaccess` rules.
-- Use HTTPS so the admin session cookie is marked Secure.
-- No Node.js, Docker, cron job, or change to the existing DreamHost MySQL user is required.
+Only a `superadmin` sees and may open **Manage Admins** (`/admin/manage-admins.php`):
 
-The live database connection cannot be verified until the private `DB_HOST` and `DB_PASSWORD` are supplied.
+1. Enter a unique username, password and confirmation, select `admin` or `superadmin`, then click **Create Admin**.
+2. Use **Change password** to set and confirm a new password for an account; the old password is never shown or required.
+3. Select a role and click **Change Role** to switch between `admin` and `superadmin`.
+4. Click **Delete Admin** and confirm to remove another account.
+
+A normal `admin` can fully manage NEWS but is denied administrator management server-side. A `superadmin` can do both. The signed-in account cannot delete itself, and transactional checks prevent deleting or demoting the last superadmin, ensuring the system always retains one.
+
+## Remaining DreamHost configuration
+
+- Import the appropriate SQL described above.
+- Supply the real `DB_HOST` and `DB_PASSWORD` privately; these were intentionally not provided and therefore the live connection cannot be tested from this repository.
+- Use a supported PHP release with PDO MySQL and Fileinfo.
+- Ensure `uploads/news/` is writable and `.htaccess` rules are permitted.
+- Serve the admin area over HTTPS so its session cookie receives the Secure flag.
+- Delete `/setup/` immediately after creating the first superadmin.
+
+No recurring database or source-code edits are needed to publish articles after installation.
