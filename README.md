@@ -6,10 +6,10 @@ The NEWS feature requires PHP 8.1 or newer with PDO MySQL and Fileinfo, plus MyS
 
 1. Import `database/schema.sql` into the configured database.
 2. Make `uploads/news/` writable by the PHP web-server user.
-3. Create or reset an administrator from the command line (the password must contain at least 12 characters):
+3. Create an administrator from the command line (the script securely prompts for a password of at least 12 characters):
 
    ```bash
-   php admin/create_admin.php username 'a-long-private-password'
+   php admin/create_admin.php username
    ```
 
 4. Sign in at `admin/login.php`. No default or hard-coded web password is provided.

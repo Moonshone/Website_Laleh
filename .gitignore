@@ -1,0 +1,7 @@
+# Private database settings (never commit this file).
+/config.local.php
+
+# Uploaded CMS media; retain only server hardening in Git.
+/uploads/news/*
+!/uploads/news/.gitkeep
+!/uploads/news/.htaccess

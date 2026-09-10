@@ -7,10 +7,20 @@ if (PHP_SAPI !== 'cli') {
     http_response_code(404);
     exit;
 }
-if ($argc !== 3 || trim($argv[1]) === '' || strlen($argv[2]) < 12) {
-    fwrite(STDERR, "Usage: php admin/create_admin.php <username> <password-at-least-12-characters>\n");
+if ($argc !== 2 || trim($argv[1]) === '' || strlen(trim($argv[1])) > 100) {
+    fwrite(STDERR, "Usage: php admin/create_admin.php <username>\n");
     exit(1);
 }
-$statement = db()->prepare('INSERT INTO admin_users (username, password_hash) VALUES (:username, :password_hash) ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash)');
-$statement->execute(['username' => trim($argv[1]), 'password_hash' => password_hash($argv[2], PASSWORD_DEFAULT)]);
+$username = trim($argv[1]);
+fwrite(STDOUT, 'Admin password (at least 12 characters): ');
+shell_exec('stty -echo');
+$password = rtrim((string) fgets(STDIN), "\r\n");
+shell_exec('stty echo');
+fwrite(STDOUT, "\n");
+if (strlen($password) < 12) {
+    fwrite(STDERR, "The password must contain at least 12 characters.\n");
+    exit(1);
+}
+$statement = db()->prepare('INSERT INTO admins (username, password_hash) VALUES (:username, :password_hash)');
+$statement->execute(['username' => $username, 'password_hash' => password_hash($password, PASSWORD_DEFAULT)]);
 fwrite(STDOUT, "Administrator saved.\n");

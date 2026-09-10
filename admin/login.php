@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = (string) ($_POST['password'] ?? '');
     if ($username !== '' && $password !== '') {
         try {
-            $statement = db()->prepare('SELECT id, password_hash FROM admin_users WHERE username = :username LIMIT 1');
+            $statement = db()->prepare('SELECT id, password_hash FROM admins WHERE username = :username LIMIT 1');
             $statement->execute(['username' => $username]);
             $admin = $statement->fetch();
             if ($admin && password_verify($password, $admin['password_hash'])) {
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: news.php');
                 exit;
             }
-        } catch (PDOException $exception) {
+        } catch (Throwable $exception) {
             error_log($exception->getMessage());
         }
     }
