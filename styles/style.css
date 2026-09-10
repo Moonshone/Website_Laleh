@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap");
+
 :root {
   --paper: #f4f1ea;
   --artwork-frame: #dcd9d3;
@@ -8,6 +10,7 @@
   --serif: Georgia, "Times New Roman", serif;
   --sans: Arial, Helvetica, sans-serif;
   --avenir: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
+  --heading-font: "Nunito", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -23,12 +26,15 @@ body {
 a { color: inherit; text-decoration: none; }
 img { display: block; width: 100%; height: auto; }
 button, input, textarea, select { font: inherit; }
-body:not(.admin-page) h1,
-body:not(.admin-page) h2,
-body:not(.admin-page) h3,
-body:not(.admin-page) h4,
-body:not(.admin-page) h5,
-body:not(.admin-page) h6 { font-family: var(--avenir) !important; }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--heading-font) !important;
+  font-weight: 700 !important;
+}
 .menu-toggle {
   position: fixed;
   z-index: 60;
