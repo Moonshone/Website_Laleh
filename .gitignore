@@ -1,4 +1,5 @@
 # Private database settings (never commit this file).
+/config/database.local.php
 /config.local.php
 
 # Uploaded CMS media; retain only server hardening in Git.
