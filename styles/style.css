@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
 
 :root {
   --paper: #f4f1ea;
@@ -120,7 +120,7 @@ main { min-height: 80vh; }
   color: #fff;
   font-family: var(--avenir);
   font-size: clamp(1.96rem, 6.104vw, 6.72rem);
-  font-weight: 400;
+  font-weight: 400 !important;
   letter-spacing: -.055em;
   line-height: .9;
   text-align: center;
