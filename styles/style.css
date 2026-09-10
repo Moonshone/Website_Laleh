@@ -83,28 +83,55 @@ button, input, textarea, select { font: inherit; }
 .menu-overlay a:hover, .menu-overlay a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
 
 main { min-height: 80vh; }
-.home-page { overflow-x: hidden; overflow-y: auto; }
+.home-page { overflow-x: hidden; overflow-y: auto; font-family: Aptos, "Segoe UI", Arial, sans-serif; }
 .home-page main { min-height: 100svh; }
-.home-content { padding-bottom: clamp(6rem, 12vw, 12rem); }
-.home-intro {
-  min-height: min(76svh, 52rem);
-  display: flex;
-  align-items: flex-end;
-  padding: clamp(8rem, 19vh, 13rem) var(--gutter) clamp(3.5rem, 7vw, 7rem);
+.home-content { padding-bottom: clamp(6rem, 11vw, 11rem); }
+.home-hero {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #171717;
+  color: #fff;
 }
-.home-intro h1 {
-  max-width: 100%;
+.home-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: url("../assets/images/home/h01.JPG") center / cover no-repeat;
+  opacity: .5;
+}
+.home-hero h1 {
+  width: 100%;
   margin: 0;
-  font-family: var(--serif);
-  font-size: clamp(4rem, 12.4vw, 13rem);
+  padding-inline: 2.5vw;
+  color: #fff;
+  font-family: Aptos, "Segoe UI", Arial, sans-serif;
+  font-size: clamp(3.5rem, 10.9vw, 12rem);
   font-weight: 400;
-  letter-spacing: -.065em;
-  line-height: .78;
+  letter-spacing: -.055em;
+  line-height: .9;
+  text-align: center;
+  white-space: nowrap;
 }
-.home-image { margin: 0; }
-.home-image img { width: 100%; height: auto; object-fit: contain; }
-.home-image--hero, .home-image--full { width: 100%; }
-.home-image--hero { padding-inline: var(--gutter); }
+.home-scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.5rem, 4vh, 3rem);
+  width: clamp(3.25rem, 5vw, 5rem);
+  padding: .75rem 0;
+  transform: translateX(-50%);
+  color: #fff;
+}
+.home-scroll-cue svg { display: block; width: 100%; overflow: visible; }
+.home-scroll-cue path { fill: none; stroke: currentColor; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.home-image { width: 95vw; margin: 0 auto; }
+.home-image img { width: 100%; height: auto; object-fit: contain; opacity: 1; }
 .home-text {
   display: grid;
   grid-template-columns: minmax(8rem, .45fr) minmax(0, 1.55fr);
@@ -119,33 +146,37 @@ main { min-height: 80vh; }
   text-transform: uppercase;
 }
 .home-text-body { max-width: 58rem; }
-.home-text-body h2, .home-trailer h2 {
+.home-text-body h2 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: Aptos, "Segoe UI", Arial, sans-serif;
   font-size: clamp(2.7rem, 5.7vw, 6.5rem);
   font-weight: 400;
   letter-spacing: -.04em;
   line-height: .95;
 }
 .home-text-body p { max-width: 45rem; margin: 2rem 0 0 auto; font-size: clamp(1rem, 1.35vw, 1.3rem); line-height: 1.65; }
-.home-sequence { padding-inline: var(--gutter); }
-.home-sequence .home-image { margin-bottom: clamp(8rem, 16vw, 17rem); }
-.home-image--wide { width: 87%; }
-.home-image--right { width: 57%; margin-left: auto; }
-.home-image--left { width: 68%; margin-left: 6vw; }
-.home-image--offset-left { width: 52%; margin-left: 10vw; }
-.home-image--offset-right { width: 64%; margin-left: auto; margin-right: 4vw; }
+.home-sequence { padding-top: clamp(3rem, 7vw, 8rem); }
+.home-sequence .home-image { margin-bottom: clamp(7rem, 14vw, 15rem); }
+.home-sequence .home-image:last-child { margin-bottom: 0; }
 .home-text--statement { padding-top: 0; }
-.home-trailer { padding: 0 var(--gutter); }
-.home-trailer-heading { display: grid; grid-template-columns: minmax(8rem, .45fr) minmax(0, 1.55fr); gap: clamp(2rem, 8vw, 10rem); margin-bottom: clamp(3rem, 7vw, 7rem); }
-.home-video-placeholder {
-  min-height: clamp(18rem, 50vw, 48rem);
-  display: grid;
-  place-items: center;
-  background: var(--ink);
-  color: var(--paper);
+.home-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  padding: clamp(2rem, 4vw, 4rem) 2.5vw;
+  border-top: 1px solid rgba(20,20,20,.2);
+  font-family: Aptos, "Segoe UI", Arial, sans-serif;
+  font-size: .72rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
-.home-video-placeholder p { margin: 0; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; }
+.home-footer p { margin: 0; }
+.home-footer p a { border-bottom: 1px solid currentColor; }
+.home-socials { display: flex; gap: 1rem; align-items: center; }
+.home-socials a { display: block; width: 1.35rem; height: 1.35rem; }
+.home-socials svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.home-socials .social-icon-fill { fill: currentColor; stroke: none; }
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -260,20 +291,14 @@ main { min-height: 80vh; }
   .admin-header, .admin-post { align-items: flex-start; }
   .about-copy { padding-top: 0; }
   .site-footer { align-items: flex-end; }
-  .home-intro { min-height: 66svh; padding-bottom: 3.5rem; }
-  .home-intro h1 { font-size: clamp(3.45rem, 17vw, 6rem); line-height: .84; }
-  .home-image--hero { padding-inline: 0; }
-  .home-text, .home-trailer-heading { grid-template-columns: 1fr; gap: 1.75rem; }
+  .home-hero h1 { padding-inline: 1rem; font-size: clamp(2.4rem, 11.6vw, 5rem); letter-spacing: -.045em; }
+  .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
+  .home-text { grid-template-columns: 1fr; gap: 1.75rem; }
   .home-text { padding-block: 7rem; }
-  .home-text-body h2, .home-trailer h2 { font-size: clamp(2.6rem, 12vw, 4.5rem); }
+  .home-text-body h2 { font-size: clamp(2.6rem, 12vw, 4.5rem); }
   .home-text-body p { margin-top: 1.5rem; }
   .home-sequence .home-image { margin-bottom: 7rem; }
-  .home-image--wide, .home-image--right, .home-image--left, .home-image--offset-left, .home-image--offset-right {
-    width: auto;
-    margin-left: 0;
-    margin-right: 0;
-  }
-  .home-video-placeholder { min-height: 55vw; }
+  .home-footer { align-items: flex-end; }
 }
 
 @media (prefers-reduced-motion: reduce) {

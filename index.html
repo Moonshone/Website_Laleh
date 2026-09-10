@@ -32,13 +32,20 @@
 </nav>
 </div>
 <main class="home-content">
-<header class="home-intro">
-<h1>LALEH BARZEGAR</h1>
-</header>
+<section class="home-hero" aria-labelledby="home-title">
+<h1 id="home-title">LALEH BARZEGAR</h1>
+<a class="home-scroll-cue" href="#home-gallery" aria-label="Scroll to selected works">
+<svg viewBox="0 0 72 24" aria-hidden="true" focusable="false">
+<path d="M2 2l34 20L70 2"></path>
+</svg>
+</a>
+</section>
 
-<figure class="home-image home-image--hero reveal">
-<img src="assets/images/home/h01.JPG" alt="Artwork by Laleh Barzegar">
+<section class="home-sequence" id="home-gallery" aria-label="Selected works">
+<figure class="home-image reveal">
+<img src="assets/images/home/h02.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </figure>
+</section>
 
 <section class="home-text home-text--introduction reveal" aria-labelledby="home-about-title">
 <p class="home-eyebrow">About the artist</p>
@@ -49,14 +56,11 @@
 </div>
 </section>
 
-<section class="home-sequence home-sequence--first" aria-label="Selected works">
-<figure class="home-image home-image--wide reveal">
-<img src="assets/images/home/h02.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
-</figure>
-<figure class="home-image home-image--right reveal">
+<section class="home-sequence" aria-label="Selected works continued">
+<figure class="home-image reveal">
 <img src="assets/images/home/h03.PNG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </figure>
-<figure class="home-image home-image--left reveal">
+<figure class="home-image reveal">
 <img src="assets/images/home/h04.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </figure>
 </section>
@@ -69,31 +73,34 @@
 </div>
 </section>
 
-<section class="home-sequence home-sequence--second" aria-label="More selected works">
-<figure class="home-image home-image--offset-left reveal">
+<section class="home-sequence" aria-label="More selected works">
+<figure class="home-image reveal">
 <img src="assets/images/home/h05.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </figure>
-<figure class="home-image home-image--full reveal">
+<figure class="home-image reveal">
 <img src="assets/images/home/h06.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </figure>
-<figure class="home-image home-image--offset-right reveal">
+<figure class="home-image reveal">
 <img src="assets/images/home/h07.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </figure>
-<figure class="home-image home-image--wide reveal">
+<figure class="home-image reveal">
 <img src="assets/images/home/h08.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </figure>
 </section>
-
-<section class="home-trailer reveal" aria-labelledby="home-trailer-title">
-<div class="home-trailer-heading">
-<p class="home-eyebrow">Moving image</p>
-<h2 id="home-trailer-title">Film / Trailer</h2>
-</div>
-<div class="home-video-placeholder" role="img" aria-label="Video placeholder">
-<p>Video forthcoming</p>
-</div>
-</section>
 </main>
+<footer class="home-footer">
+<div class="home-socials" aria-label="Social media">
+<!-- Replace # below with Laleh Barzegar's Instagram URL. -->
+<a href="#" aria-label="Instagram">
+<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4.25"></circle><circle class="social-icon-fill" cx="17.4" cy="6.7" r="1.1"></circle></svg>
+</a>
+<!-- Replace # below with Laleh Barzegar's X URL. -->
+<a href="#" aria-label="X">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3l12.9 18H20L7.1 3H4zm.2 18L10.8 13M13.2 10.8L19.8 3"></path></svg>
+</a>
+</div>
+<p>Powered by <a href="https://www.nema.one">www.nema.one</a></p>
+</footer>
 <script src="src/script.js">
 </script>
 </body>
