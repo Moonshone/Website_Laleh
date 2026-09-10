@@ -222,6 +222,18 @@ main { min-height: 80vh; }
 .admin-post-meta { margin: 0; }
 .admin-post-actions { display: flex; gap: 1rem; align-items: flex-start; }
 .admin-post-actions form { margin: 0; }
+.admin-navigation { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 1rem 1.5rem; }
+.admin-navigation form { margin: 0; }
+.admin-navigation a, .admin-primary-link, .admin-inline-form button, .admin-account summary { border-bottom: 1px solid currentColor; font-size: .68rem; letter-spacing: .06em; cursor: pointer; }
+.admin-dashboard { max-width: 42rem; padding-top: 3rem; }
+.admin-account { padding: 1.25rem 0; border-top: 1px solid rgba(20,20,20,.2); }
+.admin-account h3 { margin: 0 0 .3rem; font-family: var(--serif); font-size: 1.4rem; font-weight: 400; }
+.admin-account details { margin: 1rem 0; }
+.admin-form.compact { max-width: 25rem; padding-top: 1rem; }
+.admin-inline-form { display: flex; gap: 1rem; align-items: end; margin: 1rem 0; }
+.admin-inline-form label { font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.admin-inline-form select { display: block; margin-top: .3rem; }
+.admin-inline-form button { padding: .35rem 0; border-width: 0 0 1px; background: transparent; }
 
 .site-footer { display: flex; justify-content: space-between; padding: 2rem var(--gutter); border-top: 1px solid rgba(20,20,20,.2); font-size: .65rem; letter-spacing: .05em; text-transform: uppercase; }
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
