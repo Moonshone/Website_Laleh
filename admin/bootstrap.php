@@ -78,9 +78,11 @@ function admin_navigation(): void
 {
     ?>
     <nav class="admin-navigation" aria-label="Administration">
-        <a href="dashboard.php">DASHBOARD</a>
-        <a href="news.php">NEWS POSTS</a>
-        <?php if (($_SESSION['role'] ?? '') === 'superadmin'): ?><a href="manage-admins.php">MANAGE ADMINS</a><?php endif; ?>
+        <a href="/admin/dashboard.php">Dashboard</a>
+        <a href="/admin/news.php">NEWS Posts</a>
+        <?php if (($_SESSION['role'] ?? '') === 'superadmin'): ?>
+            <a href="/admin/manage-admins.php">Manage Admins</a>
+        <?php endif; ?>
         <form action="logout.php" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><button class="text-button" type="submit">LOG OUT</button></form>
     </nav>
     <?php
