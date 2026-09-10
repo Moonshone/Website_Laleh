@@ -7,10 +7,10 @@ require_once __DIR__ . '/includes/navigation.php';
 $posts = [];
 $unavailable = false;
 try {
-    $statement = db()->prepare("SELECT id, title, content, image, published_at FROM news WHERE status = :status AND published_at IS NOT NULL AND published_at <= NOW() ORDER BY published_at DESC, id DESC");
+    $statement = db()->prepare("SELECT id, title, content, image, published_at FROM news_posts WHERE status = :status AND published_at IS NOT NULL AND published_at <= NOW() ORDER BY published_at DESC, id DESC");
     $statement->execute(['status' => 'published']);
     $posts = $statement->fetchAll();
-} catch (PDOException $exception) {
+} catch (Throwable $exception) {
     error_log($exception->getMessage());
     $unavailable = true;
 }

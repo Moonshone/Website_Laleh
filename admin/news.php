@@ -14,11 +14,11 @@ try {
         $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 
         if ($action === 'delete' && $id) {
-            $statement = db()->prepare('SELECT image FROM news WHERE id = :id');
+            $statement = db()->prepare('SELECT image FROM news_posts WHERE id = :id');
             $statement->execute(['id' => $id]);
             $post = $statement->fetch();
             if ($post) {
-                $statement = db()->prepare('DELETE FROM news WHERE id = :id');
+                $statement = db()->prepare('DELETE FROM news_posts WHERE id = :id');
                 $statement->execute(['id' => $id]);
                 delete_news_image($post['image']);
             }
@@ -27,10 +27,19 @@ try {
             exit;
         }
 
+        if (in_array($action, ['toggle'], true) && $id) {
+            $status = ($_POST['status'] ?? '') === 'published' ? 'published' : 'draft';
+            $statement = db()->prepare("UPDATE news_posts SET status = :status, published_at = CASE WHEN :status_date = 'published' THEN COALESCE(published_at, NOW()) ELSE published_at END WHERE id = :id");
+            $statement->execute(['status' => $status, 'status_date' => $status, 'id' => $id]);
+            $_SESSION['flash'] = $status === 'published' ? 'The news post was published.' : 'The news post was unpublished.';
+            header('Location: news.php');
+            exit;
+        }
+
         if (in_array($action, ['save', 'publish'], true)) {
             $title = trim((string) ($_POST['title'] ?? ''));
             $content = trim((string) ($_POST['content'] ?? ''));
-            $status = $action === 'publish' ? 'published' : (string) ($_POST['status'] ?? 'draft');
+            $status = $action === 'publish' ? 'published' : 'draft';
             $status = in_array($status, ['draft', 'published'], true) ? $status : 'draft';
             $dateInput = trim((string) ($_POST['published_at'] ?? ''));
             $date = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $dateInput);
@@ -47,7 +56,7 @@ try {
             $publishedAt = $validDate ? $date->format('Y-m-d H:i:s') : null;
             $oldImage = null;
             if ($id) {
-                $statement = db()->prepare('SELECT image FROM news WHERE id = :id');
+                $statement = db()->prepare('SELECT image FROM news_posts WHERE id = :id');
                 $statement->execute(['id' => $id]);
                 $oldImage = $statement->fetchColumn() ?: null;
             }
@@ -57,10 +66,10 @@ try {
             }
 
             if ($id) {
-                $statement = db()->prepare('UPDATE news SET title = :title, content = :content, image = :image, status = :status, published_at = :published_at WHERE id = :id');
+                $statement = db()->prepare('UPDATE news_posts SET title = :title, content = :content, image = :image, status = :status, published_at = :published_at WHERE id = :id');
                 $statement->execute(compact('title', 'content', 'image', 'status', 'id') + ['published_at' => $publishedAt]);
             } else {
-                $statement = db()->prepare('INSERT INTO news (title, content, image, status, published_at) VALUES (:title, :content, :image, :status, :published_at)');
+                $statement = db()->prepare('INSERT INTO news_posts (title, content, image, status, published_at) VALUES (:title, :content, :image, :status, :published_at)');
                 $statement->execute(compact('title', 'content', 'image', 'status') + ['published_at' => $publishedAt]);
             }
             if ($image !== $oldImage) {
@@ -74,11 +83,11 @@ try {
 
     $editId = filter_var($_GET['edit'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     if ($editId) {
-        $statement = db()->prepare('SELECT * FROM news WHERE id = :id');
+        $statement = db()->prepare('SELECT * FROM news_posts WHERE id = :id');
         $statement->execute(['id' => $editId]);
         $editing = $statement->fetch() ?: $editing;
     }
-    $posts = db()->query('SELECT id, title, image, status, published_at, updated_at FROM news ORDER BY created_at DESC')->fetchAll();
+    $posts = db()->query('SELECT id, title, image, status, published_at, updated_at FROM news_posts ORDER BY created_at DESC')->fetchAll();
 } catch (Throwable $exception) {
     error_log($exception->getMessage());
     $error = $exception instanceof RuntimeException ? $exception->getMessage() : 'The database request could not be completed.';
@@ -104,10 +113,10 @@ unset($_SESSION['flash']);
 <label>Text<textarea name="content" rows="14" required><?= h($editing['content']) ?></textarea></label>
 <label>Image <span>(JPG, PNG or WEBP, max. 8 MB)</span><input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
 <?php if ($editing['image']): ?><img class="admin-image-preview" src="../<?= h($editing['image']) ?>" alt="Current post image"><?php endif; ?>
-<label>Status<select name="status"><option value="draft"<?= $editing['status'] === 'draft' ? ' selected' : '' ?>>Draft</option><option value="published"<?= $editing['status'] === 'published' ? ' selected' : '' ?>>Published</option></select></label>
+<label>Current status <span>(set with the buttons below)</span><select disabled><option value="draft"<?= $editing['status'] === 'draft' ? ' selected' : '' ?>>Draft</option><option value="published"<?= $editing['status'] === 'published' ? ' selected' : '' ?>>Published</option></select></label>
 <label>Publication date<input type="datetime-local" name="published_at" value="<?= h($publicationValue) ?>"></label>
-<div class="admin-actions"><button type="submit" name="action" value="save">SAVE</button><button type="submit" name="action" value="publish">PUBLISH</button><?php if ($editing['id']): ?><a href="news.php">CANCEL</a><?php endif; ?></div>
+<div class="admin-actions"><button type="submit" name="action" value="save">SAVE DRAFT</button><button type="submit" name="action" value="publish">PUBLISH</button><?php if ($editing['id']): ?><a href="news.php">CANCEL</a><?php endif; ?></div>
 </form></section><section><h2>Existing posts</h2><div class="admin-posts">
 <?php if (!$posts): ?><p>No news posts have been created.</p><?php endif; ?>
-<?php foreach ($posts as $post): ?><article class="admin-post"><div><p class="admin-post-meta"><?= h(ucfirst($post['status'])) ?> · <?= h($post['published_at'] ?: 'No publication date') ?></p><h3><?= h($post['title']) ?></h3></div><div class="admin-post-actions"><a href="?edit=<?= (int) $post['id'] ?>">EDIT</a><form method="post" onsubmit="return confirm('Diesen Beitrag wirklich löschen?');"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int) $post['id'] ?>"><button type="submit" name="action" value="delete">DELETE</button></form></div></article><?php endforeach; ?>
+<?php foreach ($posts as $post): ?><article class="admin-post"><div><p class="admin-post-meta"><?= h(ucfirst($post['status'])) ?> · <?= h($post['published_at'] ?: 'No publication date') ?></p><h3><?= h($post['title']) ?></h3></div><div class="admin-post-actions"><a href="?edit=<?= (int) $post['id'] ?>">EDIT</a><form method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int) $post['id'] ?>"><input type="hidden" name="status" value="<?= $post['status'] === 'published' ? 'draft' : 'published' ?>"><button type="submit" name="action" value="toggle"><?= $post['status'] === 'published' ? 'UNPUBLISH' : 'PUBLISH' ?></button></form><form method="post" onsubmit="return confirm('Delete this post permanently?');"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int) $post['id'] ?>"><button type="submit" name="action" value="delete">DELETE</button></form></div></article><?php endforeach; ?>
 </div></section></div></main></body></html>

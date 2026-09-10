@@ -40,7 +40,7 @@ function verify_csrf(): void
 function require_admin(): void
 {
     if (empty($_SESSION['admin_id'])) {
-        header('Location: login.php');
+        header('Location: /admin/login.php');
         exit;
     }
 }
@@ -60,7 +60,7 @@ function delete_news_image(?string $path): void
 
 function store_news_image(array $file): string
 {
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
         throw new RuntimeException('The image upload failed.');
     }
     if (($file['size'] ?? 0) > 8 * 1024 * 1024) {
