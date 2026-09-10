@@ -38,4 +38,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="admin-page"><main class="admin-shell admin-login"><p class="admin-eyebrow">Laleh Barzegar</p><h1>News administration</h1>
 <?php if ($error): ?><p class="admin-message admin-error" role="alert"><?= h($error) ?></p><?php endif; ?>
 <form class="admin-form" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
-<label>Username<input name="username" autocomplete="username" required></label><label>Password<input type="password" name="password" autocomplete="current-password" required></label><button type="submit">LOG IN</button></form></main></body></html>
+<label>Username<input name="username" autocomplete="username" required></label><label>Password<input type="password" name="password" autocomplete="current-password" required></label><button type="submit">LOG IN</button></form><p><a class="admin-primary-link" href="/admin/forgot-password.php">Forgot password?</a></p></main></body></html>

@@ -16,11 +16,15 @@ try {
 
         if ($action === 'create') {
             $username = trim((string) ($_POST['username'] ?? ''));
+            $email = strtolower(trim((string) ($_POST['email'] ?? '')));
             $password = (string) ($_POST['password'] ?? '');
             $confirmation = (string) ($_POST['password_confirmation'] ?? '');
             $role = (string) ($_POST['role'] ?? '');
             if ($username === '' || preg_match_all('/./us', $username) > 100) {
                 throw new RuntimeException('Enter a username of up to 100 characters.');
+            }
+            if (!valid_admin_email($email)) {
+                throw new RuntimeException('Enter a valid email address.');
             }
             if (strlen($password) < 12) {
                 throw new RuntimeException('The password must contain at least 12 characters.');
@@ -36,8 +40,8 @@ try {
             if ((int) $statement->fetchColumn() > 0) {
                 throw new RuntimeException('That username is already in use.');
             }
-            $statement = db()->prepare('INSERT INTO admins (username, password_hash, role) VALUES (:username, :password_hash, :role)');
-            $statement->execute(['username' => $username, 'password_hash' => password_hash($password, PASSWORD_DEFAULT), 'role' => $role]);
+            $statement = db()->prepare('INSERT INTO admins (username, email, password_hash, role) VALUES (:username, :email, :password_hash, :role)');
+            $statement->execute(['username' => $username, 'email' => $email, 'password_hash' => password_hash($password, PASSWORD_DEFAULT), 'role' => $role]);
             $_SESSION['flash'] = 'The administrator was created.';
         } elseif ($action === 'password' && $targetId) {
             $password = (string) ($_POST['new_password'] ?? '');
@@ -109,23 +113,23 @@ try {
         header('Location: manage-admins.php');
         exit;
     }
-    $admins = db()->query('SELECT id, username, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
+    $admins = db()->query('SELECT id, username, email, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
 } catch (PDOException $exception) {
     if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
     error_log($exception->getMessage());
-    $error = $exception->getCode() === '23000' ? 'That username is already in use.' : 'The administrator request could not be completed.';
-    $admins = db()->query('SELECT id, username, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
+    $error = $exception->getCode() === '23000' ? 'That username or email address is already in use.' : 'The administrator request could not be completed.';
+    $admins = db()->query('SELECT id, username, email, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
 } catch (Throwable $exception) {
     if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
     $error = $exception instanceof RuntimeException ? $exception->getMessage() : 'The administrator request could not be completed.';
     if (!$exception instanceof RuntimeException) error_log($exception->getMessage());
-    $admins = db()->query('SELECT id, username, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
+    $admins = db()->query('SELECT id, username, email, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
 }
 ?>
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Manage administrators — Laleh Barzegar</title><link rel="stylesheet" href="../styles/style.css"></head><body class="admin-page"><main class="admin-shell"><header class="admin-header"><div><p class="admin-eyebrow">Laleh Barzegar</p><h1>Manage administrators</h1></div><?php admin_navigation(); ?></header>
 <?php if ($flash): ?><p class="admin-message" role="status"><?= h($flash) ?></p><?php endif; ?><?php if ($error): ?><p class="admin-message admin-error" role="alert"><?= h($error) ?></p><?php endif; ?>
-<div class="admin-grid"><section><h2>Create New Admin</h2><form class="admin-form" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><label>Username<input name="username" maxlength="100" required></label><label>Password <span>(at least 12 characters)</span><input type="password" name="password" minlength="12" autocomplete="new-password" required></label><label>Confirm Password<input type="password" name="password_confirmation" minlength="12" autocomplete="new-password" required></label><label>Role<select name="role"><option value="admin">admin</option><option value="superadmin">superadmin</option></select></label><button name="action" value="create">Create Admin</button></form></section>
-<section><h2>Existing administrators</h2><?php foreach ($admins as $admin): ?><article class="admin-account"><h3><?= h($admin['username']) ?></h3><p class="admin-post-meta"><?= h($admin['role']) ?> · created <?= h($admin['created_at']) ?></p>
+<div class="admin-grid"><section><h2>Create New Admin</h2><form class="admin-form" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><label>Username<input name="username" maxlength="100" autocomplete="username" required></label><label>Email address<input type="email" name="email" maxlength="255" autocomplete="email" required></label><label>Password <span>(at least 12 characters)</span><input type="password" name="password" minlength="12" autocomplete="new-password" required></label><label>Confirm Password<input type="password" name="password_confirmation" minlength="12" autocomplete="new-password" required></label><label>Role<select name="role"><option value="admin">admin</option><option value="superadmin">superadmin</option></select></label><button name="action" value="create">Create Admin</button></form></section>
+<section><h2>Existing administrators</h2><?php foreach ($admins as $admin): ?><article class="admin-account"><h3><?= h($admin['username']) ?></h3><p><?= h($admin['email']) ?></p><p class="admin-post-meta"><?= h($admin['role']) ?> · created <?= h($admin['created_at']) ?></p>
 <details><summary>Change Password</summary><form class="admin-form compact" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="admin_id" value="<?= (int) $admin['id'] ?>"><label>New Password<input type="password" name="new_password" minlength="12" required></label><label>Confirm Password<input type="password" name="new_password_confirmation" minlength="12" required></label><button name="action" value="password">Change Password</button></form></details>
 <form class="admin-inline-form" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="admin_id" value="<?= (int) $admin['id'] ?>"><label>Role <select name="role"><option value="admin"<?= $admin['role'] === 'admin' ? ' selected' : '' ?>>admin</option><option value="superadmin"<?= $admin['role'] === 'superadmin' ? ' selected' : '' ?>>superadmin</option></select></label><button name="action" value="role">Change Role</button></form>
 <form class="admin-inline-form" method="post" onsubmit="return confirm('Delete this administrator permanently?');"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="admin_id" value="<?= (int) $admin['id'] ?>"><button name="action" value="delete"<?= (int) $admin['id'] === (int) $_SESSION['admin_id'] ? ' disabled title="You cannot delete your signed-in account"' : '' ?>>Delete Admin</button></form></article><?php endforeach; ?></section></div></main></body></html>

@@ -38,6 +38,34 @@ function verify_csrf(): void
     }
 }
 
+function valid_admin_email(string $email): bool
+{
+    return strlen($email) <= 255 && filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+function send_password_reset_email(string $recipient, string $token): bool
+{
+    $appUrl = rtrim(app_setting('APP_URL'), '/');
+    $from = app_setting('MAIL_FROM');
+    if (!filter_var($recipient, FILTER_VALIDATE_EMAIL) || !filter_var($from, FILTER_VALIDATE_EMAIL)
+        || !preg_match('#^https://[^/]+(?:/.*)?$#i', $appUrl)) {
+        error_log('Password reset email configuration is incomplete.');
+        return false;
+    }
+    $resetUrl = $appUrl . '/admin/reset-password.php?token=' . rawurlencode($token);
+    $subject = 'Administrator password reset';
+    $message = "A password reset was requested for your administrator account.\n\n"
+        . "Reset your password using this secure link:\n{$resetUrl}\n\n"
+        . "This one-time link expires in 30 minutes. If you did not request this reset, you can ignore this email.\n";
+    $headers = [
+        'From: ' . $from,
+        'Reply-To: ' . $from,
+        'Content-Type: text/plain; charset=UTF-8',
+        'X-Mailer: PHP/' . PHP_VERSION,
+    ];
+    return mail($recipient, $subject, $message, implode("\r\n", $headers));
+}
+
 function require_admin(): void
 {
     if (empty($_SESSION['admin_id'])) {
@@ -80,6 +108,7 @@ function admin_navigation(): void
     <nav class="admin-navigation" aria-label="Administration">
         <a href="/admin/dashboard.php">Dashboard</a>
         <a href="/admin/news.php">NEWS Posts</a>
+        <a href="/admin/account.php">Account</a>
         <?php if (($_SESSION['role'] ?? '') === 'superadmin'): ?>
             <a href="/admin/manage-admins.php">Manage Admins</a>
         <?php endif; ?>
