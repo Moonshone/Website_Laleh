@@ -353,10 +353,10 @@ main { min-height: 80vh; }
   letter-spacing: -.035em;
   overflow-wrap: anywhere;
 }
-.book-entry-year {
+.book-entry-meta {
   margin: .75rem 0 0;
   color: var(--muted);
-  font-size: clamp(.72rem, 1vw, .9rem);
+  font-size: clamp(.972rem, 1.35vw, 1.215rem);
   letter-spacing: .04em;
   line-height: 1.6;
 }
@@ -385,6 +385,7 @@ main { min-height: 80vh; }
   padding: clamp(1.5rem, 3.5vw, 3.5rem);
   border-left: 1px solid var(--artwork-border);
   color: var(--muted);
+  font-size: 1.35em;
   line-height: 1.75;
   overflow-wrap: anywhere;
 }

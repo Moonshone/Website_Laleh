@@ -10,7 +10,7 @@ $booksUnavailable = false;
 
 try {
     $statement = db()->query(
-        'SELECT `id`, `Name`, `Year`, `Description`, `URL`
+        'SELECT `id`, `Name`, `Year`, `Language`, `Description`, `URL`
          FROM `Books`
          ORDER BY `id` ASC'
     );
@@ -46,14 +46,15 @@ function writing_h(mixed $value): string
 <?php foreach ($books as $book): ?>
 <?php
 $year = trim((string) ($book['Year'] ?? ''));
+$language = trim((string) ($book['Language'] ?? ''));
 $description = trim((string) ($book['Description'] ?? ''));
 $imageUrl = (string) ($book['URL'] ?? '');
 ?>
 <article class="book-entry reveal" data-book-id="<?= (int) $book['id'] ?>">
 <header class="book-entry-header">
 <h2 class="book-entry-title"><?= writing_h($book['Name']) ?></h2>
-<?php if ($year !== ''): ?>
-<p class="book-entry-year"><?= writing_h($year) ?></p>
+<?php if ($year !== '' || $language !== ''): ?>
+<p class="book-entry-meta"><?php if ($year !== ''): ?><span class="book-entry-year"><?= writing_h($year) ?></span><?php endif; ?><?php if ($year !== '' && $language !== ''): ?>, <?php endif; ?><?php if ($language !== ''): ?><span class="book-entry-language"><?= writing_h($language) ?></span><?php endif; ?></p>
 <?php endif; ?>
 </header>
 <div class="book-entry-content">
