@@ -186,7 +186,7 @@ main { min-height: 80vh; }
   font-size: clamp(.95rem, 1.15vw, 1.15rem);
   line-height: 1.7;
 }
-.home-artwork-description { font-weight: 700; }
+.home-artwork-caption > p.home-artwork-description { font-size: clamp(1.235rem, 1.495vw, 1.495rem); font-weight: 700; }
 .home-footer {
   display: flex;
   justify-content: space-between;
