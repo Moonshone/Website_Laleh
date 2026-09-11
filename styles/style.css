@@ -228,6 +228,108 @@ main { min-height: 80vh; }
 .gallery-item { margin: 0 0 clamp(7rem, 14vw, 14rem); }
 .gallery-item figure { margin: 0; }
 .gallery-item:nth-child(3n+1) { width: 56%; }
+.paintings-page {
+  padding: clamp(7rem, 11vw, 10rem) var(--gutter) clamp(6rem, 12vw, 11rem);
+  overflow: hidden;
+}
+.painting-activity {
+  width: min(100%, 82rem);
+  margin: 0 auto clamp(4rem, 8vw, 8rem);
+  overflow: hidden;
+  border: 1px solid var(--artwork-border);
+  background: var(--artwork-frame);
+}
+.painting-activity:last-child { margin-bottom: 0; }
+.painting-activity-header,
+.painting-activity-description {
+  padding: clamp(1.5rem, 3.5vw, 3.5rem) clamp(1.25rem, 4vw, 4.5rem);
+  background: var(--artwork-frame);
+}
+.painting-activity-header { border-bottom: 1px solid var(--artwork-border); }
+.painting-activity-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -.035em;
+  overflow-wrap: anywhere;
+}
+.painting-activity-meta {
+  margin: .75rem 0 0;
+  color: var(--muted);
+  font-size: clamp(.72rem, 1vw, .9rem);
+  letter-spacing: .04em;
+  line-height: 1.6;
+}
+.painting-slideshow {
+  position: relative;
+  width: 100%;
+  background: var(--paper);
+}
+.painting-slide {
+  display: none;
+  width: 100%;
+  min-height: min(68vw, 48rem);
+  padding: clamp(.75rem, 2.5vw, 2.5rem);
+  place-items: center;
+}
+.painting-slide.is-active { display: grid; }
+.painting-slide img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(78vh, 48rem);
+  object-fit: contain;
+}
+.painting-slideshow-button {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid rgba(20,20,20,.25);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: rgba(244,241,234,.9);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+.painting-slideshow-button:hover,
+.painting-slideshow-button:focus-visible { background: #fff; }
+.painting-slideshow-button--previous { left: clamp(.5rem, 1.5vw, 1.25rem); }
+.painting-slideshow-button--next { right: clamp(.5rem, 1.5vw, 1.25rem); }
+.painting-slideshow-status {
+  position: absolute;
+  right: 1rem;
+  bottom: .65rem;
+  margin: 0;
+  padding: .15rem .4rem;
+  background: rgba(244,241,234,.9);
+  font-size: .65rem;
+}
+.painting-activity-description {
+  max-width: none;
+  margin: 0;
+  border-top: 1px solid var(--artwork-border);
+  color: var(--muted);
+  line-height: 1.75;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.painting-empty {
+  min-height: clamp(10rem, 28vw, 22rem);
+  display: grid;
+  place-items: center;
+}
+.painting-empty,
+.paintings-message {
+  margin: 0;
+  padding: clamp(3rem, 8vw, 7rem) 1rem;
+  color: var(--muted);
+  text-align: center;
+}
 .gallery-item:nth-child(3n+2) { width: 37%; margin-left: auto; margin-right: 7%; }
 .gallery-item:nth-child(3n) { width: 74%; margin-left: 12%; }
 .work-meta { display: flex; justify-content: space-between; gap: 2rem; margin-top: .85rem; font-size: .68rem; }
@@ -311,6 +413,10 @@ main { min-height: 80vh; }
   .menu-toggle { top: .75rem; }
   .gallery-item, .gallery-item:nth-child(n) { width: auto; margin: 0 0 7rem; }
   .gallery-item:nth-child(even) { margin-left: 14vw; }
+  .paintings-page { padding-top: 6rem; }
+  .painting-activity { margin-bottom: 3.5rem; }
+  .painting-slide { min-height: 70vw; padding: .65rem; }
+  .painting-slideshow-button { width: 2.5rem; height: 2.5rem; }
   .film, .film:nth-child(even) { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 8rem; }
   .film:nth-child(even) .film-image { order: 0; }
   .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
