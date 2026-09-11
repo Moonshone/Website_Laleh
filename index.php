@@ -81,7 +81,7 @@ function home_h(?string $value): string
 </div>
 <?php if ($homePicture['Description'] !== null): ?>
 <figcaption class="home-artwork-caption">
-<p><?= home_h($homePicture['Description']) ?></p>
+<p class="home-artwork-description"><?= home_h($homePicture['Description']) ?></p>
 </figcaption>
 <?php else: ?>
 <figcaption class="home-artwork-caption home-artwork-caption--empty" aria-label="Artwork details to come"></figcaption>
