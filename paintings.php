@@ -17,43 +17,43 @@ try {
     );
     $paintingActivities = $activityStatement->fetchAll(PDO::FETCH_ASSOC);
 
-    $schemaStatement = $connection->query(
-        'SELECT `TABLE_NAME`, `COLUMN_NAME`
+    $schemaStatement = $connection->prepare(
+        'SELECT `COLUMN_NAME`
          FROM `INFORMATION_SCHEMA`.`COLUMNS`
-         WHERE `TABLE_SCHEMA` = DATABASE()'
+         WHERE `TABLE_SCHEMA` = DATABASE()
+           AND `TABLE_NAME` = :table_name
+           AND `COLUMN_NAME` IN (\'ActivityID\', \'URL\')'
     );
-    $tableColumns = [];
-    foreach ($schemaStatement->fetchAll(PDO::FETCH_ASSOC) as $column) {
-        $tableColumns[(string) $column['TABLE_NAME']][(string) $column['COLUMN_NAME']] = true;
-    }
 
     foreach ($paintingActivities as &$paintingActivity) {
         $paintingActivity['images'] = [];
         $tableName = (string) ($paintingActivity['Name'] ?? '');
 
-        // A dynamic identifier cannot be parameter-bound. Only use an exact table name
-        // discovered in the current schema and only when its required columns exist.
-        if (
-            $tableName === ''
-            || !isset($tableColumns[$tableName])
-            || !isset($tableColumns[$tableName]['ActivityID'], $tableColumns[$tableName]['URL'])
-        ) {
-            continue;
+        $tableColumns = [];
+        if ($tableName !== '') {
+            $schemaStatement->execute(['table_name' => $tableName]);
+            foreach ($schemaStatement->fetchAll(PDO::FETCH_COLUMN) as $columnName) {
+                $tableColumns[(string) $columnName] = true;
+            }
         }
 
-        try {
-            $quotedTableName = '`' . str_replace('`', '``', $tableName) . '`';
-            $imageStatement = $connection->prepare(
-                "SELECT `URL` FROM {$quotedTableName} WHERE `ActivityID` = :activity_id"
-            );
-            $imageStatement->execute(['activity_id' => $paintingActivity['id']]);
+        // A dynamic identifier cannot be parameter-bound. Only query the exact table
+        // named by the activity after confirming both required columns in that table.
+        if (isset($tableColumns['ActivityID'], $tableColumns['URL'])) {
+            try {
+                $quotedTableName = '`' . str_replace('`', '``', $tableName) . '`';
+                $imageStatement = $connection->prepare(
+                    "SELECT `URL` FROM {$quotedTableName} WHERE `ActivityID` = :activity_id"
+                );
+                $imageStatement->execute(['activity_id' => $paintingActivity['id']]);
 
-            // Every matching database row becomes one slide. The URL is not
-            // filtered, normalised, or combined with a hard-coded path.
-            $paintingActivity['images'] = $imageStatement->fetchAll(PDO::FETCH_COLUMN);
-        } catch (Throwable $exception) {
-            // One missing or malformed activity table must not break the other galleries.
-            error_log($exception->getMessage());
+                // Every matching database row becomes one slide. The URL is not
+                // filtered, normalised, or combined with a hard-coded path.
+                $paintingActivity['images'] = $imageStatement->fetchAll(PDO::FETCH_COLUMN);
+            } catch (Throwable $exception) {
+                // One missing or malformed activity table must not break the other galleries.
+                error_log($exception->getMessage());
+            }
         }
     }
     unset($paintingActivity);
