@@ -7,7 +7,7 @@
   --ink: #141414;
   --muted: #6b6964;
   --gutter: clamp(1.25rem, 3.1vw, 3.75rem);
-  --serif: Georgia, "Times New Roman", serif;
+  --serif: Georgia, Arial, sans-serif;
   --sans: Arial, Helvetica, sans-serif;
   --avenir: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
   --heading-font: "Nunito", sans-serif;
