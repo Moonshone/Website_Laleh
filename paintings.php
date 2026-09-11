@@ -48,14 +48,9 @@ try {
             );
             $imageStatement->execute(['activity_id' => $paintingActivity['id']]);
 
-            foreach ($imageStatement->fetchAll(PDO::FETCH_COLUMN) as $url) {
-                $url = (string) $url;
-                $path = parse_url($url, PHP_URL_PATH);
-                if ($url !== '' && is_string($path) && preg_match('/\.(?:jpe?g|png)$/i', $path) === 1) {
-                    // Keep the database value untouched; only the extension check is case-insensitive.
-                    $paintingActivity['images'][] = $url;
-                }
-            }
+            // Every matching database row becomes one slide. The URL is not
+            // filtered, normalised, or combined with a hard-coded path.
+            $paintingActivity['images'] = $imageStatement->fetchAll(PDO::FETCH_COLUMN);
         } catch (Throwable $exception) {
             // One missing or malformed activity table must not break the other galleries.
             error_log($exception->getMessage());
@@ -121,7 +116,7 @@ $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $ac
 <div class="painting-slideshow" id="<?= paintings_h($slideshowId) ?>" data-painting-slideshow aria-label="<?= paintings_h($paintingActivity['Name']) ?> slideshow">
 <?php foreach ($images as $imageIndex => $imageUrl): ?>
 <div class="painting-slide<?= $imageIndex === 0 ? ' is-active' : '' ?>" data-painting-slide<?= $imageIndex === 0 ? '' : ' hidden' ?>>
-<img src="<?= paintings_h($imageUrl) ?>" alt="<?= paintings_h($paintingActivity['Name']) ?>, image <?= $imageIndex + 1 ?> of <?= $imageCount ?>"<?= $imageIndex === 0 ? '' : ' loading="lazy"' ?>>
+<img src="<?= paintings_h($imageUrl) ?>" alt=""<?= $imageIndex === 0 ? '' : ' loading="lazy"' ?>>
 </div>
 <?php endforeach; ?>
 <?php if ($imageCount > 1): ?>
