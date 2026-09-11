@@ -107,7 +107,7 @@ function home_picture_url(?string $url): ?string
 </div>
 <?php if (trim((string) ($homePicture['Description'] ?? '')) !== ''): ?>
 <figcaption class="home-artwork-caption">
-<p><?= home_h($homePicture['Description']) ?></p>
+<p class="home-artwork-description"><?= home_h($homePicture['Description']) ?></p>
 </figcaption>
 <?php else: ?>
 <figcaption class="home-artwork-caption home-artwork-caption--empty" aria-label="Artwork details to come"></figcaption>
