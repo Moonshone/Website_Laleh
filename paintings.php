@@ -28,6 +28,14 @@ try {
     foreach ($paintingActivities as &$paintingActivity) {
         $paintingActivity['images'] = [];
         $tableName = (string) ($paintingActivity['Name'] ?? '');
+        if ((int) $paintingActivity['id'] === 6) {
+            error_log('ACTIVE DATABASE: ' . $connection->query('SELECT DATABASE()')->fetchColumn());
+            error_log('RUNNING FILE: ' . __FILE__);
+            error_log('ACTIVITY ID: ' . $paintingActivity['id']);
+            error_log('TABLE NAME: [' . $tableName . ']');
+            error_log('TABLE NAME LENGTH: ' . strlen($tableName));
+            error_log('TABLE NAME HEX: ' . bin2hex($tableName));
+        }
 
         $tableColumns = [];
         if ($tableName !== '') {
@@ -37,9 +45,18 @@ try {
             }
         }
 
+        if ((int) $paintingActivity['id'] === 6) {
+            error_log('COLUMNS: ' . print_r($tableColumns, true));
+            error_log('ACTIVITY ID COLUMN: ' . (isset($tableColumns['ActivityID']) ? 'true' : 'false'));
+            error_log('URL COLUMN: ' . (isset($tableColumns['URL']) ? 'true' : 'false'));
+        }
+
         // A dynamic identifier cannot be parameter-bound. Only query the exact table
         // named by the activity after confirming both required columns in that table.
         if (isset($tableColumns['ActivityID'], $tableColumns['URL'])) {
+            if ((int) $paintingActivity['id'] === 6) {
+                error_log('COLOR AND FORM: schema check PASSED');
+            }
             try {
                 $quotedTableName = '`' . str_replace('`', '``', $tableName) . '`';
                 $imageStatement = $connection->prepare(
@@ -50,10 +67,21 @@ try {
                 // Every matching database row becomes one slide. The URL is not
                 // filtered, normalised, or combined with a hard-coded path.
                 $paintingActivity['images'] = $imageStatement->fetchAll(PDO::FETCH_COLUMN);
+                if ((int) $paintingActivity['id'] === 6) {
+                    error_log('COLOR AND FORM IMAGE COUNT: ' . count($paintingActivity['images']));
+                    error_log('COLOR AND FORM URLS: ' . print_r($paintingActivity['images'], true));
+                }
             } catch (Throwable $exception) {
                 // One missing or malformed activity table must not break the other galleries.
                 error_log($exception->getMessage());
+                if ((int) $paintingActivity['id'] === 6) {
+                    error_log('IMAGE QUERY ERROR: ' . $exception->getMessage());
+                    error_log('TABLE: ' . $tableName);
+                    error_log('ACTIVITY ID: ' . $paintingActivity['id']);
+                }
             }
+        } elseif ((int) $paintingActivity['id'] === 6) {
+            error_log('COLOR AND FORM: schema check FAILED');
         }
     }
     unset($paintingActivity);
