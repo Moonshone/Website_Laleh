@@ -93,31 +93,6 @@ function paintings_details(array $activity): string
 <meta name="description" content="Painting activities by Laleh Barzegar.">
 <title>Paintings — Laleh Barzegar</title>
 <link rel="stylesheet" href="styles/style.css">
-<style>
-.paintings-page { padding: clamp(8rem, 14vw, 12rem) var(--gutter) clamp(6rem, 12vw, 11rem); }
-.painting-activity { width: min(100%, 82rem); margin: 0 auto clamp(7rem, 13vw, 13rem); }
-.painting-activity:last-child { margin-bottom: 0; }
-.painting-activity-header { margin-bottom: clamp(1.5rem, 3vw, 2.75rem); }
-.painting-activity-title { margin: 0; font-size: clamp(2rem, 5vw, 5rem); line-height: 1; letter-spacing: -.035em; }
-.painting-activity-meta { margin: .65rem 0 0; color: var(--muted); font-size: .75rem; letter-spacing: .05em; }
-.painting-slideshow { position: relative; background: var(--artwork-frame); border: 1px solid var(--artwork-border); }
-.painting-slide { display: none; min-height: min(70vw, 48rem); padding: clamp(.75rem, 2.5vw, 2.5rem); place-items: center; }
-.painting-slide.is-active { display: grid; }
-.painting-slide img { width: auto; max-width: 100%; height: auto; max-height: min(78vh, 48rem); object-fit: contain; }
-.painting-slideshow-button { position: absolute; z-index: 2; top: 50%; width: 3rem; height: 3rem; padding: 0; border: 1px solid rgba(20,20,20,.25); border-radius: 50%; transform: translateY(-50%); background: rgba(244,241,234,.88); color: var(--ink); cursor: pointer; font-size: 1.35rem; line-height: 1; }
-.painting-slideshow-button:hover, .painting-slideshow-button:focus-visible { background: var(--paper); }
-.painting-slideshow-button--previous { left: clamp(.5rem, 1.5vw, 1.25rem); }
-.painting-slideshow-button--next { right: clamp(.5rem, 1.5vw, 1.25rem); }
-.painting-slideshow-status { position: absolute; right: 1rem; bottom: .65rem; margin: 0; padding: .15rem .4rem; background: rgba(244,241,234,.88); font-size: .65rem; }
-.painting-activity-description { max-width: 48rem; margin: clamp(1.5rem, 3vw, 2.75rem) 0 0; color: var(--muted); line-height: 1.75; white-space: pre-line; }
-.painting-empty, .paintings-message { margin: 0; padding: clamp(3rem, 8vw, 7rem) 1rem; color: var(--muted); text-align: center; }
-@media (max-width: 720px) {
-  .paintings-page { padding-top: 7rem; }
-  .painting-activity { margin-bottom: 7rem; }
-  .painting-slide { min-height: 70vw; padding: .65rem; }
-  .painting-slideshow-button { width: 2.5rem; height: 2.5rem; }
-}
-</style>
 </head>
 <body id="top">
 <?php render_navigation('paintings'); ?>
@@ -134,7 +109,7 @@ $images = $paintingActivity['images'];
 $imageCount = count($images);
 $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $activityIndex;
 ?>
-<article class="painting-activity reveal">
+<article class="painting-activity reveal" data-painting-activity-id="<?= (int) $paintingActivity['id'] ?>">
 <header class="painting-activity-header">
 <h2 class="painting-activity-title"><?= paintings_h($paintingActivity['Name']) ?></h2>
 <?php if (paintings_details($paintingActivity) !== ''): ?>
@@ -146,7 +121,7 @@ $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $ac
 <div class="painting-slideshow" id="<?= paintings_h($slideshowId) ?>" data-painting-slideshow aria-label="<?= paintings_h($paintingActivity['Name']) ?> slideshow">
 <?php foreach ($images as $imageIndex => $imageUrl): ?>
 <div class="painting-slide<?= $imageIndex === 0 ? ' is-active' : '' ?>" data-painting-slide<?= $imageIndex === 0 ? '' : ' hidden' ?>>
-<img src="<?= paintings_h($imageUrl) ?>" alt="<?= paintings_h($paintingActivity['Name']) ?>"<?= $imageIndex === 0 ? '' : ' loading="lazy"' ?>>
+<img src="<?= paintings_h($imageUrl) ?>" alt="<?= paintings_h($paintingActivity['Name']) ?>, image <?= $imageIndex + 1 ?> of <?= $imageCount ?>"<?= $imageIndex === 0 ? '' : ' loading="lazy"' ?>>
 </div>
 <?php endforeach; ?>
 <?php if ($imageCount > 1): ?>
@@ -167,25 +142,5 @@ $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $ac
 </main>
 <footer class="site-footer"><span>© <span data-year>2026</span> Laleh Barzegar</span><a href="#top">Back to top</a></footer>
 <script src="src/script.js"></script>
-<script>
-document.querySelectorAll('[data-painting-slideshow]').forEach((slideshow) => {
-  const slides = Array.from(slideshow.querySelectorAll('[data-painting-slide]'));
-  const current = slideshow.querySelector('[data-painting-current]');
-  let activeIndex = 0;
-
-  const showSlide = (nextIndex) => {
-    activeIndex = (nextIndex + slides.length) % slides.length;
-    slides.forEach((slide, index) => {
-      const isActive = index === activeIndex;
-      slide.classList.toggle('is-active', isActive);
-      slide.hidden = !isActive;
-    });
-    if (current) current.textContent = String(activeIndex + 1);
-  };
-
-  slideshow.querySelector('[data-painting-previous]')?.addEventListener('click', () => showSlide(activeIndex - 1));
-  slideshow.querySelector('[data-painting-next]')?.addEventListener('click', () => showSlide(activeIndex + 1));
-});
-</script>
 </body>
 </html>

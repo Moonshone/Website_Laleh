@@ -93,3 +93,24 @@ form?.addEventListener('submit', async (event) => {
 });
 
 document.querySelectorAll('[data-year]').forEach((element) => { element.textContent = new Date().getFullYear(); });
+
+document.querySelectorAll('[data-painting-slideshow]').forEach((slideshow) => {
+  const slides = Array.from(slideshow.querySelectorAll('[data-painting-slide]'));
+  const current = slideshow.querySelector('[data-painting-current]');
+  let activeIndex = 0;
+
+  if (slides.length < 2) return;
+
+  const showSlide = (nextIndex) => {
+    activeIndex = (nextIndex + slides.length) % slides.length;
+    slides.forEach((slide, index) => {
+      const isActive = index === activeIndex;
+      slide.classList.toggle('is-active', isActive);
+      slide.hidden = !isActive;
+    });
+    if (current) current.textContent = String(activeIndex + 1);
+  };
+
+  slideshow.querySelector('[data-painting-previous]')?.addEventListener('click', () => showSlide(activeIndex - 1));
+  slideshow.querySelector('[data-painting-next]')?.addEventListener('click', () => showSlide(activeIndex + 1));
+});
