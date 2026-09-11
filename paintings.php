@@ -171,32 +171,23 @@ $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $ac
 </header>
 
 <?php if (isset($paintingActivity['debug'])): ?>
-<fieldset>
-<legend><strong>Temporary Paintings Debug — Color and Form</strong></legend>
-<pre>Database: <?= paintings_h($paintingActivity['debug']['database']) ?>
-Running file: <?= paintings_h($paintingActivity['debug']['running_file']) ?>
-Activity ID: <?= paintings_h($paintingActivity['debug']['activity_id']) ?>
-Table Name: [<?= paintings_h($paintingActivity['debug']['table_name']) ?>]
-Table Name Length: <?= paintings_h($paintingActivity['debug']['table_name_length']) ?>
-Table Name HEX: <?= paintings_h($paintingActivity['debug']['table_name_hex']) ?>
-Found columns:
-<?= paintings_h(print_r($paintingActivity['debug']['table_columns'], true)) ?>
+<pre style="background:#fff3cd; color:#000; padding:20px; border:2px solid #000; white-space:pre-wrap;">DATABASE: <?= paintings_h($paintingActivity['debug']['database']) ?>
+RUNNING FILE: <?= paintings_h($paintingActivity['debug']['running_file']) ?>
+ACTIVITY ID: <?= paintings_h($paintingActivity['debug']['activity_id']) ?>
+TABLE NAME: [<?= paintings_h($paintingActivity['debug']['table_name']) ?>]
+TABLE NAME LENGTH: <?= paintings_h($paintingActivity['debug']['table_name_length']) ?>
+TABLE NAME HEX: <?= paintings_h($paintingActivity['debug']['table_name_hex']) ?>
+COLUMNS: <?= paintings_h(implode(', ', array_keys($paintingActivity['debug']['table_columns']))) ?>
 ActivityID exists: <?= $paintingActivity['debug']['activity_id_exists'] ? 'YES' : 'NO' ?>
 URL exists: <?= $paintingActivity['debug']['url_exists'] ? 'YES' : 'NO' ?>
-Schema check: <?= $paintingActivity['debug']['schema_check_passed'] ? 'PASSED' : 'FAILED' ?>
-<?php if ($paintingActivity['debug']['schema_check_passed']): ?>
-Image count: <?= count($paintingActivity['images']) ?>
-URLs:
+SCHEMA CHECK: <?= $paintingActivity['debug']['schema_check_passed'] ? 'PASSED' : 'FAILED' ?>
+IMAGE COUNT: <?= count($paintingActivity['images']) ?>
 <?php foreach ($paintingActivity['images'] as $debugImageIndex => $debugImageUrl): ?>
 URL <?= $debugImageIndex + 1 ?>: <?= paintings_h($debugImageUrl) ?>
 <?php endforeach; ?>
-<?php endif; ?>
-Query error: <?= $paintingActivity['debug']['query_error'] === null ? 'NONE' : paintings_h($paintingActivity['debug']['query_error']) ?>
 <?php if ($paintingActivity['debug']['query_error'] !== null): ?>
-QUERY ERROR:
-<?= paintings_h($paintingActivity['debug']['query_error']) ?>
+QUERY ERROR: <?= paintings_h($paintingActivity['debug']['query_error']) ?>
 <?php endif; ?></pre>
-</fieldset>
 <?php endif; ?>
 
 <?php if ($imageCount > 0): ?>
