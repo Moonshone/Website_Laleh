@@ -11,6 +11,8 @@
   --sans: Arial, Helvetica, sans-serif;
   --avenir: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
   --heading-font: "Nunito", sans-serif;
+  --entry-meta-font-size: clamp(.972rem, 1.35vw, 1.215rem);
+  --entry-description-font-size: 1.35em;
 }
 
 * { box-sizing: border-box; }
@@ -186,7 +188,7 @@ main { min-height: 80vh; }
   font-size: clamp(.95rem, 1.15vw, 1.15rem);
   line-height: 1.7;
 }
-.home-artwork-caption > p.home-artwork-description { font-size: clamp(1.235rem, 1.495vw, 1.495rem); font-weight: 700; }
+.home-artwork-caption > p.home-artwork-description { font-size: var(--entry-description-font-size); font-weight: 700; }
 .home-footer {
   display: flex;
   justify-content: space-between;
@@ -256,7 +258,7 @@ main { min-height: 80vh; }
 .painting-activity-meta {
   margin: .75rem 0 0;
   color: var(--muted);
-  font-size: clamp(.72rem, 1vw, .9rem);
+  font-size: var(--entry-meta-font-size);
   letter-spacing: .04em;
   line-height: 1.6;
 }
@@ -314,6 +316,7 @@ main { min-height: 80vh; }
   margin: 0;
   border-top: 1px solid var(--artwork-border);
   color: var(--muted);
+  font-size: var(--entry-description-font-size);
   line-height: 1.75;
   white-space: pre-line;
   overflow-wrap: anywhere;
@@ -356,7 +359,7 @@ main { min-height: 80vh; }
 .book-entry-meta {
   margin: .75rem 0 0;
   color: var(--muted);
-  font-size: clamp(.972rem, 1.35vw, 1.215rem);
+  font-size: var(--entry-meta-font-size);
   letter-spacing: .04em;
   line-height: 1.6;
 }
@@ -385,7 +388,7 @@ main { min-height: 80vh; }
   padding: clamp(1.5rem, 3.5vw, 3.5rem);
   border-left: 1px solid var(--artwork-border);
   color: var(--muted);
-  font-size: 1.35em;
+  font-size: var(--entry-description-font-size);
   line-height: 1.75;
   overflow-wrap: anywhere;
 }
@@ -429,7 +432,7 @@ main { min-height: 80vh; }
 .film-entry-year {
   margin: .75rem 0 0;
   color: var(--muted);
-  font-size: clamp(.72rem, 1vw, .9rem);
+  font-size: var(--entry-meta-font-size);
   letter-spacing: .04em;
   line-height: 1.6;
 }
@@ -463,6 +466,7 @@ main { min-height: 80vh; }
   margin: 0;
   border-top: 1px solid var(--artwork-border);
   color: var(--muted);
+  font-size: var(--entry-description-font-size);
   line-height: 1.75;
   white-space: pre-line;
   overflow-wrap: anywhere;
