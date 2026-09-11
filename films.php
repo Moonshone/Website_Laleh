@@ -39,6 +39,40 @@ function films_is_video_file(string $url): bool
 
     return in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['mp4', 'webm', 'mov'], true);
 }
+
+function films_youtube_embed_url(string $url): ?string
+{
+    $parts = parse_url(trim($url));
+    if ($parts === false || !isset($parts['host'])) {
+        return null;
+    }
+
+    $host = strtolower(rtrim($parts['host'], '.'));
+    if (str_starts_with($host, 'www.')) {
+        $host = substr($host, 4);
+    }
+
+    $videoId = null;
+    $path = trim((string) ($parts['path'] ?? ''), '/');
+
+    if ($host === 'youtu.be') {
+        $videoId = explode('/', $path, 2)[0];
+    } elseif (in_array($host, ['youtube.com', 'm.youtube.com'], true)) {
+        if ($path === 'watch') {
+            parse_str((string) ($parts['query'] ?? ''), $query);
+            $videoId = isset($query['v']) && is_string($query['v']) ? $query['v'] : null;
+        } elseif (str_starts_with($path, 'embed/')) {
+            $videoId = explode('/', substr($path, 6), 2)[0];
+        }
+    }
+
+    $videoId = rawurldecode(trim((string) $videoId));
+    if ($videoId === '' || preg_match('/^[A-Za-z0-9_-]+$/D', $videoId) !== 1) {
+        return null;
+    }
+
+    return 'https://www.youtube.com/embed/' . $videoId;
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -59,6 +93,10 @@ function films_is_video_file(string $url): bool
 <?php endif; ?>
 
 <?php foreach ($films as $film): ?>
+<?php
+$movieUrl = trim((string) ($film['Mov_URL'] ?? ''));
+$youtubeEmbedUrl = films_youtube_embed_url($movieUrl);
+?>
 <article class="film-entry reveal" data-film-id="<?= (int) $film['id'] ?>">
 <?php if (films_has_value($film['Name']) || films_has_value($film['Year'])): ?>
 <header class="film-entry-header">
@@ -77,14 +115,16 @@ function films_is_video_file(string $url): bool
 </div>
 <?php endif; ?>
 
-<?php if (films_has_value($film['Mov_URL'])): ?>
+<?php if ($movieUrl !== ''): ?>
 <div class="film-entry-movie">
-<?php if (films_is_video_file((string) $film['Mov_URL'])): ?>
+<?php if ($youtubeEmbedUrl !== null): ?>
+<iframe src="<?= films_h($youtubeEmbedUrl) ?>" title="<?= films_h($film['Name']) ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+<?php elseif (films_is_video_file($movieUrl)): ?>
 <video controls preload="metadata">
-<source src="<?= films_h($film['Mov_URL']) ?>">
+<source src="<?= films_h($movieUrl) ?>">
 </video>
 <?php else: ?>
-<iframe src="<?= films_h($film['Mov_URL']) ?>" title="<?= films_h($film['Name']) ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+<iframe src="<?= films_h($movieUrl) ?>" title="<?= films_h($film['Name']) ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
 <?php endif; ?>
 </div>
 <?php endif; ?>
