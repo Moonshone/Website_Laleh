@@ -16,6 +16,30 @@ function home_h(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
+
+function home_picture_url(?string $url): ?string
+{
+    $url = trim($url ?? '');
+    if ($url === '') {
+        return null;
+    }
+
+    if (preg_match('~^(?:[a-z][a-z0-9+.-]*:|//)~i', $url) === 1) {
+        return $url;
+    }
+
+    $url = str_replace('\\', '/', $url);
+    $url = preg_replace('~/+~', '/', $url) ?? $url;
+    while (str_starts_with($url, './')) {
+        $url = substr($url, 2);
+    }
+
+    if (!str_contains($url, '/')) {
+        return 'assets/images/home/p2/' . $url;
+    }
+
+    return $url;
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -75,11 +99,13 @@ function home_h(?string $value): string
 </figcaption>
 </figure>
 <?php foreach ($homePictures as $homePicture): ?>
+<?php $homePictureUrl = home_picture_url($homePicture['URL']); ?>
+<?php if ($homePictureUrl === null) continue; ?>
 <figure class="home-artwork reveal">
 <div class="home-artwork-image">
-<img src="<?= home_h($homePicture['URL']) ?>" alt="Artwork by Laleh Barzegar" loading="lazy">
+<img src="<?= home_h($homePictureUrl) ?>" alt="Artwork by Laleh Barzegar" loading="lazy">
 </div>
-<?php if ($homePicture['Description'] !== null): ?>
+<?php if (trim((string) ($homePicture['Description'] ?? '')) !== ''): ?>
 <figcaption class="home-artwork-caption">
 <p><?= home_h($homePicture['Description']) ?></p>
 </figcaption>
