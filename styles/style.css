@@ -107,7 +107,7 @@ main { min-height: 80vh; }
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: url("../assets/images/home/h01.JPG") center / cover no-repeat;
+  background: url("../assets/images/home/p1/h01.JPG") center / cover no-repeat;
   opacity: .3;
 }
 .home-hero h1 {
