@@ -20,30 +20,6 @@ function home_h(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
-
-function home_picture_url(?string $url): string
-{
-    $url = trim($url ?? '');
-    if ($url === '') {
-        return '';
-    }
-
-    if (preg_match('~^(?:[a-z][a-z0-9+.-]*:|//)~i', $url) === 1) {
-        return $url;
-    }
-
-    $url = str_replace('\\', '/', $url);
-    $url = preg_replace('~/+~', '/', $url) ?? $url;
-    while (str_starts_with($url, './')) {
-        $url = substr($url, 2);
-    }
-
-    if (!str_contains($url, '/')) {
-        return 'assets/images/home/p2/' . $url;
-    }
-
-    return $url;
-}
 ?>
 <!doctype html>
 <html lang="en">
@@ -92,28 +68,15 @@ function home_picture_url(?string $url): string
 <img src="assets/images/home/p1/h02.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </div>
 </figure>
-<figure class="home-artwork reveal">
-<div class="home-artwork-image">
-<img src="assets/images/home/p2/h03.PNG" alt="Artwork by Laleh Barzegar" loading="lazy">
-</div>
-<figcaption class="home-artwork-caption">
-<p class="home-artwork-eyebrow">Artist statement</p>
-<h2>Between places, generations, and forms of belonging.</h2>
-<p>Across both media, Barzegar approaches the image as a site of translation—between places, generations, and forms of belonging.</p>
-</figcaption>
-</figure>
 <?php foreach ($homePictures as $homePicture): ?>
-<?php $homePictureUrl = home_picture_url($homePicture['URL']); ?>
 <figure class="home-artwork reveal">
 <div class="home-artwork-image">
-<img src="<?= home_h($homePictureUrl) ?>" alt="Artwork by Laleh Barzegar" loading="lazy">
+<img src="<?= home_h($homePicture['URL']) ?>" alt="Artwork by Laleh Barzegar" loading="lazy">
 </div>
 <?php if (trim((string) ($homePicture['Description'] ?? '')) !== ''): ?>
 <figcaption class="home-artwork-caption">
 <p class="home-artwork-description"><?= home_h($homePicture['Description']) ?></p>
 </figcaption>
-<?php else: ?>
-<figcaption class="home-artwork-caption home-artwork-caption--empty" aria-label="Artwork details to come"></figcaption>
 <?php endif; ?>
 </figure>
 <?php endforeach; ?>
