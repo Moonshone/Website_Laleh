@@ -28,6 +28,14 @@ try {
     foreach ($paintingActivities as &$paintingActivity) {
         $paintingActivity['images'] = [];
         $tableName = trim((string) ($paintingActivity['Name'] ?? ''));
+        if ($tableName === 'Repetition in Form') {
+            $repetitionTableNamesByActivityId = [
+                3 => 'Repetition in Form_1',
+                4 => 'Repetition in Form_2',
+            ];
+            $activityId = (int) ($paintingActivity['id'] ?? 0);
+            $tableName = $repetitionTableNamesByActivityId[$activityId] ?? $tableName;
+        }
 
         $tableColumns = [];
         if ($tableName !== '') {
