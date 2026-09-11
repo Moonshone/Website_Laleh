@@ -330,6 +330,71 @@ main { min-height: 80vh; }
   color: var(--muted);
   text-align: center;
 }
+.writing-page {
+  padding: clamp(7rem, 11vw, 10rem) var(--gutter) clamp(6rem, 12vw, 11rem);
+  overflow: hidden;
+}
+.book-entry {
+  width: min(100%, 82rem);
+  margin: 0 auto clamp(4rem, 8vw, 8rem);
+  overflow: hidden;
+  border: 1px solid var(--artwork-border);
+  background: var(--artwork-frame);
+}
+.book-entry:last-child { margin-bottom: 0; }
+.book-entry-header {
+  padding: clamp(1.5rem, 3.5vw, 3.5rem) clamp(1.25rem, 4vw, 4.5rem);
+  border-bottom: 1px solid var(--artwork-border);
+}
+.book-entry-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -.035em;
+  overflow-wrap: anywhere;
+}
+.book-entry-year {
+  margin: .75rem 0 0;
+  color: var(--muted);
+  font-size: clamp(.72rem, 1vw, .9rem);
+  letter-spacing: .04em;
+  line-height: 1.6;
+}
+.book-entry-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  background: var(--paper);
+}
+.book-entry-image {
+  display: grid;
+  min-width: 0;
+  min-height: clamp(12rem, 32vw, 34rem);
+  padding: clamp(.75rem, 2.5vw, 2.5rem);
+  place-items: center;
+}
+.book-entry-image img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(78vh, 44rem);
+  object-fit: contain;
+}
+.book-entry-description {
+  min-width: 0;
+  padding: clamp(1.5rem, 3.5vw, 3.5rem);
+  border-left: 1px solid var(--artwork-border);
+  color: var(--muted);
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.book-entry-description p { margin: 0; white-space: pre-line; }
+.writing-message {
+  margin: 0;
+  padding: clamp(3rem, 8vw, 7rem) 1rem;
+  color: var(--muted);
+  text-align: center;
+}
 .gallery-item:nth-child(3n+2) { width: 37%; margin-left: auto; margin-right: 7%; }
 .gallery-item:nth-child(3n) { width: 74%; margin-left: 12%; }
 .work-meta { display: flex; justify-content: space-between; gap: 2rem; margin-top: .85rem; font-size: .68rem; }
@@ -417,6 +482,11 @@ main { min-height: 80vh; }
   .painting-activity { margin-bottom: 3.5rem; }
   .painting-slide { min-height: 70vw; padding: .65rem; }
   .painting-slideshow-button { width: 2.5rem; height: 2.5rem; }
+  .writing-page { padding-top: 6rem; }
+  .book-entry { margin-bottom: 3.5rem; }
+  .book-entry-content { grid-template-columns: 1fr; }
+  .book-entry-image { min-height: 0; }
+  .book-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
   .film, .film:nth-child(even) { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 8rem; }
   .film:nth-child(even) .film-image { order: 0; }
   .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
