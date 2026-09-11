@@ -5,9 +5,13 @@ require_once __DIR__ . '/config.php';
 
 $homePictures = [];
 try {
-    $statement = db()->prepare('SELECT `URL`, `Description` FROM `HomePics` ORDER BY `id` ASC');
+    $statement = db()->prepare(
+        'SELECT `URL`, `Description`
+         FROM `HomePics`
+         ORDER BY `id` ASC'
+    );
     $statement->execute();
-    $homePictures = $statement->fetchAll();
+    $homePictures = $statement->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $exception) {
     error_log($exception->getMessage());
 }
@@ -17,11 +21,11 @@ function home_h(?string $value): string
     return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-function home_picture_url(?string $url): ?string
+function home_picture_url(?string $url): string
 {
     $url = trim($url ?? '');
     if ($url === '') {
-        return null;
+        return '';
     }
 
     if (preg_match('~^(?:[a-z][a-z0-9+.-]*:|//)~i', $url) === 1) {
@@ -100,7 +104,6 @@ function home_picture_url(?string $url): ?string
 </figure>
 <?php foreach ($homePictures as $homePicture): ?>
 <?php $homePictureUrl = home_picture_url($homePicture['URL']); ?>
-<?php if ($homePictureUrl === null) continue; ?>
 <figure class="home-artwork reveal">
 <div class="home-artwork-image">
 <img src="<?= home_h($homePictureUrl) ?>" alt="Artwork by Laleh Barzegar" loading="lazy">
