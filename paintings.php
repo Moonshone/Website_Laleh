@@ -36,7 +36,7 @@ try {
         if (
             $tableName === ''
             || !isset($tableColumns[$tableName])
-            || !isset($tableColumns[$tableName]['ActivitiesID'], $tableColumns[$tableName]['URL'])
+            || !isset($tableColumns[$tableName]['ActivityID'], $tableColumns[$tableName]['URL'])
         ) {
             continue;
         }
@@ -44,7 +44,7 @@ try {
         try {
             $quotedTableName = '`' . str_replace('`', '``', $tableName) . '`';
             $imageStatement = $connection->prepare(
-                "SELECT `URL` FROM {$quotedTableName} WHERE `ActivitiesID` = :activity_id"
+                "SELECT `URL` FROM {$quotedTableName} WHERE `ActivityID` = :activity_id"
             );
             $imageStatement->execute(['activity_id' => $paintingActivity['id']]);
 
