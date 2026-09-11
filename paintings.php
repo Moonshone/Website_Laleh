@@ -148,6 +148,9 @@ function paintings_details(array $activity): string
 <link rel="stylesheet" href="styles/style.css">
 </head>
 <body id="top">
+<div style="background:red;color:white;padding:20px;font-size:24px;position:relative;z-index:999999;">
+LIVE PAINTINGS PHP TEST
+</div>
 <?php render_navigation('paintings'); ?>
 <main class="paintings-page">
 <?php if ($paintingsUnavailable): ?>
