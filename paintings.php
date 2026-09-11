@@ -28,8 +28,24 @@ try {
     foreach ($paintingActivities as &$paintingActivity) {
         $paintingActivity['images'] = [];
         $tableName = (string) ($paintingActivity['Name'] ?? '');
-        if ((int) $paintingActivity['id'] === 6) {
-            error_log('ACTIVE DATABASE: ' . $connection->query('SELECT DATABASE()')->fetchColumn());
+        $isColorAndFormDebugActivity = (int) $paintingActivity['id'] === 6
+            && $tableName === 'Color and Form';
+        if ($isColorAndFormDebugActivity) {
+            $paintingActivity['debug'] = [
+                'database' => $connection->query('SELECT DATABASE()')->fetchColumn(),
+                'running_file' => __FILE__,
+                'activity_id' => $paintingActivity['id'],
+                'table_name' => $tableName,
+                'table_name_length' => strlen($tableName),
+                'table_name_hex' => bin2hex($tableName),
+                'table_columns' => [],
+                'activity_id_exists' => false,
+                'url_exists' => false,
+                'schema_check_passed' => false,
+                'query_error' => null,
+            ];
+
+            error_log('ACTIVE DATABASE: ' . $paintingActivity['debug']['database']);
             error_log('RUNNING FILE: ' . __FILE__);
             error_log('ACTIVITY ID: ' . $paintingActivity['id']);
             error_log('TABLE NAME: [' . $tableName . ']');
@@ -39,13 +55,25 @@ try {
 
         $tableColumns = [];
         if ($tableName !== '') {
-            $schemaStatement->execute(['table_name' => $tableName]);
-            foreach ($schemaStatement->fetchAll(PDO::FETCH_COLUMN) as $columnName) {
-                $tableColumns[(string) $columnName] = true;
+            try {
+                $schemaStatement->execute(['table_name' => $tableName]);
+                foreach ($schemaStatement->fetchAll(PDO::FETCH_COLUMN) as $columnName) {
+                    $tableColumns[(string) $columnName] = true;
+                }
+            } catch (Throwable $exception) {
+                if (!$isColorAndFormDebugActivity) {
+                    throw $exception;
+                }
+
+                $paintingActivity['debug']['query_error'] = $exception->getMessage();
+                error_log('SCHEMA QUERY ERROR: ' . $exception->getMessage());
             }
         }
 
-        if ((int) $paintingActivity['id'] === 6) {
+        if ($isColorAndFormDebugActivity) {
+            $paintingActivity['debug']['table_columns'] = $tableColumns;
+            $paintingActivity['debug']['activity_id_exists'] = isset($tableColumns['ActivityID']);
+            $paintingActivity['debug']['url_exists'] = isset($tableColumns['URL']);
             error_log('COLUMNS: ' . print_r($tableColumns, true));
             error_log('ACTIVITY ID COLUMN: ' . (isset($tableColumns['ActivityID']) ? 'true' : 'false'));
             error_log('URL COLUMN: ' . (isset($tableColumns['URL']) ? 'true' : 'false'));
@@ -54,7 +82,8 @@ try {
         // A dynamic identifier cannot be parameter-bound. Only query the exact table
         // named by the activity after confirming both required columns in that table.
         if (isset($tableColumns['ActivityID'], $tableColumns['URL'])) {
-            if ((int) $paintingActivity['id'] === 6) {
+            if ($isColorAndFormDebugActivity) {
+                $paintingActivity['debug']['schema_check_passed'] = true;
                 error_log('COLOR AND FORM: schema check PASSED');
             }
             try {
@@ -67,20 +96,21 @@ try {
                 // Every matching database row becomes one slide. The URL is not
                 // filtered, normalised, or combined with a hard-coded path.
                 $paintingActivity['images'] = $imageStatement->fetchAll(PDO::FETCH_COLUMN);
-                if ((int) $paintingActivity['id'] === 6) {
+                if ($isColorAndFormDebugActivity) {
                     error_log('COLOR AND FORM IMAGE COUNT: ' . count($paintingActivity['images']));
                     error_log('COLOR AND FORM URLS: ' . print_r($paintingActivity['images'], true));
                 }
             } catch (Throwable $exception) {
                 // One missing or malformed activity table must not break the other galleries.
                 error_log($exception->getMessage());
-                if ((int) $paintingActivity['id'] === 6) {
+                if ($isColorAndFormDebugActivity) {
+                    $paintingActivity['debug']['query_error'] = $exception->getMessage();
                     error_log('IMAGE QUERY ERROR: ' . $exception->getMessage());
                     error_log('TABLE: ' . $tableName);
                     error_log('ACTIVITY ID: ' . $paintingActivity['id']);
                 }
             }
-        } elseif ((int) $paintingActivity['id'] === 6) {
+        } elseif ($isColorAndFormDebugActivity) {
             error_log('COLOR AND FORM: schema check FAILED');
         }
     }
@@ -139,6 +169,35 @@ $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $ac
 <p class="painting-activity-meta"><?= paintings_h(paintings_details($paintingActivity)) ?></p>
 <?php endif; ?>
 </header>
+
+<?php if (isset($paintingActivity['debug'])): ?>
+<fieldset>
+<legend><strong>Temporary Paintings Debug — Color and Form</strong></legend>
+<pre>Database: <?= paintings_h($paintingActivity['debug']['database']) ?>
+Running file: <?= paintings_h($paintingActivity['debug']['running_file']) ?>
+Activity ID: <?= paintings_h($paintingActivity['debug']['activity_id']) ?>
+Table Name: [<?= paintings_h($paintingActivity['debug']['table_name']) ?>]
+Table Name Length: <?= paintings_h($paintingActivity['debug']['table_name_length']) ?>
+Table Name HEX: <?= paintings_h($paintingActivity['debug']['table_name_hex']) ?>
+Found columns:
+<?= paintings_h(print_r($paintingActivity['debug']['table_columns'], true)) ?>
+ActivityID exists: <?= $paintingActivity['debug']['activity_id_exists'] ? 'YES' : 'NO' ?>
+URL exists: <?= $paintingActivity['debug']['url_exists'] ? 'YES' : 'NO' ?>
+Schema check: <?= $paintingActivity['debug']['schema_check_passed'] ? 'PASSED' : 'FAILED' ?>
+<?php if ($paintingActivity['debug']['schema_check_passed']): ?>
+Image count: <?= count($paintingActivity['images']) ?>
+URLs:
+<?php foreach ($paintingActivity['images'] as $debugImageIndex => $debugImageUrl): ?>
+URL <?= $debugImageIndex + 1 ?>: <?= paintings_h($debugImageUrl) ?>
+<?php endforeach; ?>
+<?php endif; ?>
+Query error: <?= $paintingActivity['debug']['query_error'] === null ? 'NONE' : paintings_h($paintingActivity['debug']['query_error']) ?>
+<?php if ($paintingActivity['debug']['query_error'] !== null): ?>
+QUERY ERROR:
+<?= paintings_h($paintingActivity['debug']['query_error']) ?>
+<?php endif; ?></pre>
+</fieldset>
+<?php endif; ?>
 
 <?php if ($imageCount > 0): ?>
 <div class="painting-slideshow" id="<?= paintings_h($slideshowId) ?>" data-painting-slideshow aria-label="<?= paintings_h($paintingActivity['Name']) ?> slideshow">
