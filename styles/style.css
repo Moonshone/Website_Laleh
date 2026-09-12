@@ -121,7 +121,7 @@ main { min-height: 80vh; }
   padding-inline: 2.5vw;
   color: #fff;
   font-family: var(--avenir);
-  font-size: clamp(1.96rem, 6.104vw, 6.72rem);
+  font-size: clamp(1.568rem, 4.8832vw, 5.376rem);
   font-weight: 400 !important;
   letter-spacing: -.055em;
   line-height: .9;
@@ -219,10 +219,10 @@ main { min-height: 80vh; }
   border: 0;
 }
 
-.page-title-header { padding: clamp(9rem, 18vh, 13rem) var(--gutter) clamp(5rem, 9vw, 9rem); }
+.page-title-header { padding: clamp(4.5rem, 9vh, 6.5rem) var(--gutter) clamp(2.5rem, 4.5vw, 4.5rem); }
 .page-title {
   max-width: 90%; margin: 0;
-  font-family: var(--serif); font-size: clamp(1.12rem, 3.08vw, 2.8rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
+  font-family: var(--serif); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
 }
 .page-title-header p { max-width: 30rem; margin: 2.5rem 0 0 auto; color: var(--muted); }
 .news-admin-back { display: inline-block; margin-top: 2.5rem; border-bottom: 1px solid currentColor; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
@@ -488,12 +488,12 @@ main { min-height: 80vh; }
 .about-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(3rem, 9vw, 11rem); align-items: start; padding: 0 var(--gutter) 12vw; }
 .about-copy { padding-top: 8vw; }
 .about-copy h2 { margin: 0 0 3rem; font-family: var(--serif); font-size: clamp(1.89rem, 3.5vw, 3.78rem); font-weight: 400; line-height: .95; }
-.about-copy p { max-width: 36rem; margin: 0 0 1.5rem; }
+.about-copy p { max-width: 36rem; margin: 0 0 1.5rem; font-size: var(--entry-description-font-size); }
 .selected-cv { margin-top: 3rem; }
 .selected-cv > h2 { margin: 0 0 2rem; font-size: 1em; font-weight: 700; }
 .selected-cv-section { margin-bottom: 2rem; }
 .selected-cv-category { margin: 0 0 .5rem; font-size: 1.2em; }
-.selected-cv-section p { margin: 0; font-size: 1em; }
+.selected-cv-section p { margin: 0; font-size: var(--entry-description-font-size); }
 
 .contact-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 10vw; padding: 0 var(--gutter) 12vw; }
 .contact-details p { margin: 0 0 .4rem; }
@@ -576,7 +576,7 @@ main { min-height: 80vh; }
   .admin-header, .admin-post { align-items: flex-start; }
   .about-copy { padding-top: 0; }
   .site-footer { align-items: flex-end; }
-  .home-hero h1 { padding-inline: 1rem; font-size: clamp(1.344rem, 6.496vw, 2.8rem); letter-spacing: -.045em; }
+  .home-hero h1 { padding-inline: 1rem; font-size: clamp(1.0752rem, 5.1968vw, 2.24rem); letter-spacing: -.045em; }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
   .home-sequence { padding-top: 0; }
   .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }

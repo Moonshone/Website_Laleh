@@ -113,4 +113,6 @@ document.querySelectorAll('[data-painting-slideshow]').forEach((slideshow) => {
 
   slideshow.querySelector('[data-painting-previous]')?.addEventListener('click', () => showSlide(activeIndex - 1));
   slideshow.querySelector('[data-painting-next]')?.addEventListener('click', () => showSlide(activeIndex + 1));
+
+  setInterval(() => showSlide(activeIndex + 1), 5000);
 });
