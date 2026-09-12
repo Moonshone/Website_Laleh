@@ -97,11 +97,19 @@ $selectedCvFields = [
 <header class="page-title-header">
 <h1 class="page-title">ABOUT</h1>
 </header>
-<section class="about-layout">
-<figure class="reveal">
+<div class="about-page">
+<section class="about-intro reveal" aria-labelledby="artist-name">
+<figure class="about-portrait">
 <img src="<?= about_h($artist['Photo_URL']) ?>" alt="Portrait of artist Laleh Barzegar in her studio">
-<section class="selected-cv" aria-labelledby="selected-cv-title">
+</figure>
+<article class="about-copy">
+<h2 id="artist-name">Laleh Barzegar</h2>
+<p><?= nl2br(about_h($artist['About'])) ?></p>
+</article>
+</section>
+<section class="selected-cv reveal" aria-labelledby="selected-cv-title">
 <h2 id="selected-cv-title">SELECTED CV</h2>
+<div class="selected-cv-grid">
 <?php foreach ($selectedCvFields as $field): ?>
 <?php if (!empty($artist[$field])): ?>
 <div class="selected-cv-section">
@@ -110,13 +118,9 @@ $selectedCvFields = [
 </div>
 <?php endif; ?>
 <?php endforeach; ?>
+</div>
 </section>
-</figure>
-<article class="about-copy reveal">
-<h2>Laleh Barzegar</h2>
-<p><?= nl2br(about_h($artist['About'])) ?></p>
-</article>
-</section>
+</div>
 </main>
 <footer class="site-footer">
 <span>© <span data-year>2026</span> Laleh Barzegar</span>
