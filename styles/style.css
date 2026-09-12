@@ -542,8 +542,10 @@ main { min-height: 80vh; }
 .news-post { padding-bottom: clamp(6rem, 11vw, 11rem); }
 .news-post time, .admin-eyebrow, .admin-post-meta { color: var(--muted); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
 .news-post h2 { max-width: 54rem; margin: .75rem 0 2.5rem; font-family: var(--serif); font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 400; line-height: .95; }
+.news-post h2.news-custom-title-size { font-size: min(var(--news-title-font-size), 11vw); overflow-wrap: anywhere; }
 .news-post img { max-width: 58rem; max-height: 80vh; margin-bottom: 2rem; object-fit: contain; object-position: left center; }
 .news-content { max-width: 44rem; font-size: 1rem; line-height: 1.7; overflow-wrap: anywhere; }
+.news-content.news-custom-text-size { font-size: min(var(--news-text-font-size), 7vw); }
 .news-empty { margin: 0 0 8rem; color: var(--muted); }
 
 .admin-page { min-height: 100vh; }
@@ -558,6 +560,45 @@ main { min-height: 80vh; }
 .admin-form input, .admin-form textarea, .admin-form select { display: block; width: 100%; margin-top: .45rem; padding: .75rem 0; border: 0; border-bottom: 1px solid #9b9891; border-radius: 0; outline: 0; background: transparent; color: inherit; }
 .admin-form textarea { resize: vertical; line-height: 1.6; }
 .admin-form input:focus, .admin-form textarea:focus, .admin-form select:focus { border-color: var(--ink); }
+.admin-format-field { margin-bottom: 1.7rem; }
+.admin-format-field > label { margin-bottom: 0; }
+.admin-format-field > input, .admin-format-field > textarea { margin-top: .45rem; }
+.format-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: .25rem;
+  margin-top: .45rem;
+  padding: .3rem;
+  border: 1px solid rgba(20,20,20,.25);
+}
+.admin-form .format-size { display: flex; align-items: center; gap: .35rem; margin: 0 .25rem 0 0; }
+.admin-form .format-size span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.admin-form .format-size select { width: auto; min-width: 5.25rem; height: 2rem; margin: 0; padding: 0 1.4rem 0 .4rem; border: 0; font-size: .75rem; }
+.format-button {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.format-button:hover, .format-button:focus-visible, .format-button.is-active { background: rgba(20,20,20,.12); outline: none; }
+.format-bold { font-weight: 700; }
+.format-italic { font-family: var(--serif); font-style: italic; }
+.format-underline { text-decoration: underline; text-underline-offset: .15em; }
+.format-alignments { display: flex; gap: .1rem; margin-left: .25rem; padding-left: .25rem; border-left: 1px solid rgba(20,20,20,.2); }
+.format-align { flex-direction: column; gap: 3px; }
+.format-align span { display: block; width: 13px; height: 1px; background: currentColor; }
+.format-align-left span:nth-child(2), .format-align-right span:nth-child(2) { width: 9px; }
+.format-align-left { align-items: flex-start; padding-left: 9px; }
+.format-align-right { align-items: flex-end; padding-right: 9px; }
+.format-align-center span:nth-child(2) { width: 9px; }
+.format-align-justify span { width: 13px; }
 .admin-actions { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
 .admin-actions button, .admin-actions a, .text-button, .admin-post-actions button, .admin-post-actions a { padding: .5rem 0; border: 0; border-bottom: 1px solid currentColor; background: transparent; font-size: .68rem; letter-spacing: .06em; cursor: pointer; }
 .admin-message { margin: 0 0 2rem; padding: .8rem 0; border-block: 1px solid rgba(20,20,20,.25); }
