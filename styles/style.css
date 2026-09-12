@@ -621,7 +621,8 @@ main { min-height: 80vh; }
 .admin-post h3 { margin: .25rem 0 0; font-family: var(--serif); font-size: inherit; font-weight: 400; }
 .admin-page .admin-eyebrow, .admin-page .admin-post-meta { font-size: inherit; }
 .admin-post-meta { margin: 0; }
-.admin-post-actions { display: flex; gap: 1rem; align-items: flex-start; }
+.admin-post .admin-post-meta { font-size: .8em; }
+.admin-post-actions { display: flex; flex: 0 0 auto; gap: 1rem; align-items: flex-start; white-space: nowrap; }
 .admin-post-actions form { margin: 0; }
 .admin-navigation { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 1rem 1.5rem; }
 .admin-navigation form { margin: 0; }
