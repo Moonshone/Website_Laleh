@@ -525,11 +525,11 @@ main { min-height: 80vh; }
 .selected-cv-category { margin: 0 0 .5rem; font-size: 1.44em; font-weight: 700; }
 .selected-cv-section p { margin: 0; font-size: var(--entry-description-font-size); }
 
-.contact-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 10vw; padding: 0 var(--gutter) 12vw; }
+.contact-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 10vw; padding: 0 var(--gutter) 12vw; font-size: 21px; }
 .contact-layout > * { min-width: 0; }
 .contact-details p { margin: 0 0 .4rem; }
 .contact-details a { border-bottom: 1px solid currentColor; }
-.contact-form label { display: block; margin-bottom: 2.5rem; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.contact-form label { display: block; margin-bottom: 2.5rem; font-size: 1.02rem; letter-spacing: .06em; text-transform: uppercase; }
 .contact-form input, .contact-form textarea { width: 100%; padding: .8rem 0; border: 0; border-bottom: 1px solid #9b9891; border-radius: 0; outline: 0; background: transparent; color: inherit; }
 .contact-form input:focus, .contact-form textarea:focus { border-color: var(--ink); }
 .contact-form textarea { min-height: 8rem; resize: vertical; }
@@ -699,7 +699,7 @@ main { min-height: 80vh; }
   .contact-details a { word-break: break-word; }
   .contact-form label { margin-bottom: 2rem; }
   .contact-form input,
-  .contact-form textarea { min-width: 0; font-size: 16px; }
+  .contact-form textarea { min-width: 0; font-size: 24px; }
   .contact-form button { min-width: 44px; min-height: 44px; }
   .news-post { padding-bottom: 4.5rem; }
   .admin-shell h1 { font-size: clamp(2.25rem, 14vw, 4rem); }
