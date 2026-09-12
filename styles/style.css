@@ -196,7 +196,7 @@ main { min-height: 80vh; }
   min-width: 0;
   padding: clamp(1.5rem, 4vw, 5rem);
 }
-.home-artist-text p { margin: 0; white-space: normal; }
+.home-artist-text p { margin: 0; font-size: 18.2px; line-height: 1.95; white-space: normal; }
 .home-artwork-caption {
   padding: clamp(2.25rem, 4.5vw, 5rem) clamp(1.5rem, 8vw, 9rem);
   border-top: 1px solid var(--artwork-border);
