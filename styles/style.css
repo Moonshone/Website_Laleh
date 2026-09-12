@@ -270,16 +270,16 @@ main { min-height: 80vh; }
 .painting-slide {
   display: none;
   width: 100%;
-  min-height: min(68vw, 48rem);
+  min-height: min(68vw, 96rem);
   padding: clamp(.75rem, 2.5vw, 2.5rem);
   place-items: center;
 }
 .painting-slide.is-active { display: grid; }
 .painting-slide img {
-  width: auto;
+  width: 100%;
   max-width: 100%;
   height: auto;
-  max-height: min(78vh, 48rem);
+  max-height: min(156vh, 96rem);
   object-fit: contain;
 }
 .painting-slideshow-button {
@@ -453,10 +453,10 @@ main { min-height: 80vh; }
 .film-entry-image img,
 .film-entry-movie video {
   display: block;
-  width: auto;
+  width: 100%;
   max-width: 100%;
   height: auto;
-  max-height: min(78vh, 48rem);
+  max-height: min(156vh, 96rem);
   object-fit: contain;
 }
 .film-entry-movie { border-top: 1px solid var(--artwork-border); }
