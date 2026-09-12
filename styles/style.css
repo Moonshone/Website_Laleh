@@ -158,16 +158,25 @@ main { min-height: 80vh; }
 .home-artwork:last-child { margin-bottom: 0; }
 .home-artwork-image { padding: clamp(1rem, 2.4vw, 2.75rem); }
 .home-artwork-image img { width: 100%; height: auto; object-fit: contain; opacity: 1; }
-.home-artwork.home-artwork--full {
+.home-artwork.home-artwork--artist {
+  display: grid;
+  grid-template-columns: 67% minmax(0, 1fr);
+  align-items: center;
   width: 100%;
   max-width: none;
   margin-top: 0;
+  overflow: visible;
   border: 0;
   box-shadow: none;
   background: transparent;
 }
-.home-artwork--full .home-artwork-image { padding: 0; }
-.home-artwork--full .home-artwork-image img { width: 100%; height: auto; }
+.home-artwork--artist .home-artwork-image { min-width: 0; padding: 0; }
+.home-artwork--artist .home-artwork-image img { width: 100%; height: auto; object-fit: contain; }
+.home-artist-text {
+  min-width: 0;
+  padding: clamp(1.5rem, 4vw, 5rem);
+}
+.home-artist-text p { margin: 0; white-space: normal; }
 .home-artwork-caption {
   padding: clamp(2.25rem, 4.5vw, 5rem) clamp(1.5rem, 8vw, 9rem);
   border-top: 1px solid var(--artwork-border);
@@ -754,6 +763,9 @@ main { min-height: 80vh; }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
   .home-sequence { padding-top: 0; }
   .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }
+  .home-artwork.home-artwork--artist { grid-template-columns: minmax(0, 1fr); }
+  .home-artwork--artist .home-artwork-image { width: 67%; }
+  .home-artist-text { padding: 2rem 1rem 0; }
   .home-artwork-image { padding: clamp(.75rem, 3.5vw, 1.25rem); }
   .home-artwork-caption { padding: 2.25rem 1.25rem 2.5rem; }
   .home-artwork-caption--empty { min-height: 3.5rem; padding: 0; }

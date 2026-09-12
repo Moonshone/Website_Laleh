@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/config.php';
 
 $homePictures = [];
+$artistFirstPage = '';
 try {
     $statement = db()->prepare(
         'SELECT `URL`, `Description`
@@ -12,6 +13,20 @@ try {
     );
     $statement->execute();
     $homePictures = $statement->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $exception) {
+    error_log($exception->getMessage());
+}
+
+try {
+    $artistStatement = db()->query(
+        'SELECT `FirstPage`
+         FROM `Artist`
+         LIMIT 1'
+    );
+    $artistRecord = $artistStatement->fetch(PDO::FETCH_ASSOC);
+    if (is_array($artistRecord)) {
+        $artistFirstPage = (string) ($artistRecord['FirstPage'] ?? '');
+    }
 } catch (Throwable $exception) {
     error_log($exception->getMessage());
 }
@@ -63,10 +78,13 @@ function home_h(?string $value): string
 </section>
 
 <section class="home-sequence" id="home-gallery" aria-label="Selected works">
-<figure class="home-artwork home-artwork--full">
+<figure class="home-artwork home-artwork--artist">
 <div class="home-artwork-image">
 <img src="assets/images/home/p1/h02.JPG" alt="Artwork by Laleh Barzegar" loading="lazy">
 </div>
+<figcaption class="home-artist-text">
+<p><?= nl2br(home_h($artistFirstPage)) ?></p>
+</figcaption>
 </figure>
 <?php foreach ($homePictures as $homePicture): ?>
 <figure class="home-artwork reveal">
