@@ -83,7 +83,7 @@ function films_youtube_embed_url(string $url): ?string
 <title>Films — Laleh Barzegar</title>
 <link rel="stylesheet" href="styles/style.css">
 </head>
-<body id="top">
+<body id="top" class="films-view">
 <?php render_navigation('films'); ?>
 <main>
 <header class="page-title-header">
