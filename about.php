@@ -71,9 +71,12 @@ $selectedCvSections = array_values(array_filter(
     $selectedCvFields,
     static fn (string $field): bool => !empty($artist[$field])
 ));
-$selectedCvColumns = $selectedCvSections === []
-    ? []
-    : array_chunk($selectedCvSections, (int) ceil(count($selectedCvSections) / 2));
+$selectedCvColumnBreak = array_search('GROUP EXHIBITIONS', $selectedCvFields, true) + 1;
+$selectedCvColumns = $selectedCvSections === [] ? [] : [
+    array_values(array_intersect(array_slice($selectedCvFields, 0, $selectedCvColumnBreak), $selectedCvSections)),
+    array_values(array_intersect(array_slice($selectedCvFields, $selectedCvColumnBreak), $selectedCvSections)),
+];
+$selectedCvColumns = array_values(array_filter($selectedCvColumns));
 ?>
 <!doctype html>
 <html lang="en">
