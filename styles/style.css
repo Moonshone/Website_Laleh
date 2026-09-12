@@ -493,16 +493,36 @@ main { min-height: 80vh; }
   text-align: center;
 }
 
-.about-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(3rem, 9vw, 11rem); align-items: start; padding: 0 var(--gutter) 12vw; }
-.about-layout > * { min-width: 0; }
-.about-layout figure { margin: 0; }
-.about-copy { padding-top: 8vw; }
+.about-page { padding: 0 var(--gutter) 12vw; }
+.about-intro,
+.selected-cv {
+  width: 85vw;
+  max-width: 100%;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid var(--artwork-border);
+  background: var(--artwork-frame);
+}
+.about-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.495fr) minmax(0, .85fr);
+  align-items: center;
+  padding: clamp(1.5rem, 3.5vw, 3.5rem) clamp(1.25rem, 4vw, 4.5rem);
+  gap: clamp(2rem, 5vw, 5rem);
+}
+.about-portrait { min-width: 0; margin: 0; }
+.about-portrait img { width: 100%; height: auto; object-fit: contain; }
+.about-copy { min-width: 0; }
 .about-copy h2 { margin: 0 0 3rem; font-family: var(--serif); font-size: clamp(1.89rem, 3.5vw, 3.78rem); font-weight: 400; line-height: .95; }
 .about-copy p { max-width: 36rem; margin: 0 0 1.5rem; font-size: var(--entry-description-font-size); }
-.selected-cv { margin-top: 3rem; }
-.selected-cv > h2 { margin: 0 0 2rem; font-size: 1em; font-weight: 700; }
-.selected-cv-section { margin-bottom: 2rem; }
-.selected-cv-category { margin: 0 0 .5rem; font-size: 1.2em; }
+.selected-cv {
+  margin-top: clamp(4rem, 8vw, 8rem);
+  padding: clamp(1.5rem, 3.5vw, 3.5rem) clamp(1.25rem, 4vw, 4.5rem);
+}
+.selected-cv > h2 { margin: 0 0 2rem; font-size: 1.4em; font-weight: 700; }
+.selected-cv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem clamp(2rem, 5vw, 5rem); }
+.selected-cv-section { min-width: 0; }
+.selected-cv-category { margin: 0 0 .5rem; font-size: 1.44em; font-weight: 700; }
 .selected-cv-section p { margin: 0; font-size: var(--entry-description-font-size); }
 
 .contact-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 10vw; padding: 0 var(--gutter) 12vw; }
@@ -584,7 +604,7 @@ main { min-height: 80vh; }
   .films-page { padding-top: clamp(5.5rem, 9vw, 7rem); }
   .painting-slide { min-height: min(72vw, 42rem); }
   .film-entry-content { grid-template-columns: minmax(0, 1.65fr) minmax(16rem, 1fr); }
-  .about-layout { gap: clamp(2.5rem, 6vw, 5rem); }
+  .about-intro { gap: clamp(2rem, 4vw, 3.5rem); }
   .contact-layout { gap: clamp(3rem, 8vw, 6rem); }
   .news-list { width: 100%; }
 }
@@ -601,15 +621,15 @@ main { min-height: 80vh; }
   .film-entry { width: 100%; }
   .book-entry-content,
   .film-entry-content,
-  .about-layout,
+  .about-intro,
+  .selected-cv-grid,
   .contact-layout,
   .admin-grid { grid-template-columns: minmax(0, 1fr); }
   .book-entry-image { min-height: 0; }
   .book-entry-description,
   .film-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
-  .about-layout,
+  .about-intro { gap: 3.5rem; }
   .contact-layout { gap: 3.5rem; }
-  .about-copy { padding-top: 0; }
   .about-copy h2 { margin-bottom: 2rem; }
   .news-post h2 { font-size: clamp(2rem, 9vw, 4rem); }
   .news-post img { width: auto; max-width: 100%; height: auto; }
@@ -634,10 +654,9 @@ main { min-height: 80vh; }
   .film-entry { width: 100%; margin-bottom: 3.5rem; }
   .film-entry-content { grid-template-columns: 1fr; }
   .film-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
-  .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
+  .about-intro, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
   .admin-grid { grid-template-columns: 1fr; }
   .admin-header, .admin-post { align-items: flex-start; }
-  .about-copy { padding-top: 0; }
   .site-footer { align-items: flex-end; }
   .home-hero h1 { padding-inline: 1rem; font-size: clamp(1.0752rem, 5.1968vw, 2.24rem); letter-spacing: -.045em; }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
@@ -672,9 +691,10 @@ main { min-height: 80vh; }
   .home-artwork { width: calc(100vw - 1.5rem); }
   .home-footer,
   .site-footer { gap: 1.25rem; flex-wrap: wrap; }
-  .about-layout,
-  .contact-layout { gap: 2.75rem; padding-bottom: 4rem; }
-  .selected-cv-category { font-size: 1.05em; }
+  .about-page,
+  .contact-layout { padding-bottom: 4rem; }
+  .about-intro { gap: 2.75rem; }
+  .selected-cv-category { font-size: 1.26em; }
   .contact-details a { word-break: break-word; }
   .contact-form label { margin-bottom: 2rem; }
   .contact-form input,
