@@ -6,10 +6,10 @@ function render_navigation(string $current = ''): void
 {
     $items = [
         'home' => ['HOME', 'index.html'],
+        'about' => ['ABOUT', 'about.html'],
         'films' => ['FILMS', 'films.html'],
         'paintings' => ['PAINTINGS', 'paintings.html'],
         'writing' => ['WRITING', 'writing.html'],
-        'about' => ['ABOUT', 'about.html'],
         'news' => ['NEWS', 'news.php'],
         'contact' => ['CONTACT', 'contact.html'],
     ];
