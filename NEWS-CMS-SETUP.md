@@ -72,7 +72,7 @@ Empty values and mismatched or short passwords are rejected. Neither the passwor
 ## 5. Log in and manage NEWS
 
 1. Open **`https://YOUR-DOMAIN/admin/`** and enter the NEWS administrator credentials. Login regenerates the session ID. Incorrect credentials receive one generic error.
-2. Open **NEWS Posts**. Enter a title, normal multi-paragraph article text, publication date/time, and optionally an image. The separate compact toolbars set title and text size, bold, italic, underline, and alignment; text also supports justified alignment. **Default** size retains the original responsive site typography.
+2. Open **NEWS Posts**. Enter a title, normal multi-paragraph article text, publication date/time, and optionally an image. The separate compact toolbars set title and text size, bold, italic, underline, and alignment; text also supports justified alignment. The title and text fields preview these settings while editing, and reopening a post restores both the toolbar state and preview. **Default** size retains the original responsive site typography.
 3. **Save Draft** keeps the post private. **Publish** makes it public at its intended publication time. Future-dated posts remain hidden until that time.
 4. Existing-post **Edit** reloads its content. **Publish/Unpublish** changes visibility. **Delete** asks for confirmation and permanently removes the post and its CMS-owned image.
 5. Public posts appear newest-first on `/news.php`. Drafts never appear. `/api/news.php` returns only required public fields.
