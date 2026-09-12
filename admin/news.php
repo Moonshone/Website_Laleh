@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
+require_once dirname(__DIR__) . '/includes/news-rich-text.php';
 require_admin();
 
 $error = '';
@@ -78,7 +79,7 @@ try {
 
         if (in_array($action, ['save', 'publish'], true)) {
             $title = trim((string) ($_POST['title'] ?? ''));
-            $content = trim((string) ($_POST['content'] ?? ''));
+            $content = sanitize_news_rich_text(trim((string) ($_POST['content'] ?? '')));
             $titleFormat = news_format_from_post('title', false);
             $textFormat = news_format_from_post('text', true);
             $status = $action === 'publish' ? 'published' : 'draft';
@@ -89,7 +90,7 @@ try {
             $validDate = $date && ($dateErrors === false || ($dateErrors['warning_count'] === 0 && $dateErrors['error_count'] === 0));
 
             $titleLength = preg_match_all('/./us', $title);
-            if ($title === '' || $titleLength === false || $titleLength > 255 || $content === '') {
+            if ($title === '' || $titleLength === false || $titleLength > 255 || !news_rich_text_has_content($content)) {
                 throw new RuntimeException('Please enter a title of up to 255 characters and the post text.');
             }
             if ($status === 'published' && !$validDate) {
@@ -170,11 +171,11 @@ unset($_SESSION['flash']);
 <input type="hidden" name="title_alignment" value="<?= h(in_array($editing['title_alignment'], ['left', 'center', 'right'], true) ? $editing['title_alignment'] : 'left') ?>"><div class="format-alignments" role="group" aria-label="Title alignment"><?php foreach (['left' => 'Align left', 'center' => 'Align center', 'right' => 'Align right'] as $alignment => $label): ?><button type="button" class="format-button format-align format-align-<?= $alignment ?><?= $editing['title_alignment'] === $alignment ? ' is-active' : '' ?>" data-format-align="title_alignment" data-value="<?= $alignment ?>" aria-label="<?= $label ?>" aria-pressed="<?= $editing['title_alignment'] === $alignment ? 'true' : 'false' ?>"><span></span><span></span><span></span></button><?php endforeach; ?></div>
 </div><input class="news-title-editor" id="news-title" name="title" maxlength="255" value="<?= h($editing['title']) ?>" style="<?= h(news_editor_format_style($editing, 'title', false)) ?>" required></div>
 <div class="admin-format-field"><label for="news-content">Text</label>
-<div class="format-toolbar" data-format-toolbar data-format-target="news-content" aria-label="Text formatting">
-<label class="format-size"><span>Size</span><select name="text_font_size" aria-label="Text font size"><option value="">Default</option><?php foreach (NEWS_FONT_SIZES as $size): ?><option value="<?= $size ?>"<?= (string) $editing['text_font_size'] === (string) $size ? ' selected' : '' ?>><?= $size ?></option><?php endforeach; ?></select></label>
-<?php foreach (['bold' => 'B', 'italic' => 'I', 'underline' => 'U'] as $format => $caption): ?><input type="hidden" name="text_<?= $format ?>" value="<?= !empty($editing['text_' . $format]) ? '1' : '0' ?>"><button type="button" class="format-button format-<?= $format ?><?= !empty($editing['text_' . $format]) ? ' is-active' : '' ?>" data-format-toggle="text_<?= $format ?>" aria-pressed="<?= !empty($editing['text_' . $format]) ? 'true' : 'false' ?>" title="<?= ucfirst($format) ?>"><?= $caption ?></button><?php endforeach; ?>
-<input type="hidden" name="text_alignment" value="<?= h(in_array($editing['text_alignment'], ['left', 'center', 'right', 'justify'], true) ? $editing['text_alignment'] : 'left') ?>"><div class="format-alignments" role="group" aria-label="Text alignment"><?php foreach (['left' => 'Align left', 'center' => 'Align center', 'right' => 'Align right', 'justify' => 'Justify'] as $alignment => $label): ?><button type="button" class="format-button format-align format-align-<?= $alignment ?><?= $editing['text_alignment'] === $alignment ? ' is-active' : '' ?>" data-format-align="text_alignment" data-value="<?= $alignment ?>" aria-label="<?= $label ?>" aria-pressed="<?= $editing['text_alignment'] === $alignment ? 'true' : 'false' ?>"><span></span><span></span><span></span></button><?php endforeach; ?></div>
-</div><textarea class="news-content-editor" id="news-content" name="content" rows="14" style="<?= h(news_editor_format_style($editing, 'text', true)) ?>" required><?= h($editing['content']) ?></textarea></div>
+<div class="format-toolbar" data-rich-text-toolbar data-format-target="news-content" aria-label="Text formatting">
+<label class="format-size"><span>Size</span><select data-rich-text-size aria-label="Text font size"><option value="">Default</option><?php foreach (NEWS_FONT_SIZES as $size): ?><option value="<?= $size ?>"><?= $size ?></option><?php endforeach; ?></select></label>
+<?php foreach (['bold' => 'B', 'italic' => 'I', 'underline' => 'U'] as $format => $caption): ?><button type="button" class="format-button format-<?= $format ?>" data-rich-text-command="<?= $format ?>" aria-pressed="false" title="<?= ucfirst($format) ?>"><?= $caption ?></button><?php endforeach; ?>
+<div class="format-alignments" role="group" aria-label="Text alignment"><?php foreach (['justifyLeft' => ['left', 'Align left'], 'justifyCenter' => ['center', 'Align center'], 'justifyRight' => ['right', 'Align right'], 'justifyFull' => ['justify', 'Justify']] as $command => [$alignment, $label]): ?><button type="button" class="format-button format-align format-align-<?= $alignment ?>" data-rich-text-command="<?= $command ?>" aria-label="<?= $label ?>" aria-pressed="false"><span></span><span></span><span></span></button><?php endforeach; ?></div>
+</div><div class="news-content-editor" id="news-content" contenteditable="true" role="textbox" aria-multiline="true" aria-required="true"><?= news_rich_text_for_editor((string) $editing['content']) ?></div><textarea class="news-content-value" name="content" hidden><?= h((string) $editing['content']) ?></textarea></div>
 <label>Image <span>(JPG, PNG or WEBP, max. 8 MB)</span><input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
 <?php if ($editing['image']): ?><img class="admin-image-preview" src="../<?= h($editing['image']) ?>" alt="Current post image"><?php endif; ?>
 <label>Current status <span>(set with the buttons below)</span><select disabled><option value="draft"<?= $editing['status'] === 'draft' ? ' selected' : '' ?>>Draft</option><option value="published"<?= $editing['status'] === 'published' ? ' selected' : '' ?>>Published</option></select></label>
