@@ -69,7 +69,10 @@ function home_h(?string $value): string
 </div>
 <main class="home-content">
 <section class="home-hero" aria-labelledby="home-title">
+<div class="home-hero-heading">
 <h1 id="home-title">LALEH BARZEGAR</h1>
+<p class="home-hero-professions" aria-label="Artist, filmmaker, writer"><span>| ARTIST</span> <span>| FILMMAKER</span> <span>| WRITER</span> <span>|</span></p>
+</div>
 <a class="home-scroll-cue" href="#home-gallery" aria-label="Scroll to selected works">
 <svg viewBox="0 0 72 24" aria-hidden="true" focusable="false">
 <path d="M2 2l34 20L70 2"></path>
