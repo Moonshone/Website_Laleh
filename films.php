@@ -85,7 +85,11 @@ function films_youtube_embed_url(string $url): ?string
 </head>
 <body id="top">
 <?php render_navigation('films'); ?>
-<main class="films-page">
+<main>
+<header class="page-title-header">
+<h1 class="page-title">FILMS</h1>
+</header>
+<div class="films-page">
 <?php if ($filmsUnavailable): ?>
 <p class="films-message">Films are temporarily unavailable.</p>
 <?php elseif ($films === []): ?>
@@ -141,6 +145,7 @@ $metadata = array_values(array_filter([
 </div>
 </article>
 <?php endforeach; ?>
+</div>
 </main>
 <footer class="site-footer"><span>© <span data-year>2026</span> Laleh Barzegar</span><a href="#top">Back to top</a></footer>
 <script src="src/script.js"></script>

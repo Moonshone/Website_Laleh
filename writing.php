@@ -36,7 +36,11 @@ function writing_h(mixed $value): string
 </head>
 <body id="top">
 <?php render_navigation('writing'); ?>
-<main class="writing-page">
+<main>
+<header class="page-title-header">
+<h1 class="page-title">WRITING</h1>
+</header>
+<div class="writing-page">
 <?php if ($booksUnavailable): ?>
 <p class="writing-message">Books are temporarily unavailable.</p>
 <?php elseif ($books === []): ?>
@@ -67,6 +71,7 @@ $imageUrl = (string) ($book['URL'] ?? '');
 </div>
 </article>
 <?php endforeach; ?>
+</div>
 </main>
 <footer class="site-footer"><span>© <span data-year>2026</span> Laleh Barzegar</span><a href="#top">Back to top</a></footer>
 <script src="src/script.js"></script>
