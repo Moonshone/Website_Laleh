@@ -84,10 +84,10 @@ $selectedCvFields = [
 <nav aria-label="Main navigation">
 <ul>
 <li><a href="index.html">HOME</a></li>
+<li><a href="about.html" aria-current="page">ABOUT</a></li>
 <li><a href="films.html">FILMS</a></li>
 <li><a href="paintings.html">PAINTINGS</a></li>
 <li><a href="writing.html">WRITING</a></li>
-<li><a href="about.html" aria-current="page">ABOUT</a></li>
 <li><a href="news.php">NEWS</a></li>
 <li><a href="contact.html">CONTACT</a></li>
 </ul>
