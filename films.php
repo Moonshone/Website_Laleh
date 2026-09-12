@@ -10,7 +10,7 @@ $filmsUnavailable = false;
 
 try {
     $statement = db()->query(
-        'SELECT `id`, `Name`, `Year`, `Description`, `URL`, `Mov_URL`
+        'SELECT `id`, `Name`, `Year`, `Genre`, `Duration`, `Description`, `URL`, `Mov_URL`
          FROM `Films`
          ORDER BY `id` ASC'
     );
@@ -96,19 +96,26 @@ function films_youtube_embed_url(string $url): ?string
 <?php
 $movieUrl = trim((string) ($film['Mov_URL'] ?? ''));
 $youtubeEmbedUrl = films_youtube_embed_url($movieUrl);
+$metadata = array_values(array_filter([
+    trim((string) ($film['Year'] ?? '')),
+    trim((string) ($film['Genre'] ?? '')),
+    trim((string) ($film['Duration'] ?? '')),
+], static fn (string $value): bool => $value !== ''));
 ?>
 <article class="film-entry reveal" data-film-id="<?= (int) $film['id'] ?>">
-<?php if (films_has_value($film['Name']) || films_has_value($film['Year'])): ?>
+<?php if (films_has_value($film['Name']) || $metadata !== []): ?>
 <header class="film-entry-header">
 <?php if (films_has_value($film['Name'])): ?>
 <h2 class="film-entry-title"><?= films_h($film['Name']) ?></h2>
 <?php endif; ?>
-<?php if (films_has_value($film['Year'])): ?>
-<p class="film-entry-year"><?= films_h($film['Year']) ?></p>
+<?php if ($metadata !== []): ?>
+<p class="film-entry-meta"><?= films_h(implode(', ', $metadata)) ?></p>
 <?php endif; ?>
 </header>
 <?php endif; ?>
 
+<div class="film-entry-content">
+<div class="film-entry-media">
 <?php if (films_has_value($film['URL'])): ?>
 <div class="film-entry-image">
 <img src="<?= films_h($film['URL']) ?>" alt="">
@@ -128,10 +135,10 @@ $youtubeEmbedUrl = films_youtube_embed_url($movieUrl);
 <?php endif; ?>
 </div>
 <?php endif; ?>
+</div>
 
-<?php if (films_has_value($film['Description'])): ?>
-<p class="film-entry-description"><?= films_h($film['Description']) ?></p>
-<?php endif; ?>
+<div class="film-entry-description"><?php if (films_has_value($film['Description'])): ?><p><?= films_h($film['Description']) ?></p><?php endif; ?></div>
+</div>
 </article>
 <?php endforeach; ?>
 </main>
