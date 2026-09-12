@@ -196,7 +196,7 @@ main { min-height: 80vh; }
   font-size: clamp(.95rem, 1.15vw, 1.15rem);
   line-height: 1.7;
 }
-.home-artwork-caption > p.home-artwork-description { font-size: var(--entry-description-font-size); font-weight: 700; }
+.home-artwork-caption > p.home-artwork-description { font-size: 1.62em; font-weight: 700; }
 .home-footer {
   display: flex;
   justify-content: space-between;
@@ -614,6 +614,7 @@ main { min-height: 80vh; }
     --gutter: clamp(1rem, 4.5vw, 2rem);
     --entry-description-font-size: clamp(1rem, 2.7vw, 1.2rem);
   }
+  .home-artwork-caption > p.home-artwork-description { font-size: clamp(1.2rem, 3.24vw, 1.44rem); }
   .page-title-header { padding-top: 4.75rem; }
   .page-title { max-width: calc(100% - 3.5rem); }
   .painting-activity,
