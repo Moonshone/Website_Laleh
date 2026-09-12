@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap");
 
 :root {
   --paper: #f4f1ea;
@@ -7,10 +7,8 @@
   --ink: #141414;
   --muted: #6b6964;
   --gutter: clamp(1.25rem, 3.1vw, 3.75rem);
-  --serif: Georgia, Arial, sans-serif;
-  --sans: Arial, Helvetica, sans-serif;
-  --avenir: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
-  --heading-font: "Nunito", sans-serif;
+  --sans: "Open Sans", Arial, sans-serif;
+  --heading-font: Futura, "Futura PT", Arial, sans-serif;
   --entry-meta-font-size: clamp(.972rem, 1.35vw, 1.215rem);
   --entry-description-font-size: 1.35em;
 }
@@ -97,7 +95,7 @@ h6 {
 .menu-overlay a:hover, .menu-overlay a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
 
 main { min-height: 80vh; }
-.home-page { overflow-x: hidden; overflow-y: auto; font-family: var(--avenir); }
+.home-page { overflow-x: hidden; overflow-y: auto; font-family: var(--sans); }
 .home-page main { min-height: 100svh; }
 .home-content { padding-bottom: clamp(6rem, 11vw, 11rem); }
 .home-hero {
@@ -128,7 +126,7 @@ main { min-height: 80vh; }
   margin: 0;
   padding-inline: 2.5vw;
   color: #fff;
-  font-family: var(--avenir);
+  font-family: var(--heading-font);
   font-size: clamp(1.568rem, 4.8832vw, 5.376rem);
   font-weight: 400 !important;
   letter-spacing: -.055em;
@@ -204,7 +202,7 @@ main { min-height: 80vh; }
   gap: 2rem;
   padding: clamp(2rem, 4vw, 4rem) 2.5vw;
   border-top: 1px solid rgba(20,20,20,.2);
-  font-family: var(--avenir);
+  font-family: var(--sans);
   font-size: .72rem;
   letter-spacing: .04em;
   text-transform: uppercase;
@@ -230,7 +228,7 @@ main { min-height: 80vh; }
 .page-title-header { padding: clamp(4.5rem, 9vh, 6.5rem) var(--gutter) clamp(2.5rem, 4.5vw, 4.5rem); }
 .page-title {
   max-width: 90%; margin: 0;
-  font-family: var(--serif); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
+  font-family: var(--heading-font); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
 }
 .page-title-header p { max-width: 30rem; margin: 2.5rem 0 0 auto; color: var(--muted); }
 .news-admin-back { display: inline-block; margin-top: 2.5rem; border-bottom: 1px solid currentColor; font-size: .816rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
@@ -513,7 +511,7 @@ main { min-height: 80vh; }
 .about-portrait { min-width: 0; margin: 0; }
 .about-portrait img { width: 100%; height: auto; object-fit: contain; }
 .about-copy { min-width: 0; }
-.about-copy h2 { margin: 0 0 3rem; font-family: var(--serif); font-size: clamp(1.89rem, 3.5vw, 3.78rem); font-weight: 400; line-height: .95; }
+.about-copy h2 { margin: 0 0 3rem; font-family: var(--heading-font); font-size: clamp(1.89rem, 3.5vw, 3.78rem); font-weight: 400; line-height: .95; }
 .about-copy p { max-width: 36rem; margin: 0 0 1.5rem; font-size: var(--entry-description-font-size); }
 .selected-cv {
   margin-top: clamp(4rem, 8vw, 8rem);
@@ -542,7 +540,7 @@ main { min-height: 80vh; }
 .news-post { padding-bottom: clamp(6rem, 11vw, 11rem); }
 .news-post time, .admin-eyebrow, .admin-post-meta { color: var(--muted); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
 .news-post time { font-size: .816rem; font-weight: 700; }
-.news-post h2 { max-width: 54rem; margin: .75rem 0 2.5rem; font-family: var(--serif); font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 400; line-height: .95; }
+.news-post h2 { max-width: 54rem; margin: .75rem 0 2.5rem; font-family: var(--heading-font); font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 400; line-height: .95; }
 .news-post h2.news-custom-title-size { max-width: 100%; font-size: var(--news-title-font-size); overflow-wrap: anywhere; }
 .news-post img { max-width: 58rem; max-height: 80vh; margin-bottom: 2rem; object-fit: contain; object-position: left center; }
 .news-content { max-width: 44rem; font-size: 1rem; line-height: 1.7; overflow-wrap: anywhere; }
@@ -550,11 +548,12 @@ main { min-height: 80vh; }
 .news-empty { margin: 0 0 8rem; color: var(--muted); }
 
 .admin-page, .admin-page * { font-family: var(--sans) !important; }
+.admin-page h1, .admin-page h2, .admin-page h3, .admin-page h4, .admin-page h5, .admin-page h6 { font-family: var(--heading-font) !important; }
 .admin-page { min-height: 100vh; font-size: var(--entry-description-font-size); }
 .admin-shell { width: min(100% - 2 * var(--gutter), 88rem); margin: 0 auto; padding: clamp(3rem, 7vw, 7rem) 0; }
 .admin-login { max-width: 34rem; }
-.admin-shell h1 { margin: .3rem 0 3rem; font-family: var(--serif); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; line-height: .95; }
-.admin-shell h2 { margin: 0 0 2rem; font-family: var(--serif); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; }
+.admin-shell h1 { margin: .3rem 0 3rem; font-family: var(--heading-font); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; line-height: .95; }
+.admin-shell h2 { margin: 0 0 2rem; font-family: var(--heading-font); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; }
 .admin-header { display: flex; justify-content: space-between; gap: 2rem; align-items: flex-start; }
 .admin-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, .8fr); gap: clamp(4rem, 8vw, 9rem); }
 .admin-form label { display: block; margin-bottom: 1.7rem; font-size: inherit; letter-spacing: .06em; text-transform: uppercase; }
@@ -595,7 +594,7 @@ main { min-height: 80vh; }
 }
 .format-button:hover, .format-button:focus-visible, .format-button.is-active { background: rgba(20,20,20,.12); outline: none; }
 .format-bold { font-weight: 700; }
-.format-italic { font-family: var(--serif); font-style: italic; }
+.format-italic { font-family: var(--sans); font-style: italic; }
 .format-underline { text-decoration: underline; text-underline-offset: .15em; }
 .format-alignments { display: flex; gap: .1rem; margin-left: .25rem; padding-left: .25rem; border-left: 1px solid rgba(20,20,20,.2); }
 .format-align { flex-direction: column; gap: 3px; }
@@ -618,7 +617,7 @@ main { min-height: 80vh; }
 .admin-current-image > span { color: var(--muted); font-size: .68rem; letter-spacing: .04em; }
 .admin-current-image .admin-image-preview { margin: 0; }
 .admin-post { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1rem 0; border-top: 1px solid rgba(20,20,20,.2); }
-.admin-post h3 { margin: .25rem 0 0; font-family: var(--serif); font-size: inherit; font-weight: 400; }
+.admin-post h3 { margin: .25rem 0 0; font-family: var(--heading-font); font-size: inherit; font-weight: 400; }
 .admin-page .admin-eyebrow, .admin-page .admin-post-meta { font-size: inherit; }
 .admin-post-meta { margin: 0; }
 .admin-post .admin-post-meta { font-size: .8em; }
@@ -630,7 +629,7 @@ main { min-height: 80vh; }
 .admin-navigation a, .admin-primary-link, .admin-account summary { font-size: inherit; }
 .admin-dashboard { max-width: 42rem; padding-top: 3rem; }
 .admin-account { padding: 1.25rem 0; border-top: 1px solid rgba(20,20,20,.2); }
-.admin-account h3 { margin: 0 0 .3rem; font-family: var(--serif); font-size: inherit; font-weight: 400; }
+.admin-account h3 { margin: 0 0 .3rem; font-family: var(--heading-font); font-size: inherit; font-weight: 400; }
 .admin-account details { margin: 1rem 0; }
 .admin-form.compact { max-width: 25rem; padding-top: 1rem; }
 .admin-inline-form { display: flex; gap: 1rem; align-items: end; margin: 1rem 0; }
