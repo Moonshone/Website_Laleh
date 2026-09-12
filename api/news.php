@@ -8,7 +8,9 @@ header('Cache-Control: public, max-age=60');
 
 try {
     $statement = db()->prepare(
-        "SELECT id, title, content, image, published_at
+        "SELECT id, title, content, image, published_at,
+                title_font_size, title_bold, title_italic, title_underline, title_alignment,
+                text_font_size, text_bold, text_italic, text_underline, text_alignment
          FROM news_posts
          WHERE status = :status AND published_at IS NOT NULL AND published_at <= NOW()
          ORDER BY published_at DESC, id DESC"

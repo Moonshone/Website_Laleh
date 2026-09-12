@@ -10,6 +10,7 @@ The CMS uses PHP, PDO, MySQL, PHP sessions, and the existing site styles. It doe
 - `database/schema.sql` creates the complete `admins`, `password_resets`, and `news_posts` tables on a new installation.
 - `database/add-password-recovery.sql` adds administrator email addresses and reset tokens to an existing installation.
 - `database/add-admin-role.sql` safely adds roles to a pre-existing role-less `admins` table and makes its oldest account a superadmin. Run this migration **only if** that table already exists without `role`; do not run it after `schema.sql`.
+- `database/add-news-formatting.sql` adds the independent title and text formatting settings to an existing `news_posts` table. Run it once before deploying the updated NEWS editor; new installations already receive these columns from `schema.sql`.
 - `setup/create-admin.php` creates only the first administrator; `setup/.gitignore` keeps its generated lock private.
 - `admin/` contains login, logout, password recovery, account, dashboard, NEWS editing, administrator management, authentication, authorization, CSRF, and upload code.
 - `api/news.php` is the read-only published NEWS JSON endpoint.
@@ -71,7 +72,7 @@ Empty values and mismatched or short passwords are rejected. Neither the passwor
 ## 5. Log in and manage NEWS
 
 1. Open **`https://YOUR-DOMAIN/admin/`** and enter the NEWS administrator credentials. Login regenerates the session ID. Incorrect credentials receive one generic error.
-2. Open **NEWS Posts**. Enter a title, normal multi-paragraph article text, publication date/time, and optionally an image.
+2. Open **NEWS Posts**. Enter a title, normal multi-paragraph article text, publication date/time, and optionally an image. The separate compact toolbars set title and text size, bold, italic, underline, and alignment; text also supports justified alignment. **Default** size retains the original responsive site typography.
 3. **Save Draft** keeps the post private. **Publish** makes it public at its intended publication time. Future-dated posts remain hidden until that time.
 4. Existing-post **Edit** reloads its content. **Publish/Unpublish** changes visibility. **Delete** asks for confirmation and permanently removes the post and its CMS-owned image.
 5. Public posts appear newest-first on `/news.php`. Drafts never appear. `/api/news.php` returns only required public fields.

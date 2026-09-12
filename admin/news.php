@@ -5,7 +5,29 @@ require_once __DIR__ . '/bootstrap.php';
 require_admin();
 
 $error = '';
-$editing = ['id' => '', 'title' => '', 'content' => '', 'image' => null, 'status' => 'draft', 'published_at' => ''];
+const NEWS_FONT_SIZES = [12, 14, 16, 18, 20, 22, 24, 28, 32, 36, 40, 48];
+
+function news_format_from_post(string $prefix, bool $allowJustify): array
+{
+    $fontSize = filter_var($_POST[$prefix . '_font_size'] ?? null, FILTER_VALIDATE_INT);
+    $alignment = (string) ($_POST[$prefix . '_alignment'] ?? 'left');
+    $alignments = $allowJustify ? ['left', 'center', 'right', 'justify'] : ['left', 'center', 'right'];
+
+    return [
+        'font_size' => in_array($fontSize, NEWS_FONT_SIZES, true) ? $fontSize : null,
+        'bold' => ($_POST[$prefix . '_bold'] ?? '0') === '1' ? 1 : 0,
+        'italic' => ($_POST[$prefix . '_italic'] ?? '0') === '1' ? 1 : 0,
+        'underline' => ($_POST[$prefix . '_underline'] ?? '0') === '1' ? 1 : 0,
+        'alignment' => in_array($alignment, $alignments, true) ? $alignment : 'left',
+    ];
+}
+
+$formatDefaults = [
+    'title_font_size' => null, 'title_bold' => 0, 'title_italic' => 0,
+    'title_underline' => 0, 'title_alignment' => 'left', 'text_font_size' => null,
+    'text_bold' => 0, 'text_italic' => 0, 'text_underline' => 0, 'text_alignment' => 'left',
+];
+$editing = ['id' => '', 'title' => '', 'content' => '', 'image' => null, 'status' => 'draft', 'published_at' => ''] + $formatDefaults;
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -39,6 +61,8 @@ try {
         if (in_array($action, ['save', 'publish'], true)) {
             $title = trim((string) ($_POST['title'] ?? ''));
             $content = trim((string) ($_POST['content'] ?? ''));
+            $titleFormat = news_format_from_post('title', false);
+            $textFormat = news_format_from_post('text', true);
             $status = $action === 'publish' ? 'published' : 'draft';
             $status = in_array($status, ['draft', 'published'], true) ? $status : 'draft';
             $dateInput = trim((string) ($_POST['published_at'] ?? ''));
@@ -66,11 +90,17 @@ try {
             }
 
             if ($id) {
-                $statement = db()->prepare('UPDATE news_posts SET title = :title, content = :content, image = :image, status = :status, published_at = :published_at WHERE id = :id');
-                $statement->execute(compact('title', 'content', 'image', 'status', 'id') + ['published_at' => $publishedAt]);
+                $statement = db()->prepare('UPDATE news_posts SET title = :title, content = :content, image = :image, status = :status, published_at = :published_at, title_font_size = :title_font_size, title_bold = :title_bold, title_italic = :title_italic, title_underline = :title_underline, title_alignment = :title_alignment, text_font_size = :text_font_size, text_bold = :text_bold, text_italic = :text_italic, text_underline = :text_underline, text_alignment = :text_alignment WHERE id = :id');
+                $statement->execute(compact('title', 'content', 'image', 'status', 'id') + ['published_at' => $publishedAt] + [
+                    'title_font_size' => $titleFormat['font_size'], 'title_bold' => $titleFormat['bold'], 'title_italic' => $titleFormat['italic'], 'title_underline' => $titleFormat['underline'], 'title_alignment' => $titleFormat['alignment'],
+                    'text_font_size' => $textFormat['font_size'], 'text_bold' => $textFormat['bold'], 'text_italic' => $textFormat['italic'], 'text_underline' => $textFormat['underline'], 'text_alignment' => $textFormat['alignment'],
+                ]);
             } else {
-                $statement = db()->prepare('INSERT INTO news_posts (title, content, image, status, published_at) VALUES (:title, :content, :image, :status, :published_at)');
-                $statement->execute(compact('title', 'content', 'image', 'status') + ['published_at' => $publishedAt]);
+                $statement = db()->prepare('INSERT INTO news_posts (title, content, image, status, published_at, title_font_size, title_bold, title_italic, title_underline, title_alignment, text_font_size, text_bold, text_italic, text_underline, text_alignment) VALUES (:title, :content, :image, :status, :published_at, :title_font_size, :title_bold, :title_italic, :title_underline, :title_alignment, :text_font_size, :text_bold, :text_italic, :text_underline, :text_alignment)');
+                $statement->execute(compact('title', 'content', 'image', 'status') + ['published_at' => $publishedAt] + [
+                    'title_font_size' => $titleFormat['font_size'], 'title_bold' => $titleFormat['bold'], 'title_italic' => $titleFormat['italic'], 'title_underline' => $titleFormat['underline'], 'title_alignment' => $titleFormat['alignment'],
+                    'text_font_size' => $textFormat['font_size'], 'text_bold' => $textFormat['bold'], 'text_italic' => $textFormat['italic'], 'text_underline' => $textFormat['underline'], 'text_alignment' => $textFormat['alignment'],
+                ]);
             }
             if ($image !== $oldImage) {
                 delete_news_image($oldImage);
@@ -85,7 +115,7 @@ try {
     if ($editId) {
         $statement = db()->prepare('SELECT * FROM news_posts WHERE id = :id');
         $statement->execute(['id' => $editId]);
-        $editing = $statement->fetch() ?: $editing;
+        $editing = ($statement->fetch() ?: $editing) + $formatDefaults;
     }
     $posts = db()->query('SELECT id, title, image, status, published_at, updated_at FROM news_posts ORDER BY created_at DESC')->fetchAll();
 } catch (Throwable $exception) {
@@ -97,6 +127,12 @@ try {
             'id' => (string) ($_POST['id'] ?? ''), 'title' => (string) ($_POST['title'] ?? ''),
             'content' => (string) ($_POST['content'] ?? ''), 'image' => null,
             'status' => (string) ($_POST['status'] ?? 'draft'), 'published_at' => (string) ($_POST['published_at'] ?? ''),
+        ] + [
+            'title_font_size' => $_POST['title_font_size'] ?? null, 'title_bold' => (int) (($_POST['title_bold'] ?? '0') === '1'),
+            'title_italic' => (int) (($_POST['title_italic'] ?? '0') === '1'), 'title_underline' => (int) (($_POST['title_underline'] ?? '0') === '1'),
+            'title_alignment' => (string) ($_POST['title_alignment'] ?? 'left'), 'text_font_size' => $_POST['text_font_size'] ?? null,
+            'text_bold' => (int) (($_POST['text_bold'] ?? '0') === '1'), 'text_italic' => (int) (($_POST['text_italic'] ?? '0') === '1'),
+            'text_underline' => (int) (($_POST['text_underline'] ?? '0') === '1'), 'text_alignment' => (string) ($_POST['text_alignment'] ?? 'left'),
         ];
     }
 }
@@ -109,8 +145,18 @@ unset($_SESSION['flash']);
 <?php if ($flash): ?><p class="admin-message" role="status"><?= h($flash) ?></p><?php endif; ?><?php if ($error): ?><p class="admin-message admin-error" role="alert"><?= h($error) ?></p><?php endif; ?>
 <div class="admin-grid"><section><h2><?= $editing['id'] ? 'Edit post' : 'New post' ?></h2><form class="admin-form" method="post" enctype="multipart/form-data">
 <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= h((string) $editing['id']) ?>">
-<label>Title<input name="title" maxlength="255" value="<?= h($editing['title']) ?>" required></label>
-<label>Text<textarea name="content" rows="14" required><?= h($editing['content']) ?></textarea></label>
+<div class="admin-format-field"><label for="news-title">Title</label>
+<div class="format-toolbar" data-format-toolbar aria-label="Title formatting">
+<label class="format-size"><span>Size</span><select name="title_font_size" aria-label="Title font size"><option value="">Default</option><?php foreach (NEWS_FONT_SIZES as $size): ?><option value="<?= $size ?>"<?= (string) $editing['title_font_size'] === (string) $size ? ' selected' : '' ?>><?= $size ?></option><?php endforeach; ?></select></label>
+<?php foreach (['bold' => 'B', 'italic' => 'I', 'underline' => 'U'] as $format => $caption): ?><input type="hidden" name="title_<?= $format ?>" value="<?= !empty($editing['title_' . $format]) ? '1' : '0' ?>"><button type="button" class="format-button format-<?= $format ?><?= !empty($editing['title_' . $format]) ? ' is-active' : '' ?>" data-format-toggle="title_<?= $format ?>" aria-pressed="<?= !empty($editing['title_' . $format]) ? 'true' : 'false' ?>" title="<?= ucfirst($format) ?>"><?= $caption ?></button><?php endforeach; ?>
+<input type="hidden" name="title_alignment" value="<?= h(in_array($editing['title_alignment'], ['left', 'center', 'right'], true) ? $editing['title_alignment'] : 'left') ?>"><div class="format-alignments" role="group" aria-label="Title alignment"><?php foreach (['left' => 'Align left', 'center' => 'Align center', 'right' => 'Align right'] as $alignment => $label): ?><button type="button" class="format-button format-align format-align-<?= $alignment ?><?= $editing['title_alignment'] === $alignment ? ' is-active' : '' ?>" data-format-align="title_alignment" data-value="<?= $alignment ?>" aria-label="<?= $label ?>" aria-pressed="<?= $editing['title_alignment'] === $alignment ? 'true' : 'false' ?>"><span></span><span></span><span></span></button><?php endforeach; ?></div>
+</div><input id="news-title" name="title" maxlength="255" value="<?= h($editing['title']) ?>" required></div>
+<div class="admin-format-field"><label for="news-content">Text</label>
+<div class="format-toolbar" data-format-toolbar aria-label="Text formatting">
+<label class="format-size"><span>Size</span><select name="text_font_size" aria-label="Text font size"><option value="">Default</option><?php foreach (NEWS_FONT_SIZES as $size): ?><option value="<?= $size ?>"<?= (string) $editing['text_font_size'] === (string) $size ? ' selected' : '' ?>><?= $size ?></option><?php endforeach; ?></select></label>
+<?php foreach (['bold' => 'B', 'italic' => 'I', 'underline' => 'U'] as $format => $caption): ?><input type="hidden" name="text_<?= $format ?>" value="<?= !empty($editing['text_' . $format]) ? '1' : '0' ?>"><button type="button" class="format-button format-<?= $format ?><?= !empty($editing['text_' . $format]) ? ' is-active' : '' ?>" data-format-toggle="text_<?= $format ?>" aria-pressed="<?= !empty($editing['text_' . $format]) ? 'true' : 'false' ?>" title="<?= ucfirst($format) ?>"><?= $caption ?></button><?php endforeach; ?>
+<input type="hidden" name="text_alignment" value="<?= h(in_array($editing['text_alignment'], ['left', 'center', 'right', 'justify'], true) ? $editing['text_alignment'] : 'left') ?>"><div class="format-alignments" role="group" aria-label="Text alignment"><?php foreach (['left' => 'Align left', 'center' => 'Align center', 'right' => 'Align right', 'justify' => 'Justify'] as $alignment => $label): ?><button type="button" class="format-button format-align format-align-<?= $alignment ?><?= $editing['text_alignment'] === $alignment ? ' is-active' : '' ?>" data-format-align="text_alignment" data-value="<?= $alignment ?>" aria-label="<?= $label ?>" aria-pressed="<?= $editing['text_alignment'] === $alignment ? 'true' : 'false' ?>"><span></span><span></span><span></span></button><?php endforeach; ?></div>
+</div><textarea id="news-content" name="content" rows="14" required><?= h($editing['content']) ?></textarea></div>
 <label>Image <span>(JPG, PNG or WEBP, max. 8 MB)</span><input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
 <?php if ($editing['image']): ?><img class="admin-image-preview" src="../<?= h($editing['image']) ?>" alt="Current post image"><?php endif; ?>
 <label>Current status <span>(set with the buttons below)</span><select disabled><option value="draft"<?= $editing['status'] === 'draft' ? ' selected' : '' ?>>Draft</option><option value="published"<?= $editing['status'] === 'published' ? ' selected' : '' ?>>Published</option></select></label>
@@ -119,4 +165,4 @@ unset($_SESSION['flash']);
 </form></section><section><h2>Existing posts</h2><div class="admin-posts">
 <?php if (!$posts): ?><p>No news posts have been created.</p><?php endif; ?>
 <?php foreach ($posts as $post): ?><article class="admin-post"><div><p class="admin-post-meta"><?= h(ucfirst($post['status'])) ?> · <?= h($post['published_at'] ?: 'No publication date') ?></p><h3><?= h($post['title']) ?></h3></div><div class="admin-post-actions"><a href="?edit=<?= (int) $post['id'] ?>">EDIT</a><form method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int) $post['id'] ?>"><input type="hidden" name="status" value="<?= $post['status'] === 'published' ? 'draft' : 'published' ?>"><button type="submit" name="action" value="toggle"><?= $post['status'] === 'published' ? 'UNPUBLISH' : 'PUBLISH' ?></button></form><form method="post" onsubmit="return confirm('Delete this post permanently?');"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int) $post['id'] ?>"><button type="submit" name="action" value="delete">DELETE</button></form></div></article><?php endforeach; ?>
-</div></section></div></main></body></html>
+</div></section></div></main><script src="../src/admin-news.js"></script></body></html>
