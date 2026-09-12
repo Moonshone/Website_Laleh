@@ -250,7 +250,7 @@ main { min-height: 80vh; }
 .painting-activity-header { border-bottom: 1px solid var(--artwork-border); }
 .painting-activity-title {
   margin: 0;
-  font-size: clamp(1.8rem, 4vw, 4rem);
+  font-size: clamp(1.35rem, 3vw, 3rem);
   line-height: 1.05;
   letter-spacing: -.035em;
   overflow-wrap: anywhere;
@@ -351,7 +351,7 @@ main { min-height: 80vh; }
 }
 .book-entry-title {
   margin: 0;
-  font-size: clamp(1.8rem, 4vw, 4rem);
+  font-size: clamp(1.35rem, 3vw, 3rem);
   line-height: 1.05;
   letter-spacing: -.035em;
   overflow-wrap: anywhere;
@@ -423,7 +423,7 @@ main { min-height: 80vh; }
 .film-entry-header { border-bottom: 1px solid var(--artwork-border); }
 .film-entry-title {
   margin: 0;
-  font-size: clamp(1.8rem, 4vw, 4rem);
+  font-size: clamp(1.35rem, 3vw, 3rem);
   line-height: 1.05;
   letter-spacing: -.035em;
   overflow-wrap: anywhere;
