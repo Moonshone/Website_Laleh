@@ -148,7 +148,7 @@ main { min-height: 80vh; }
   margin: 0;
   color: #fff;
   font-family: var(--heading-font);
-  font-size: clamp(.76832rem, 2.392768vw, 2.63424rem);
+  font-size: clamp(.537824rem, 1.6749376vw, 1.843968rem);
   font-weight: 400;
   letter-spacing: -.035em;
   line-height: .9;
@@ -781,7 +781,7 @@ main { min-height: 80vh; }
   .site-footer { align-items: flex-end; }
   .home-hero-heading { left: 1rem; right: 4.5rem; }
   .home-hero h1 { font-size: clamp(.75264rem, 3.63776vw, 1.568rem); letter-spacing: -.045em; }
-  .home-hero-professions { font-size: clamp(.526848rem, 2.546432vw, 1.0976rem); }
+  .home-hero-professions { font-size: clamp(.3687936rem, 1.7825024vw, .76832rem); }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
   .home-sequence { padding-top: 0; }
   .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }
