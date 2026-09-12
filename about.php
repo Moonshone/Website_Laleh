@@ -69,7 +69,7 @@ $selectedCvFields = [
 <title>About — Laleh Barzegar</title>
 <link rel="stylesheet" href="styles/style.css">
 </head>
-<body id="top">
+<body id="top" class="about-view">
 <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
 <span>
 </span>

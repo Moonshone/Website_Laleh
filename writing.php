@@ -34,7 +34,7 @@ function writing_h(mixed $value): string
 <title>Writing — Laleh Barzegar</title>
 <link rel="stylesheet" href="styles/style.css">
 </head>
-<body id="top">
+<body id="top" class="writing-view">
 <?php render_navigation('writing'); ?>
 <main>
 <header class="page-title-header">

@@ -97,7 +97,7 @@ function paintings_details(array $activity): string
 <title>Paintings — Laleh Barzegar</title>
 <link rel="stylesheet" href="styles/style.css">
 </head>
-<body id="top">
+<body id="top" class="paintings-view">
 <?php render_navigation('paintings'); ?>
 <main>
 <header class="page-title-header">

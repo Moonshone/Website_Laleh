@@ -641,6 +641,41 @@ main { min-height: 80vh; }
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
 .reveal.is-visible { opacity: 1; transform: none; }
 
+/* These portfolio pages use the page canvas without framed or shaded sections. */
+.paintings-view .painting-activity,
+.paintings-view .painting-activity-header,
+.paintings-view .painting-activity-description,
+.paintings-view .painting-slideshow-button,
+.writing-view .book-entry,
+.writing-view .book-entry-header,
+.writing-view .book-entry-description,
+.films-view .film-entry,
+.films-view .film-entry-header,
+.films-view .film-entry-movie,
+.films-view .film-entry-description,
+.about-view .about-intro,
+.about-view .selected-cv,
+.paintings-view .site-footer,
+.writing-view .site-footer,
+.films-view .site-footer,
+.about-view .site-footer {
+  border: 0;
+}
+.paintings-view .painting-activity,
+.paintings-view .painting-activity-header,
+.paintings-view .painting-activity-description,
+.paintings-view .painting-slideshow,
+.writing-view .book-entry,
+.writing-view .book-entry-content,
+.films-view .film-entry,
+.films-view .film-entry-content,
+.films-view .film-entry-image,
+.films-view .film-entry-movie,
+.about-view .about-intro,
+.about-view .selected-cv {
+  background: transparent;
+}
+
 /* Keep wide-screen proportions intact while allowing fixed content blocks to
    shrink inside their padded page container. */
 .painting-activity,
