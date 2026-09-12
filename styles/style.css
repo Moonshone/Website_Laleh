@@ -235,7 +235,7 @@ main { min-height: 80vh; }
   overflow: hidden;
 }
 .painting-activity {
-  width: min(100%, 82rem);
+  width: 85vw;
   margin: 0 auto clamp(4rem, 8vw, 8rem);
   overflow: hidden;
   border: 1px solid var(--artwork-border);
@@ -410,7 +410,7 @@ main { min-height: 80vh; }
   overflow: hidden;
 }
 .film-entry {
-  width: min(100%, 82rem);
+  width: 85vw;
   margin: 0 auto clamp(4rem, 8vw, 8rem);
   overflow: hidden;
   border: 1px solid var(--artwork-border);
@@ -437,7 +437,7 @@ main { min-height: 80vh; }
 }
 .film-entry-content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   background: var(--paper);
 }
 .film-entry-media { min-width: 0; }
@@ -554,7 +554,7 @@ main { min-height: 80vh; }
   .gallery-item, .gallery-item:nth-child(n) { width: auto; margin: 0 0 7rem; }
   .gallery-item:nth-child(even) { margin-left: 14vw; }
   .paintings-page { padding-top: 6rem; }
-  .painting-activity { margin-bottom: 3.5rem; }
+  .painting-activity { width: 100%; margin-bottom: 3.5rem; }
   .painting-slide { min-height: 70vw; padding: .65rem; }
   .painting-slideshow-button { width: 2.5rem; height: 2.5rem; }
   .writing-page { padding-top: 6rem; }
@@ -563,7 +563,7 @@ main { min-height: 80vh; }
   .book-entry-image { min-height: 0; }
   .book-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
   .films-page { padding-top: 6rem; }
-  .film-entry { margin-bottom: 3.5rem; }
+  .film-entry { width: 100%; margin-bottom: 3.5rem; }
   .film-entry-content { grid-template-columns: 1fr; }
   .film-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
   .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
