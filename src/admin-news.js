@@ -43,3 +43,84 @@ document.querySelectorAll('[data-format-toolbar]').forEach((toolbar) => {
 
   updatePreview();
 });
+
+document.querySelectorAll('[data-rich-text-toolbar]').forEach((toolbar) => {
+  const editor = document.getElementById(toolbar.dataset.formatTarget);
+  const form = toolbar.closest('form');
+  const valueField = form?.querySelector('.news-content-value');
+  if (!editor || !valueField) return;
+  let savedRange = null;
+
+  const rememberSelection = () => {
+    const selection = window.getSelection();
+    if (selection.rangeCount && editor.contains(selection.anchorNode)) {
+      savedRange = selection.getRangeAt(0).cloneRange();
+    }
+  };
+
+  const restoreSelection = () => {
+    if (!savedRange) return;
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(savedRange);
+  };
+
+  const commandButtons = toolbar.querySelectorAll('[data-rich-text-command]');
+  const updateState = () => {
+    commandButtons.forEach((button) => {
+      const active = document.queryCommandState(button.dataset.richTextCommand);
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  };
+
+  const runCommand = (command, value = null) => {
+    editor.focus();
+    restoreSelection();
+    document.execCommand(command, false, value);
+    rememberSelection();
+    updateState();
+  };
+
+  // Keep the editor selection intact while toolbar controls are clicked.
+  commandButtons.forEach((button) => {
+    button.addEventListener('mousedown', (event) => event.preventDefault());
+    button.addEventListener('click', () => runCommand(button.dataset.richTextCommand));
+  });
+
+  const sizeSelect = toolbar.querySelector('[data-rich-text-size]');
+  sizeSelect?.addEventListener('mousedown', rememberSelection);
+  sizeSelect?.addEventListener('change', () => {
+    if (!sizeSelect.value) return;
+    runCommand('fontSize', '7');
+    editor.querySelectorAll('font[size="7"]').forEach((font) => {
+      const span = document.createElement('span');
+      span.style.fontSize = `${sizeSelect.value}px`;
+      while (font.firstChild) span.appendChild(font.firstChild);
+      font.replaceWith(span);
+    });
+    sizeSelect.value = '';
+  });
+
+  editor.addEventListener('keyup', () => { rememberSelection(); updateState(); });
+  editor.addEventListener('mouseup', () => { rememberSelection(); updateState(); });
+  editor.addEventListener('paste', (event) => {
+    event.preventDefault();
+    document.execCommand('insertText', false, event.clipboardData.getData('text/plain'));
+  });
+
+  form.addEventListener('submit', (event) => {
+    editor.querySelectorAll('div').forEach((block) => {
+      const paragraph = document.createElement('p');
+      for (const attribute of block.attributes) paragraph.setAttribute(attribute.name, attribute.value);
+      while (block.firstChild) paragraph.appendChild(block.firstChild);
+      block.replaceWith(paragraph);
+    });
+    valueField.value = editor.innerHTML;
+    if (!editor.textContent.trim()) {
+      event.preventDefault();
+      editor.focus();
+      editor.setAttribute('aria-invalid', 'true');
+    }
+  });
+});

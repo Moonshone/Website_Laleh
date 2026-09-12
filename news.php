@@ -3,6 +3,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/admin/bootstrap.php';
 require_once __DIR__ . '/includes/navigation.php';
+require_once __DIR__ . '/includes/news-rich-text.php';
 
 $showAdminBackLink = false;
 if (($_GET['from'] ?? '') === 'admin') {
@@ -55,5 +56,5 @@ function news_format_style(array $post, string $prefix, bool $allowJustify): arr
 <body id="top"><?php render_navigation('news'); ?>
 <main><header class="page-title-header"><h1 class="page-title">NEWS</h1><?php if ($showAdminBackLink): ?><a class="news-admin-back" href="/admin/">&larr; Back to Admin</a><?php endif; ?></header><section class="news-list" aria-label="News posts">
 <?php if ($unavailable): ?><p class="news-empty">News is temporarily unavailable.</p><?php elseif (!$posts): ?><p class="news-empty">No news has been published yet.</p><?php endif; ?>
-<?php foreach ($posts as $post): $titleFormat = news_format_style($post, 'title', false); $textFormat = news_format_style($post, 'text', true); ?><article class="news-post reveal"><time datetime="<?= news_h(date('c', strtotime($post['published_at']))) ?>"><?= news_h(date('F j, Y', strtotime($post['published_at']))) ?></time><h2<?= $titleFormat['custom_size'] ? ' class="news-custom-title-size"' : '' ?> style="<?= news_h($titleFormat['style']) ?>"><?= news_h($post['title']) ?></h2><?php if ($post['image']): ?><img src="<?= news_h($post['image']) ?>" alt=""><?php endif; ?><div class="news-content<?= $textFormat['custom_size'] ? ' news-custom-text-size' : '' ?>" style="<?= news_h($textFormat['style']) ?>"><?= nl2br(news_h($post['content'])) ?></div></article><?php endforeach; ?>
+<?php foreach ($posts as $post): $titleFormat = news_format_style($post, 'title', false); ?><article class="news-post reveal"><time datetime="<?= news_h(date('c', strtotime($post['published_at']))) ?>"><?= news_h(date('F j, Y', strtotime($post['published_at']))) ?></time><h2<?= $titleFormat['custom_size'] ? ' class="news-custom-title-size"' : '' ?> style="<?= news_h($titleFormat['style']) ?>"><?= news_h($post['title']) ?></h2><?php if ($post['image']): ?><img src="<?= news_h($post['image']) ?>" alt=""><?php endif; ?><div class="news-content"><?= news_rich_text_for_editor((string) $post['content']) ?></div></article><?php endforeach; ?>
 </section></main><footer class="site-footer"><span>© <span data-year>2026</span> Laleh Barzegar</span><a href="#top">Back to top</a></footer><script src="src/script.js"></script></body></html>

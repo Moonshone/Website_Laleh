@@ -548,6 +548,7 @@ main { min-height: 80vh; }
 .news-content.news-custom-text-size { max-width: 100%; font-size: var(--news-text-font-size); }
 .news-empty { margin: 0 0 8rem; color: var(--muted); }
 
+.admin-page, .admin-page * { font-family: var(--sans) !important; }
 .admin-page { min-height: 100vh; font-size: var(--entry-description-font-size); }
 .admin-shell { width: min(100% - 2 * var(--gutter), 88rem); margin: 0 auto; padding: clamp(3rem, 7vw, 7rem) 0; }
 .admin-login { max-width: 34rem; }
@@ -559,8 +560,10 @@ main { min-height: 80vh; }
 .admin-form label span { color: var(--muted); text-transform: none; }
 .admin-form input, .admin-form textarea, .admin-form select { display: block; width: 100%; margin-top: .45rem; padding: .75rem 0; border: 0; border-bottom: 1px solid #9b9891; border-radius: 0; outline: 0; background: transparent; color: inherit; }
 .admin-form textarea { resize: vertical; line-height: 1.6; }
-.admin-form .news-title-editor { font-family: var(--serif); line-height: .95; overflow-wrap: anywhere; }
-.admin-form .news-content-editor { line-height: 1.7; overflow-wrap: anywhere; }
+.admin-form .news-title-editor { line-height: .95; overflow-wrap: anywhere; }
+.admin-form .news-content-editor { min-height: 14rem; margin-top: .45rem; padding: .75rem 0; border-bottom: 1px solid #9b9891; outline: 0; line-height: 1.7; overflow-wrap: anywhere; white-space: pre-wrap; }
+.admin-form .news-content-editor:focus { border-color: var(--ink); }
+.news-content p, .news-content-editor p { margin: 0 0 1em; }
 .admin-form input:focus, .admin-form textarea:focus, .admin-form select:focus { border-color: var(--ink); }
 .admin-format-field { margin-bottom: 1.7rem; }
 .admin-format-field > label { margin-bottom: 0; }
