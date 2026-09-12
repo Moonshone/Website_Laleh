@@ -53,9 +53,6 @@ function home_h(?string $value): string
 </nav>
 </div>
 <main class="home-content">
-<header class="page-title-header">
-<h1 class="page-title">HOME</h1>
-</header>
 <section class="home-hero" aria-labelledby="home-title">
 <h1 id="home-title">LALEH BARZEGAR</h1>
 <a class="home-scroll-cue" href="#home-gallery" aria-label="Scroll to selected works">
