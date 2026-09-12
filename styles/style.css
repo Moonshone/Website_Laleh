@@ -417,8 +417,7 @@ main { min-height: 80vh; }
   background: var(--artwork-frame);
 }
 .film-entry:last-child { margin-bottom: 0; }
-.film-entry-header,
-.film-entry-description {
+.film-entry-header {
   padding: clamp(1.5rem, 3.5vw, 3.5rem) clamp(1.25rem, 4vw, 4.5rem);
 }
 .film-entry-header { border-bottom: 1px solid var(--artwork-border); }
@@ -429,13 +428,19 @@ main { min-height: 80vh; }
   letter-spacing: -.035em;
   overflow-wrap: anywhere;
 }
-.film-entry-year {
+.film-entry-meta {
   margin: .75rem 0 0;
   color: var(--muted);
   font-size: var(--entry-meta-font-size);
   letter-spacing: .04em;
   line-height: 1.6;
 }
+.film-entry-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  background: var(--paper);
+}
+.film-entry-media { min-width: 0; }
 .film-entry-image,
 .film-entry-movie {
   display: grid;
@@ -463,14 +468,16 @@ main { min-height: 80vh; }
   border: 0;
 }
 .film-entry-description {
-  margin: 0;
-  border-top: 1px solid var(--artwork-border);
+  min-width: 0;
+  padding: clamp(1.5rem, 3.5vw, 3.5rem);
+  border-left: 1px solid var(--artwork-border);
   color: var(--muted);
   font-size: var(--entry-description-font-size);
+  font-weight: 700;
   line-height: 1.75;
-  white-space: pre-line;
   overflow-wrap: anywhere;
 }
+.film-entry-description p { margin: 0; white-space: pre-line; }
 .films-message {
   margin: 0;
   padding: clamp(3rem, 8vw, 7rem) 1rem;
@@ -557,6 +564,8 @@ main { min-height: 80vh; }
   .book-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
   .films-page { padding-top: 6rem; }
   .film-entry { margin-bottom: 3.5rem; }
+  .film-entry-content { grid-template-columns: 1fr; }
+  .film-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
   .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
   .admin-grid { grid-template-columns: 1fr; }
   .admin-header, .admin-post { align-items: flex-start; }
