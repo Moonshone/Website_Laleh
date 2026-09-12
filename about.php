@@ -48,6 +48,13 @@ function about_h(mixed $value): string
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function about_cv_entries(mixed $value): array
+{
+    $entries = preg_split('/\R\s*\R+/', trim((string) ($value ?? '')));
+
+    return array_values(array_filter($entries ?: [], static fn (string $entry): bool => $entry !== ''));
+}
+
 $selectedCvFields = [
     'FILMOGRAPHY',
     'SOLO EXHIBITIONS',
@@ -59,6 +66,14 @@ $selectedCvFields = [
     'WORKSHOPS & MASTERCLASSES',
     'MEMBERSHIP',
 ];
+
+$selectedCvSections = array_values(array_filter(
+    $selectedCvFields,
+    static fn (string $field): bool => !empty($artist[$field])
+));
+$selectedCvColumns = $selectedCvSections === []
+    ? []
+    : array_chunk($selectedCvSections, (int) ceil(count($selectedCvSections) / 2));
 ?>
 <!doctype html>
 <html lang="en">
@@ -110,13 +125,19 @@ $selectedCvFields = [
 <section class="selected-cv reveal" aria-labelledby="selected-cv-title">
 <h2 id="selected-cv-title">SELECTED CV</h2>
 <div class="selected-cv-grid">
-<?php foreach ($selectedCvFields as $field): ?>
-<?php if (!empty($artist[$field])): ?>
+<?php foreach ($selectedCvColumns as $column): ?>
+<div class="selected-cv-column">
+<?php foreach ($column as $field): ?>
 <div class="selected-cv-section">
 <h3 class="selected-cv-category"><?= about_h($field) ?></h3>
-<p><?= nl2br(about_h($artist[$field])) ?></p>
+<div class="selected-cv-entries">
+<?php foreach (about_cv_entries($artist[$field]) as $entry): ?>
+<p class="selected-cv-entry"><?= nl2br(about_h($entry)) ?></p>
+<?php endforeach; ?>
 </div>
-<?php endif; ?>
+</div>
+<?php endforeach; ?>
+</div>
 <?php endforeach; ?>
 </div>
 </section>
