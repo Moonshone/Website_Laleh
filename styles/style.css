@@ -548,14 +548,14 @@ main { min-height: 80vh; }
 .news-content.news-custom-text-size { max-width: 100%; font-size: var(--news-text-font-size); }
 .news-empty { margin: 0 0 8rem; color: var(--muted); }
 
-.admin-page { min-height: 100vh; }
+.admin-page { min-height: 100vh; font-size: var(--entry-description-font-size); }
 .admin-shell { width: min(100% - 2 * var(--gutter), 88rem); margin: 0 auto; padding: clamp(3rem, 7vw, 7rem) 0; }
 .admin-login { max-width: 34rem; }
-.admin-shell h1 { margin: .3rem 0 3rem; font-family: var(--serif); font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 400; line-height: .95; }
-.admin-shell h2 { margin: 0 0 2rem; font-family: var(--serif); font-size: 2rem; font-weight: 400; }
+.admin-shell h1 { margin: .3rem 0 3rem; font-family: var(--serif); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; line-height: .95; }
+.admin-shell h2 { margin: 0 0 2rem; font-family: var(--serif); font-size: clamp(.784rem, 2.156vw, 1.96rem); font-weight: 400; }
 .admin-header { display: flex; justify-content: space-between; gap: 2rem; align-items: flex-start; }
 .admin-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, .8fr); gap: clamp(4rem, 8vw, 9rem); }
-.admin-form label { display: block; margin-bottom: 1.7rem; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.admin-form label { display: block; margin-bottom: 1.7rem; font-size: inherit; letter-spacing: .06em; text-transform: uppercase; }
 .admin-form label span { color: var(--muted); text-transform: none; }
 .admin-form input, .admin-form textarea, .admin-form select { display: block; width: 100%; margin-top: .45rem; padding: .75rem 0; border: 0; border-bottom: 1px solid #9b9891; border-radius: 0; outline: 0; background: transparent; color: inherit; }
 .admin-form textarea { resize: vertical; line-height: 1.6; }
@@ -603,24 +603,29 @@ main { min-height: 80vh; }
 .format-align-justify span { width: 13px; }
 .admin-actions { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
 .admin-actions button, .admin-actions a, .text-button, .admin-post-actions button, .admin-post-actions a { padding: .5rem 0; border: 0; border-bottom: 1px solid currentColor; background: transparent; font-size: .68rem; letter-spacing: .06em; cursor: pointer; }
+.admin-page button { font-size: 14px; }
+.admin-actions button, .text-button, .admin-post-actions button { font-size: .68rem; }
+.admin-actions a, .admin-post-actions a { font-size: inherit; }
 .admin-message { margin: 0 0 2rem; padding: .8rem 0; border-block: 1px solid rgba(20,20,20,.25); }
 .admin-error { color: #8b1a1a; }
 .admin-image-preview { width: auto; max-width: 16rem; max-height: 12rem; margin: -1rem 0 2rem; object-fit: contain; }
 .admin-post { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1rem 0; border-top: 1px solid rgba(20,20,20,.2); }
-.admin-post h3 { margin: .25rem 0 0; font-family: var(--serif); font-size: 1.25rem; font-weight: 400; }
+.admin-post h3 { margin: .25rem 0 0; font-family: var(--serif); font-size: inherit; font-weight: 400; }
+.admin-page .admin-eyebrow, .admin-page .admin-post-meta { font-size: inherit; }
 .admin-post-meta { margin: 0; }
 .admin-post-actions { display: flex; gap: 1rem; align-items: flex-start; }
 .admin-post-actions form { margin: 0; }
 .admin-navigation { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 1rem 1.5rem; }
 .admin-navigation form { margin: 0; }
 .admin-navigation a, .admin-primary-link, .admin-inline-form button, .admin-account summary { border-bottom: 1px solid currentColor; font-size: .68rem; letter-spacing: .06em; cursor: pointer; }
+.admin-navigation a, .admin-primary-link, .admin-account summary { font-size: inherit; }
 .admin-dashboard { max-width: 42rem; padding-top: 3rem; }
 .admin-account { padding: 1.25rem 0; border-top: 1px solid rgba(20,20,20,.2); }
-.admin-account h3 { margin: 0 0 .3rem; font-family: var(--serif); font-size: 1.4rem; font-weight: 400; }
+.admin-account h3 { margin: 0 0 .3rem; font-family: var(--serif); font-size: inherit; font-weight: 400; }
 .admin-account details { margin: 1rem 0; }
 .admin-form.compact { max-width: 25rem; padding-top: 1rem; }
 .admin-inline-form { display: flex; gap: 1rem; align-items: end; margin: 1rem 0; }
-.admin-inline-form label { font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.admin-inline-form label { font-size: inherit; letter-spacing: .06em; text-transform: uppercase; }
 .admin-inline-form select { display: block; margin-top: .3rem; }
 .admin-inline-form button { padding: .35rem 0; border-width: 0 0 1px; background: transparent; }
 
@@ -745,7 +750,6 @@ main { min-height: 80vh; }
   .contact-form textarea { min-width: 0; font-size: 24px; }
   .contact-form button { min-width: 44px; min-height: 44px; }
   .news-post { padding-bottom: 4.5rem; }
-  .admin-shell h1 { font-size: clamp(2.25rem, 14vw, 4rem); }
   .admin-post { flex-direction: column; }
   .admin-inline-form { flex-wrap: wrap; align-items: flex-start; }
 }
