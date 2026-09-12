@@ -7,11 +7,33 @@ require_once __DIR__ . '/config.php';
 $artist = [
     'About' => '',
     'Photo_URL' => '',
+    'FILMOGRAPHY' => '',
+    'SOLO EXHIBITIONS' => '',
+    'GROUP EXHIBITIONS' => '',
+    'WRITING' => '',
+    'JURY & PROFESSIONAL ACTIVITIES' => '',
+    'TEACHING' => '',
+    'ARTIST RESIDENCY' => '',
+    'WORKSHOPS & MASTERCLASSES' => '',
+    'MEMBERSHIP' => '',
 ];
 
 try {
     $artistStatement = db()->query(
-        'SELECT `About`, `Photo_URL` FROM `Artist` LIMIT 1'
+        'SELECT
+            `About`,
+            `Photo_URL`,
+            `FILMOGRAPHY`,
+            `SOLO EXHIBITIONS`,
+            `GROUP EXHIBITIONS`,
+            `WRITING`,
+            `JURY & PROFESSIONAL ACTIVITIES`,
+            `TEACHING`,
+            `ARTIST RESIDENCY`,
+            `WORKSHOPS & MASTERCLASSES`,
+            `MEMBERSHIP`
+        FROM `Artist`
+        LIMIT 1'
     );
     $artistRecord = $artistStatement->fetch(PDO::FETCH_ASSOC);
     if (is_array($artistRecord)) {
@@ -25,6 +47,18 @@ function about_h(mixed $value): string
 {
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
+
+$selectedCvFields = [
+    'FILMOGRAPHY',
+    'SOLO EXHIBITIONS',
+    'GROUP EXHIBITIONS',
+    'WRITING',
+    'JURY & PROFESSIONAL ACTIVITIES',
+    'TEACHING',
+    'ARTIST RESIDENCY',
+    'WORKSHOPS & MASTERCLASSES',
+    'MEMBERSHIP',
+];
 ?>
 <!doctype html>
 <html lang="en">
@@ -66,6 +100,17 @@ function about_h(mixed $value): string
 <section class="about-layout">
 <figure class="reveal">
 <img src="<?= about_h($artist['Photo_URL']) ?>" alt="Portrait of artist Laleh Barzegar in her studio">
+<section class="selected-cv" aria-labelledby="selected-cv-title">
+<h2 id="selected-cv-title">SELECTED CV</h2>
+<?php foreach ($selectedCvFields as $field): ?>
+<?php if (!empty($artist[$field])): ?>
+<div class="selected-cv-section">
+<h3 class="selected-cv-category"><?= about_h($field) ?></h3>
+<p><?= nl2br(about_h($artist[$field])) ?></p>
+</div>
+<?php endif; ?>
+<?php endforeach; ?>
+</section>
 </figure>
 <article class="about-copy reveal">
 <h2>Laleh Barzegar</h2>

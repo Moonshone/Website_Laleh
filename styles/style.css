@@ -489,6 +489,11 @@ main { min-height: 80vh; }
 .about-copy { padding-top: 8vw; }
 .about-copy h2 { margin: 0 0 3rem; font-family: var(--serif); font-size: clamp(1.89rem, 3.5vw, 3.78rem); font-weight: 400; line-height: .95; }
 .about-copy p { max-width: 36rem; margin: 0 0 1.5rem; }
+.selected-cv { margin-top: 3rem; }
+.selected-cv > h2 { margin: 0 0 2rem; font-size: 1em; font-weight: 700; }
+.selected-cv-section { margin-bottom: 2rem; }
+.selected-cv-category { margin: 0 0 .5rem; font-size: 1.2em; }
+.selected-cv-section p { margin: 0; font-size: 1em; }
 
 .contact-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 10vw; padding: 0 var(--gutter) 12vw; }
 .contact-details p { margin: 0 0 .4rem; }
