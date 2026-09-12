@@ -82,7 +82,13 @@ try {
             $content = sanitize_news_rich_text(trim((string) ($_POST['content'] ?? '')));
             $titleFormat = news_format_from_post('title', false);
             $textFormat = news_format_from_post('text', true);
-            $status = $action === 'publish' ? 'published' : 'draft';
+            // The selected status is part of the post being edited. In particular,
+            // saving changes to a published post must not silently turn it into a
+            // draft. Keep accepting the old "publish" action for compatibility.
+            $submittedStatus = (string) ($_POST['status'] ?? '');
+            $status = in_array($submittedStatus, ['draft', 'published'], true)
+                ? $submittedStatus
+                : ($action === 'publish' ? 'published' : 'draft');
             $status = in_array($status, ['draft', 'published'], true) ? $status : 'draft';
             $dateInput = trim((string) ($_POST['published_at'] ?? ''));
             $date = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $dateInput);
@@ -96,12 +102,23 @@ try {
             if ($status === 'published' && !$validDate) {
                 throw new RuntimeException('Please enter a valid publication date and time.');
             }
-            $publishedAt = $validDate ? $date->format('Y-m-d H:i:s') : null;
             $oldImage = null;
+            $storedPublishedAt = null;
             if ($id) {
-                $statement = db()->prepare('SELECT image FROM news_posts WHERE id = :id');
+                $statement = db()->prepare('SELECT image, published_at FROM news_posts WHERE id = :id');
                 $statement->execute(['id' => $id]);
-                $oldImage = $statement->fetchColumn() ?: null;
+                $storedPost = $statement->fetch();
+                if (!$storedPost) {
+                    throw new RuntimeException('The news post to edit could not be found.');
+                }
+                $oldImage = $storedPost['image'] ?: null;
+                $storedPublishedAt = $storedPost['published_at'] ?: null;
+            }
+            $publishedAt = $validDate ? $date->format('Y-m-d H:i:s') : null;
+            if ($validDate && $storedPublishedAt && date('Y-m-d\TH:i', strtotime((string) $storedPublishedAt)) === $dateInput) {
+                // datetime-local only submits minutes; retain the exact stored value
+                // when the admin did not actually alter the displayed date.
+                $publishedAt = $storedPublishedAt;
             }
             $image = $oldImage;
             if (isset($_FILES['image']) && ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
@@ -124,7 +141,9 @@ try {
             if ($image !== $oldImage) {
                 delete_news_image($oldImage);
             }
-            $_SESSION['flash'] = $status === 'published' ? 'The news post was published.' : 'The draft was saved.';
+            $_SESSION['flash'] = $id
+                ? 'The news post was updated.'
+                : ($status === 'published' ? 'The news post was published.' : 'The draft was saved.');
             header('Location: news.php');
             exit;
         }
@@ -144,7 +163,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $editing = [
             'id' => (string) ($_POST['id'] ?? ''), 'title' => (string) ($_POST['title'] ?? ''),
-            'content' => (string) ($_POST['content'] ?? ''), 'image' => null,
+            'content' => (string) ($_POST['content'] ?? ''), 'image' => $oldImage ?? null,
             'status' => (string) ($_POST['status'] ?? 'draft'), 'published_at' => (string) ($_POST['published_at'] ?? ''),
         ] + [
             'title_font_size' => $_POST['title_font_size'] ?? null, 'title_bold' => (int) (($_POST['title_bold'] ?? '0') === '1'),
@@ -172,15 +191,16 @@ unset($_SESSION['flash']);
 </div><input class="news-title-editor" id="news-title" name="title" maxlength="255" value="<?= h($editing['title']) ?>" style="<?= h(news_editor_format_style($editing, 'title', false)) ?>" required></div>
 <div class="admin-format-field"><label for="news-content">Text</label>
 <div class="format-toolbar" data-rich-text-toolbar data-format-target="news-content" aria-label="Text formatting">
+<?php foreach (['font_size', 'bold', 'italic', 'underline', 'alignment'] as $format): ?><input type="hidden" name="text_<?= $format ?>" value="<?= h((string) ($editing['text_' . $format] ?? '')) ?>"><?php endforeach; ?>
 <label class="format-size"><span>Size</span><select data-rich-text-size aria-label="Text font size"><option value="">Default</option><?php foreach (NEWS_FONT_SIZES as $size): ?><option value="<?= $size ?>"><?= $size ?></option><?php endforeach; ?></select></label>
 <?php foreach (['bold' => 'B', 'italic' => 'I', 'underline' => 'U'] as $format => $caption): ?><button type="button" class="format-button format-<?= $format ?>" data-rich-text-command="<?= $format ?>" aria-pressed="false" title="<?= ucfirst($format) ?>"><?= $caption ?></button><?php endforeach; ?>
 <div class="format-alignments" role="group" aria-label="Text alignment"><?php foreach (['justifyLeft' => ['left', 'Align left'], 'justifyCenter' => ['center', 'Align center'], 'justifyRight' => ['right', 'Align right'], 'justifyFull' => ['justify', 'Justify']] as $command => [$alignment, $label]): ?><button type="button" class="format-button format-align format-align-<?= $alignment ?>" data-rich-text-command="<?= $command ?>" aria-label="<?= $label ?>" aria-pressed="false"><span></span><span></span><span></span></button><?php endforeach; ?></div>
-</div><div class="news-content-editor" id="news-content" contenteditable="true" role="textbox" aria-multiline="true" aria-required="true"><?= news_rich_text_for_editor((string) $editing['content']) ?></div><textarea class="news-content-value" name="content" hidden><?= h((string) $editing['content']) ?></textarea></div>
+</div><div class="news-content-editor" id="news-content" contenteditable="true" role="textbox" aria-multiline="true" aria-required="true" style="<?= h(news_editor_format_style($editing, 'text', true)) ?>"><?= news_rich_text_for_editor((string) $editing['content']) ?></div><textarea class="news-content-value" name="content" hidden><?= h((string) $editing['content']) ?></textarea></div>
 <label>Image <span>(JPG, PNG or WEBP, max. 8 MB)</span><input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
-<?php if ($editing['image']): ?><img class="admin-image-preview" src="../<?= h($editing['image']) ?>" alt="Current post image"><?php endif; ?>
-<label>Current status <span>(set with the buttons below)</span><select disabled><option value="draft"<?= $editing['status'] === 'draft' ? ' selected' : '' ?>>Draft</option><option value="published"<?= $editing['status'] === 'published' ? ' selected' : '' ?>>Published</option></select></label>
+<?php if ($editing['image']): ?><div class="admin-current-image"><span>Current image (kept unless you select a replacement)</span><img class="admin-image-preview" src="../<?= h($editing['image']) ?>" alt="Current post image"></div><?php endif; ?>
+<label>Status<select name="status"><option value="draft"<?= $editing['status'] === 'draft' ? ' selected' : '' ?>>Draft</option><option value="published"<?= $editing['status'] === 'published' ? ' selected' : '' ?>>Published</option></select></label>
 <label>Publication date<input type="datetime-local" name="published_at" value="<?= h($publicationValue) ?>"></label>
-<div class="admin-actions"><button type="submit" name="action" value="save">SAVE DRAFT</button><button type="submit" name="action" value="publish">PUBLISH</button><?php if ($editing['id']): ?><a href="news.php">CANCEL</a><?php endif; ?></div>
+<div class="admin-actions"><button type="submit" name="action" value="save"><?= $editing['id'] ? 'SAVE CHANGES' : 'CREATE POST' ?></button><?php if ($editing['id']): ?><a href="news.php">CANCEL</a><?php endif; ?></div>
 </form></section><section><h2>Existing posts</h2><div class="admin-posts">
 <?php if (!$posts): ?><p>No news posts have been created.</p><?php endif; ?>
 <?php foreach ($posts as $post): ?><article class="admin-post"><div><p class="admin-post-meta"><?= h(ucfirst($post['status'])) ?> · <?= h($post['published_at'] ?: 'No publication date') ?></p><h3><?= h($post['title']) ?></h3></div><div class="admin-post-actions"><a href="?edit=<?= (int) $post['id'] ?>">EDIT</a><form method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int) $post['id'] ?>"><input type="hidden" name="status" value="<?= $post['status'] === 'published' ? 'draft' : 'published' ?>"><button type="submit" name="action" value="toggle"><?= $post['status'] === 'published' ? 'UNPUBLISH' : 'PUBLISH' ?></button></form><form method="post" onsubmit="return confirm('Delete this post permanently?');"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int) $post['id'] ?>"><button type="submit" name="action" value="delete">DELETE</button></form></div></article><?php endforeach; ?>

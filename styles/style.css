@@ -612,6 +612,9 @@ main { min-height: 80vh; }
 .admin-message { margin: 0 0 2rem; padding: .8rem 0; border-block: 1px solid rgba(20,20,20,.25); }
 .admin-error { color: #8b1a1a; }
 .admin-image-preview { width: auto; max-width: 16rem; max-height: 12rem; margin: -1rem 0 2rem; object-fit: contain; }
+.admin-current-image { display: grid; justify-items: start; gap: 1.25rem; margin: -1rem 0 2rem; }
+.admin-current-image > span { color: var(--muted); font-size: .68rem; letter-spacing: .04em; }
+.admin-current-image .admin-image-preview { margin: 0; }
 .admin-post { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1rem 0; border-top: 1px solid rgba(20,20,20,.2); }
 .admin-post h3 { margin: .25rem 0 0; font-family: var(--serif); font-size: inherit; font-weight: 400; }
 .admin-page .admin-eyebrow, .admin-page .admin-post-meta { font-size: inherit; }
