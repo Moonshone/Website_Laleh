@@ -99,7 +99,11 @@ function paintings_details(array $activity): string
 </head>
 <body id="top">
 <?php render_navigation('paintings'); ?>
-<main class="paintings-page">
+<main>
+<header class="page-title-header">
+<h1 class="page-title">PAINTINGS</h1>
+</header>
+<div class="paintings-page">
 <?php if ($paintingsUnavailable): ?>
 <p class="paintings-message">Paintings are temporarily unavailable.</p>
 <?php elseif ($paintingActivities === []): ?>
@@ -142,6 +146,7 @@ $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $ac
 <?php endif; ?>
 </article>
 <?php endforeach; ?>
+</div>
 </main>
 <footer class="site-footer"><span>© <span data-year>2026</span> Laleh Barzegar</span><a href="#top">Back to top</a></footer>
 <script src="src/script.js"></script>

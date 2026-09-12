@@ -219,12 +219,12 @@ main { min-height: 80vh; }
   border: 0;
 }
 
-.page-header { padding: clamp(9rem, 18vh, 13rem) var(--gutter) clamp(5rem, 9vw, 9rem); }
-.page-header h1 {
+.page-title-header { padding: clamp(9rem, 18vh, 13rem) var(--gutter) clamp(5rem, 9vw, 9rem); }
+.page-title {
   max-width: 90%; margin: 0;
-  font-family: var(--serif); font-size: clamp(2.8rem, 7.7vw, 7rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
+  font-family: var(--serif); font-size: clamp(1.12rem, 3.08vw, 2.8rem); font-weight: 400; letter-spacing: -.055em; line-height: .85;
 }
-.page-header p { max-width: 30rem; margin: 2.5rem 0 0 auto; color: var(--muted); }
+.page-title-header p { max-width: 30rem; margin: 2.5rem 0 0 auto; color: var(--muted); }
 .news-admin-back { display: inline-block; margin-top: 2.5rem; border-bottom: 1px solid currentColor; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
 .gallery { padding: 0 var(--gutter) 12vw; }
 .gallery-item { margin: 0 0 clamp(7rem, 14vw, 14rem); }
