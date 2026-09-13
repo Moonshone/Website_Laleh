@@ -3,6 +3,10 @@
 declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
 
+const ADMIN_LOGIN_FAILED_ATTEMPTS = 10;
+const ADMIN_LOGIN_WINDOW_SECONDS = 600;
+const ADMIN_LOGIN_THROTTLE_SECONDS = 300;
+
 if (!empty($_SESSION['admin_id'])) {
     header('Location: dashboard.php');
     exit;
@@ -58,7 +62,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Limit only this normalized username/address pair. Shared hotel,
             // mobile, VPN, and public-Wi-Fi addresses remain valid login paths
             // for other accounts, and no address is permanently denied.
-            $loginLimit = rate_limit_consume($pdo, 'admin_login_username_ip', $loginLimitKey, 10, 600, 300);
+            // rate_limit_consume rejects the event which reaches its limit.
+            // Use one more than the allowed failure count so ten failed
+            // logins remain possible before the five-minute throttle starts.
+            $loginLimit = rate_limit_consume(
+                $pdo,
+                'admin_login_username_ip',
+                $loginLimitKey,
+                ADMIN_LOGIN_FAILED_ATTEMPTS + 1,
+                ADMIN_LOGIN_WINDOW_SECONDS,
+                ADMIN_LOGIN_THROTTLE_SECONDS
+            );
             if (!$loginLimit['allowed']) {
                 send_rate_limit_headers($loginLimit['retry_after']);
                 $error = 'Too many login attempts. Please try again later.';
