@@ -97,10 +97,10 @@ try {
 
             $titleLength = preg_match_all('/./us', $title);
             if ($title === '' || $titleLength === false || $titleLength > 255 || !news_rich_text_has_content($content)) {
-                throw new RuntimeException('Please enter a title of up to 255 characters and the post text.');
+                throw new PublicMessageException('Please enter a title of up to 255 characters and the post text.');
             }
             if ($status === 'published' && !$validDate) {
-                throw new RuntimeException('Please enter a valid publication date and time.');
+                throw new PublicMessageException('Please enter a valid publication date and time.');
             }
             $oldImage = null;
             $storedPublishedAt = null;
@@ -109,7 +109,7 @@ try {
                 $statement->execute(['id' => $id]);
                 $storedPost = $statement->fetch();
                 if (!$storedPost) {
-                    throw new RuntimeException('The news post to edit could not be found.');
+                    throw new PublicMessageException('The news post to edit could not be found.');
                 }
                 $oldImage = $storedPost['image'] ?: null;
                 $storedPublishedAt = $storedPost['published_at'] ?: null;
@@ -158,7 +158,7 @@ try {
     $posts = db()->query('SELECT id, title, image, status, published_at, updated_at FROM news_posts ORDER BY created_at DESC')->fetchAll();
 } catch (Throwable $exception) {
     error_log($exception->getMessage());
-    $error = $exception instanceof RuntimeException ? $exception->getMessage() : 'The database request could not be completed.';
+    $error = $exception instanceof PublicMessageException ? $exception->getMessage() : 'The database request could not be completed.';
     $posts = $posts ?? [];
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $editing = [

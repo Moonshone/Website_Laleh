@@ -13,16 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newPassword = (string) ($_POST['new_password'] ?? '');
         $confirmation = (string) ($_POST['new_password_confirmation'] ?? '');
         if (strlen($newPassword) < 12) {
-            throw new RuntimeException('The new password must contain at least 12 characters.');
+            throw new PublicMessageException('The new password must contain at least 12 characters.');
         }
         if (!hash_equals($newPassword, $confirmation)) {
-            throw new RuntimeException('The new passwords do not match.');
+            throw new PublicMessageException('The new passwords do not match.');
         }
         $statement = db()->prepare('SELECT password_hash FROM admins WHERE id = :id LIMIT 1');
         $statement->execute(['id' => (int) $_SESSION['admin_id']]);
         $currentHash = $statement->fetchColumn();
         if (!is_string($currentHash) || !password_verify($currentPassword, $currentHash)) {
-            throw new RuntimeException('The current password is incorrect.');
+            throw new PublicMessageException('The current password is incorrect.');
         }
         $pdo = db();
         $statement = $pdo->prepare('UPDATE admins SET password_hash = :password_hash, session_version = session_version + 1 WHERE id = :id');
@@ -34,13 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $statement->execute(['id' => (int) $_SESSION['admin_id']]);
         $sessionVersion = $statement->fetchColumn();
         if ($sessionVersion === false) {
-            throw new RuntimeException('The password could not be changed. Please try again.');
+            throw new PublicMessageException('The password could not be changed. Please try again.');
         }
         $_SESSION['session_version'] = (int) $sessionVersion;
         session_regenerate_id(true);
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         $success = 'Password changed successfully.';
-    } catch (RuntimeException $exception) {
+    } catch (PublicMessageException $exception) {
         $error = $exception->getMessage();
     } catch (Throwable $exception) {
         error_log($exception->getMessage());
