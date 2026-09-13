@@ -5,17 +5,73 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/config.php';
 require_once dirname(__DIR__) . '/includes/rate-limit.php';
 
+const ADMIN_SESSION_IDLE_TIMEOUT_SECONDS = 60 * 60;
+const ADMIN_SESSION_MAX_LIFETIME_SECONDS = 12 * 60 * 60;
+const ADMIN_SESSION_REGENERATION_INTERVAL_SECONDS = 30 * 60;
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.use_strict_mode', '1');
     session_name('laleh_admin');
     session_set_cookie_params([
         'httponly' => true,
-        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'secure' => true,
         'samesite' => 'Strict',
         'path' => '/',
     ]);
     session_start();
 }
+
+function destroy_admin_session(): void
+{
+    $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+        $parameters = session_get_cookie_params();
+        setcookie(session_name(), '', [
+            'expires' => time() - 42000,
+            'path' => $parameters['path'],
+            'domain' => $parameters['domain'],
+            'secure' => $parameters['secure'],
+            'httponly' => $parameters['httponly'],
+            'samesite' => $parameters['samesite'],
+        ]);
+    }
+    session_destroy();
+}
+
+function admin_session_is_expired(int $now): bool
+{
+    $createdAt = (int) ($_SESSION['created_at'] ?? 0);
+    $lastActivity = (int) ($_SESSION['last_activity'] ?? 0);
+
+    return $createdAt <= 0
+        || $lastActivity <= 0
+        || $now - $lastActivity >= ADMIN_SESSION_IDLE_TIMEOUT_SECONDS
+        || $now - $createdAt >= ADMIN_SESSION_MAX_LIFETIME_SECONDS;
+}
+
+function maintain_admin_session(): void
+{
+    if (empty($_SESSION['admin_id'])) {
+        return;
+    }
+
+    $now = time();
+    if (admin_session_is_expired($now)) {
+        destroy_admin_session();
+        header('Location: /admin/login.php?session_expired=1');
+        exit;
+    }
+
+    $lastRegeneration = (int) ($_SESSION['last_regeneration'] ?? 0);
+    if ($lastRegeneration <= 0 || $now - $lastRegeneration >= ADMIN_SESSION_REGENERATION_INTERVAL_SECONDS) {
+        if (session_regenerate_id(true)) {
+            $_SESSION['last_regeneration'] = $now;
+        }
+    }
+    $_SESSION['last_activity'] = $now;
+}
+
+maintain_admin_session();
 
 function h(?string $value): string
 {

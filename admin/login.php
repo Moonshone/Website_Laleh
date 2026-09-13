@@ -51,6 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['username'] = (string) $admin['username'];
                 $_SESSION['role'] = (string) $admin['role'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                $now = time();
+                $_SESSION['created_at'] = $now;
+                $_SESSION['last_activity'] = $now;
+                $_SESSION['last_regeneration'] = $now;
                 header('Location: dashboard.php');
                 exit;
             }
@@ -94,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>News administration — Laleh Barzegar</title><link rel="stylesheet" href="../styles/style.css"></head>
 <body class="admin-page"><main class="admin-shell admin-login"><p class="admin-eyebrow">Laleh Barzegar</p><h1>News administration</h1>
+<?php if (($_GET['session_expired'] ?? '') === '1'): ?><p class="admin-message" role="status">Your session has expired. Please sign in again.</p><?php endif; ?>
 <?php if ($error): ?><p class="admin-message admin-error" role="alert"><?= h($error) ?></p><?php endif; ?>
 <form class="admin-form" method="post"><input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
 <label>Username<input name="username" autocomplete="username" required></label><label>Password<input type="password" name="password" autocomplete="current-password" required></label><button type="submit">LOG IN</button></form><p><a class="admin-primary-link" href="/admin/forgot-password.php">Forgot password?</a></p></main></body></html>
