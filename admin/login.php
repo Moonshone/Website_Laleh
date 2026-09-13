@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Limit only this normalized username/address pair. Shared hotel,
             // mobile, VPN, and public-Wi-Fi addresses remain valid login paths
             // for other accounts, and no address is permanently denied.
-            $loginLimit = rate_limit_consume($pdo, 'admin_login_username_ip', $loginLimitKey, 5, 600, 60);
+            $loginLimit = rate_limit_consume($pdo, 'admin_login_username_ip', $loginLimitKey, 10, 600, 300);
             if (!$loginLimit['allowed']) {
                 send_rate_limit_headers($loginLimit['retry_after']);
                 $error = 'Too many login attempts. Please try again later.';
