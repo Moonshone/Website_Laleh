@@ -15,14 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $normalizedUsername = strtolower($username);
     $password = (string) ($_POST['password'] ?? '');
     $ipAddress = client_ip_address();
+    $loginLimitKey = admin_login_rate_limit_key($normalizedUsername, $ipAddress);
     $limited = false;
     try {
         $pdo = db();
-        $ipLimit = rate_limit_status($pdo, 'admin_login_ip', $ipAddress);
-        $usernameLimit = rate_limit_status($pdo, 'admin_login_username', $normalizedUsername);
-        if (!$ipLimit['allowed'] || !$usernameLimit['allowed']) {
-            $retryAfter = max($ipLimit['retry_after'], $usernameLimit['retry_after']);
-            send_rate_limit_headers($retryAfter);
+        $loginLimit = rate_limit_status($pdo, 'admin_login_username_ip', $loginLimitKey);
+        if (!$loginLimit['allowed']) {
+            send_rate_limit_headers($loginLimit['retry_after']);
             $error = 'Too many login attempts. Please try again later.';
             $limited = true;
         }
@@ -40,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['username'] = (string) $admin['username'];
                 $_SESSION['role'] = (string) $admin['role'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                rate_limit_clear($pdo, 'admin_login_username', $normalizedUsername);
+                rate_limit_clear($pdo, 'admin_login_username_ip', $loginLimitKey);
                 header('Location: dashboard.php');
                 exit;
             }
@@ -56,10 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$limited && $error === '') {
         try {
             $pdo = db();
-            $ipLimit = rate_limit_consume($pdo, 'admin_login_ip', $ipAddress, 20, 900, 900);
-            $usernameLimit = rate_limit_consume($pdo, 'admin_login_username', $normalizedUsername, 8, 900, 900);
-            if (!$ipLimit['allowed'] || !$usernameLimit['allowed']) {
-                send_rate_limit_headers(max($ipLimit['retry_after'], $usernameLimit['retry_after']));
+            // Limit only this normalized username/address pair. Shared hotel,
+            // mobile, VPN, and public-Wi-Fi addresses remain valid login paths
+            // for other accounts, and no address is permanently denied.
+            $loginLimit = rate_limit_consume($pdo, 'admin_login_username_ip', $loginLimitKey, 5, 600, 60);
+            if (!$loginLimit['allowed']) {
+                send_rate_limit_headers($loginLimit['retry_after']);
                 $error = 'Too many login attempts. Please try again later.';
             }
         } catch (Throwable $exception) {
