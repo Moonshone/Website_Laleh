@@ -18,13 +18,16 @@ try {
     );
     $paintingActivities = $activityStatement->fetchAll(PDO::FETCH_ASSOC);
 
-    $schemaStatement = $connection->prepare(
-        'SELECT `COLUMN_NAME`
+    $schemaStatement = $connection->query(
+        'SELECT `TABLE_NAME`, `COLUMN_NAME`
          FROM `INFORMATION_SCHEMA`.`COLUMNS`
          WHERE `TABLE_SCHEMA` = DATABASE()
-           AND `TABLE_NAME` = :table_name
            AND `COLUMN_NAME` IN (\'ActivityID\', \'URL\')'
     );
+    $columnsByTable = [];
+    foreach ($schemaStatement->fetchAll(PDO::FETCH_ASSOC) as $column) {
+        $columnsByTable[(string) $column['TABLE_NAME']][(string) $column['COLUMN_NAME']] = true;
+    }
 
     foreach ($paintingActivities as &$paintingActivity) {
         $paintingActivity['images'] = [];
@@ -38,13 +41,7 @@ try {
             $tableName = $repetitionTableNamesByActivityId[$activityId] ?? $tableName;
         }
 
-        $tableColumns = [];
-        if ($tableName !== '') {
-            $schemaStatement->execute(['table_name' => $tableName]);
-            foreach ($schemaStatement->fetchAll(PDO::FETCH_COLUMN) as $columnName) {
-                $tableColumns[(string) $columnName] = true;
-            }
-        }
+        $tableColumns = $columnsByTable[$tableName] ?? [];
 
         // A dynamic identifier cannot be parameter-bound. Only query the exact table
         // named by the activity after confirming both required columns in that table.
@@ -111,6 +108,7 @@ function paintings_details(array $activity): string
 <p class="paintings-message">No painting activities are available.</p>
 <?php endif; ?>
 
+<?php $paintingImageIndex = 0; ?>
 <?php foreach ($paintingActivities as $activityIndex => $paintingActivity): ?>
 <?php
 $images = array_values(array_filter(array_map('safe_media_url', $paintingActivity['images']), static fn (?string $url): bool => $url !== null));
@@ -129,8 +127,9 @@ $details = paintings_details($paintingActivity);
 <?php if ($imageCount > 0): ?>
 <div class="painting-slideshow" id="<?= paintings_h($slideshowId) ?>" data-painting-slideshow aria-label="<?= paintings_h($paintingActivity['Name']) ?> slideshow">
 <?php foreach ($images as $imageIndex => $imageUrl): ?>
+<?php $isPriorityImage = $paintingImageIndex++ === 0; ?>
 <div class="painting-slide<?= $imageIndex === 0 ? ' is-active' : '' ?>" data-painting-slide<?= $imageIndex === 0 ? '' : ' hidden' ?>>
-<img src="<?= paintings_h($imageUrl) ?>" alt=""<?= $imageIndex === 0 ? '' : ' loading="lazy"' ?>>
+<img src="<?= paintings_h($imageUrl) ?>" alt="" decoding="async" loading="<?= $isPriorityImage ? 'eager' : 'lazy' ?>" fetchpriority="<?= $isPriorityImage ? 'high' : 'low' ?>">
 </div>
 <?php endforeach; ?>
 <?php if ($imageCount > 1): ?>
