@@ -810,14 +810,33 @@ main { min-height: 80vh; }
   .admin-header, .admin-post { align-items: flex-start; }
   .site-footer { align-items: flex-end; }
   .home-hero-heading {
-    left: 1rem;
-    right: 4.5rem;
+    top: clamp(5rem, 12vh, 7rem);
+    right: clamp(20px, 5vw, 40px);
+    bottom: auto;
+    left: clamp(20px, 5vw, 40px);
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    justify-content: flex-start;
+    gap: clamp(4px, 1.5vw, 8px);
+    transform: none;
   }
-  .home-hero h1 { font-size: clamp(.75264rem, 3.63776vw, 1.568rem); letter-spacing: -.045em; }
-  .home-hero-professions { font-size: clamp(.3687936rem, 1.7825024vw, .76832rem); }
+  .home-hero-heading > h1,
+  .home-hero-heading > .home-hero-professions {
+    position: static;
+    inset: auto;
+    transform: none;
+  }
+  .home-hero h1 {
+    max-width: 100%;
+    margin: 0;
+    font-size: clamp(1.125rem, 4.8vw, 1.568rem);
+    letter-spacing: -.045em;
+  }
+  .home-hero-professions {
+    width: 100%;
+    margin: 0;
+    font-size: clamp(.65rem, 2.4vw, .76832rem);
+  }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
   .home-sequence { padding-top: 0; }
   .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }
