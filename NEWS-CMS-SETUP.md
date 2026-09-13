@@ -9,6 +9,7 @@ The CMS uses PHP, PDO, MySQL, PHP sessions, and the existing site styles. It doe
 - `config.local.example.php` remains the separate template for application URL and mail settings.
 - `database/schema.sql` creates the complete `admins`, `password_resets`, and `news_posts` tables on a new installation.
 - `database/add-password-recovery.sql` adds administrator email addresses and reset tokens to an existing installation.
+- `database/add-admin-session-version.sql` adds the session version used to revoke existing administrator sessions after a password change or reset.
 - `database/add-admin-role.sql` safely adds roles to a pre-existing role-less `admins` table and makes its oldest account a superadmin. Run this migration **only if** that table already exists without `role`; do not run it after `schema.sql`.
 - `database/add-news-formatting.sql` adds the independent title and text formatting settings to an existing `news_posts` table. Run it once before deploying the updated NEWS editor; new installations already receive these columns from `schema.sql`.
 - `admin/` contains login, logout, password recovery, account, dashboard, NEWS editing, administrator management, authentication, authorization, CSRF, and upload code.
@@ -29,7 +30,7 @@ For a new CMS installation, open DreamHost phpMyAdmin for `neweshtaniha`, select
 - `password_resets`: hashed, expiring, one-time reset records linked to administrators.
 - `news_posts`: title, long article content, optional public image path, draft/published status, publication date, and timestamps.
 
-`CREATE TABLE IF NOT EXISTS` does not alter existing tables. For an existing CMS, follow `database/add-password-recovery.sql`: add the nullable email column, assign a real and unique email to every existing administrator, and only then apply its `NOT NULL`/unique constraint and create `password_resets`. If the older `admins` table also lacks `role`, run `database/add-admin-role.sql` first. Back up the database before migrations and never rerun an `ALTER` migration after it succeeds.
+`CREATE TABLE IF NOT EXISTS` does not alter existing tables. For an existing CMS, follow `database/add-password-recovery.sql`: add the nullable email column, assign a real and unique email to every existing administrator, and only then apply its `NOT NULL`/unique constraint and create `password_resets`. If the older `admins` table also lacks `role`, run `database/add-admin-role.sql` first. Run `database/add-admin-session-version.sql` once before deploying the session-version PHP changes. Back up the database before migrations and never rerun an `ALTER` migration after it succeeds.
 
 ## 2. Create the private DreamHost database configuration
 
@@ -119,7 +120,7 @@ This is an **emergency fallback only**. First fix or check `APP_URL`, `MAIL_FROM
    ```
 
 2. Run it once with `php emergency-password-hash.php`, enter a strong temporary password, and copy the resulting `$2y$...` hash. Terminal input may be visible while typing, so perform this privately and never put the plain password in a shell command, SQL statement, file, ticket, or chat.
-3. In phpMyAdmin, update only the intended account: `UPDATE admins SET password_hash = 'THE_COPIED_HASH' WHERE username = 'THE_EXACT_SUPERADMIN_USERNAME';`. Verify that exactly one row changed. The database receives only the one-way hash—not the plain password.
+3. In phpMyAdmin, update only the intended account and revoke its existing sessions: `UPDATE admins SET password_hash = 'THE_COPIED_HASH', session_version = session_version + 1 WHERE username = 'THE_EXACT_SUPERADMIN_USERNAME';`. Verify that exactly one row changed. The database receives only the one-way hash—not the plain password.
 4. Immediately delete the script with `rm emergency-password-hash.php`, clear the copied hash from the clipboard, log in, and change the temporary password again through **Account**.
 
 Never type a plain-text password directly into the database. Login uses `password_verify()` against a `password_hash()` value; storing plain text both exposes the credential to anyone with database access and prevents normal verification from working. Never deploy this emergency script to a web-accessible directory or leave it behind for reuse.

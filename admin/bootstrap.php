@@ -129,7 +129,7 @@ function authenticated_admin(): ?array
         return null;
     }
 
-    $statement = db()->prepare('SELECT username, role FROM admins WHERE id = :id LIMIT 1');
+    $statement = db()->prepare('SELECT username, role, session_version FROM admins WHERE id = :id LIMIT 1');
     $statement->execute(['id' => (int) $_SESSION['admin_id']]);
     $admin = $statement->fetch();
 
@@ -157,6 +157,12 @@ function require_admin(): void
     if (!$admin) {
         $_SESSION = [];
         session_regenerate_id(true);
+        header('Location: /admin/login.php');
+        exit;
+    }
+    if (!isset($_SESSION['session_version'])
+        || (int) $_SESSION['session_version'] !== (int) $admin['session_version']) {
+        destroy_admin_session();
         header('Location: /admin/login.php');
         exit;
     }

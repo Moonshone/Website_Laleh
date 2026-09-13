@@ -51,10 +51,17 @@ try {
             if (!hash_equals($password, (string) ($_POST['new_password_confirmation'] ?? ''))) {
                 throw new RuntimeException('The new passwords do not match.');
             }
-            $statement = db()->prepare('UPDATE admins SET password_hash = :password_hash WHERE id = :id');
+            $pdo = db();
+            $statement = $pdo->prepare('UPDATE admins SET password_hash = :password_hash, session_version = session_version + 1 WHERE id = :id');
             $statement->execute(['password_hash' => password_hash($password, PASSWORD_DEFAULT), 'id' => $targetId]);
             if ($statement->rowCount() !== 1) {
                 throw new RuntimeException('The administrator was not found.');
+            }
+            if ($targetId === (int) $_SESSION['admin_id']) {
+                $statement = $pdo->prepare('SELECT session_version FROM admins WHERE id = :id LIMIT 1');
+                $statement->execute(['id' => $targetId]);
+                $_SESSION['session_version'] = (int) $statement->fetchColumn();
+                session_regenerate_id(true);
             }
             $_SESSION['flash'] = 'The password was changed.';
         } elseif ($action === 'role' && $targetId) {

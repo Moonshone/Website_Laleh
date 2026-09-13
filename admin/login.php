@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if (!$limited && $username !== '' && $password !== '') {
         try {
-            $statement = db()->prepare('SELECT id, username, password_hash, role FROM admins WHERE username = :username LIMIT 1');
+            $statement = db()->prepare('SELECT id, username, password_hash, session_version, role FROM admins WHERE username = :username LIMIT 1');
             $statement->execute(['username' => $username]);
             $admin = $statement->fetch();
             if ($admin && password_verify($password, $admin['password_hash'])) {
@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['admin_id'] = (int) $admin['id'];
                 $_SESSION['username'] = (string) $admin['username'];
                 $_SESSION['role'] = (string) $admin['role'];
+                $_SESSION['session_version'] = (int) $admin['session_version'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 $now = time();
                 $_SESSION['created_at'] = $now;
