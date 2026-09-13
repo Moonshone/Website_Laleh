@@ -127,7 +127,7 @@ $selectedCvColumns = array_values(array_filter($selectedCvColumns));
 </section>
 <section class="selected-cv reveal" aria-labelledby="selected-cv-title">
 <h2 id="selected-cv-title">SELECTED CV</h2>
-<div class="selected-cv-grid" data-selected-cv-grid>
+<div class="selected-cv-grid">
 <?php foreach ($selectedCvColumns as $column): ?>
 <div class="selected-cv-column">
 <?php foreach ($column as $field): ?>
@@ -151,8 +151,6 @@ $selectedCvColumns = array_values(array_filter($selectedCvColumns));
 <a href="#top">Back to top</a>
 </footer>
 <script src="src/script.js">
-</script>
-<script src="src/selected-cv.js">
 </script>
 </body>
 </html>
