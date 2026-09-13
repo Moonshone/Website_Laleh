@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/navigation.php';
+require_once __DIR__ . '/includes/media-security.php';
 
 $paintingActivities = [];
 $paintingsUnavailable = false;
@@ -112,7 +113,7 @@ function paintings_details(array $activity): string
 
 <?php foreach ($paintingActivities as $activityIndex => $paintingActivity): ?>
 <?php
-$images = $paintingActivity['images'];
+$images = array_values(array_filter(array_map('safe_media_url', $paintingActivity['images']), static fn (?string $url): bool => $url !== null));
 $imageCount = count($images);
 $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $activityIndex;
 $details = paintings_details($paintingActivity);

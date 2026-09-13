@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/navigation.php';
+require_once __DIR__ . '/includes/media-security.php';
 
 $books = [];
 $booksUnavailable = false;
@@ -52,7 +53,7 @@ function writing_h(mixed $value): string
 $year = trim((string) ($book['Year'] ?? ''));
 $language = trim((string) ($book['Language'] ?? ''));
 $description = trim((string) ($book['Description'] ?? ''));
-$imageUrl = (string) ($book['URL'] ?? '');
+$imageUrl = safe_media_url($book['URL'] ?? null);
 ?>
 <article class="book-entry reveal" data-book-id="<?= (int) $book['id'] ?>">
 <header class="book-entry-header">
@@ -63,7 +64,7 @@ $imageUrl = (string) ($book['URL'] ?? '');
 </header>
 <div class="book-entry-content">
 <div class="book-entry-image">
-<?php if ($imageUrl !== ''): ?>
+<?php if ($imageUrl !== null): ?>
 <img src="<?= writing_h($imageUrl) ?>" alt="">
 <?php endif; ?>
 </div>
