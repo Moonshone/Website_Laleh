@@ -1,5 +1,21 @@
 Options -Indexes
 
+# Enforce HTTPS at the document root so PHP entry points and static files,
+# including the admin area, share the same transport policy. Keep the two
+# supported host forms separate: this avoids reflecting an untrusted Host
+# header and does not introduce a new www/non-www canonicalisation policy.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} ^lalehbarzegar\.com(?::[0-9]+)?$ [NC]
+    RewriteRule ^ https://lalehbarzegar.com%{REQUEST_URI} [R=301,L,NE]
+
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} ^www\.lalehbarzegar\.com(?::[0-9]+)?$ [NC]
+    RewriteRule ^ https://www.lalehbarzegar.com%{REQUEST_URI} [R=301,L,NE]
+</IfModule>
+
 # Keep PHP diagnostics in the server log, including failures occurring before
 # the application bootstrap can configure PHP itself.
 <IfModule mod_php.c>
