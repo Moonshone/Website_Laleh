@@ -2,6 +2,15 @@
 /config/database.local.php
 /config.local.php
 
+# Environment files and private key material.
+.env
+.env.local
+.env.production
+*.key
+*.pem
+*.p12
+*.pfx
+
 # Uploaded CMS media; retain only server hardening in Git.
 /uploads/news/*
 !/uploads/news/.gitkeep
