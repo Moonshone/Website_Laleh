@@ -36,7 +36,7 @@ try {
         if (!$resetRow) {
             throw new RuntimeException('This password reset link is invalid, expired, or has already been used.');
         }
-        $update = $pdo->prepare('UPDATE admins SET password_hash = :password_hash WHERE id = :id');
+        $update = $pdo->prepare('UPDATE admins SET password_hash = :password_hash, session_version = session_version + 1 WHERE id = :id');
         $update->execute(['password_hash' => password_hash($newPassword, PASSWORD_DEFAULT), 'id' => (int) $resetRow['admin_id']]);
         if ($update->rowCount() !== 1) {
             throw new RuntimeException('This administrator account is no longer available.');
