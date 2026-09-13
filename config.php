@@ -4,7 +4,43 @@ declare(strict_types=1);
 
 // Never send database errors or stack traces to public visitors.
 ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
 ini_set('log_errors', '1');
+
+set_exception_handler(static function (Throwable $exception): void {
+    error_log((string) $exception);
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/plain; charset=utf-8');
+    }
+    echo 'An unexpected error occurred. Please try again later.';
+});
+
+/**
+ * Exceptions of this type contain deliberately written, visitor-safe text.
+ * All other exception messages are for the server log only.
+ */
+class PublicMessageException extends RuntimeException
+{
+}
+
+/** Send the browser protections used by every PHP entry point. */
+function send_security_headers(): void
+{
+    if (headers_sent()) {
+        return;
+    }
+
+    header_remove('X-Powered-By');
+    header("Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; frame-src https:; connect-src 'self'; upgrade-insecure-requests");
+    header('X-Content-Type-Options: nosniff');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+    header('X-Frame-Options: DENY');
+    header('Strict-Transport-Security: max-age=31536000');
+}
+
+send_security_headers();
 
 function private_config(): array
 {

@@ -21,24 +21,24 @@ try {
             $confirmation = (string) ($_POST['password_confirmation'] ?? '');
             $role = (string) ($_POST['role'] ?? '');
             if ($username === '' || preg_match_all('/./us', $username) > 100) {
-                throw new RuntimeException('Enter a username of up to 100 characters.');
+                throw new PublicMessageException('Enter a username of up to 100 characters.');
             }
             if (!valid_admin_email($email)) {
-                throw new RuntimeException('Enter a valid email address.');
+                throw new PublicMessageException('Enter a valid email address.');
             }
             if (strlen($password) < 12) {
-                throw new RuntimeException('The password must contain at least 12 characters.');
+                throw new PublicMessageException('The password must contain at least 12 characters.');
             }
             if (!hash_equals($password, $confirmation)) {
-                throw new RuntimeException('The passwords do not match.');
+                throw new PublicMessageException('The passwords do not match.');
             }
             if (!in_array($role, ['admin', 'superadmin'], true)) {
-                throw new RuntimeException('Choose a valid role.');
+                throw new PublicMessageException('Choose a valid role.');
             }
             $statement = db()->prepare('SELECT COUNT(*) FROM admins WHERE username = :username');
             $statement->execute(['username' => $username]);
             if ((int) $statement->fetchColumn() > 0) {
-                throw new RuntimeException('That username is already in use.');
+                throw new PublicMessageException('That username is already in use.');
             }
             $statement = db()->prepare('INSERT INTO admins (username, email, password_hash, role) VALUES (:username, :email, :password_hash, :role)');
             $statement->execute(['username' => $username, 'email' => $email, 'password_hash' => password_hash($password, PASSWORD_DEFAULT), 'role' => $role]);
@@ -46,16 +46,16 @@ try {
         } elseif ($action === 'password' && $targetId) {
             $password = (string) ($_POST['new_password'] ?? '');
             if (strlen($password) < 12) {
-                throw new RuntimeException('The new password must contain at least 12 characters.');
+                throw new PublicMessageException('The new password must contain at least 12 characters.');
             }
             if (!hash_equals($password, (string) ($_POST['new_password_confirmation'] ?? ''))) {
-                throw new RuntimeException('The new passwords do not match.');
+                throw new PublicMessageException('The new passwords do not match.');
             }
             $pdo = db();
             $statement = $pdo->prepare('UPDATE admins SET password_hash = :password_hash, session_version = session_version + 1 WHERE id = :id');
             $statement->execute(['password_hash' => password_hash($password, PASSWORD_DEFAULT), 'id' => $targetId]);
             if ($statement->rowCount() !== 1) {
-                throw new RuntimeException('The administrator was not found.');
+                throw new PublicMessageException('The administrator was not found.');
             }
             if ($targetId === (int) $_SESSION['admin_id']) {
                 $statement = $pdo->prepare('SELECT session_version FROM admins WHERE id = :id LIMIT 1');
@@ -67,7 +67,7 @@ try {
         } elseif ($action === 'role' && $targetId) {
             $role = (string) ($_POST['role'] ?? '');
             if (!in_array($role, ['admin', 'superadmin'], true)) {
-                throw new RuntimeException('Choose a valid role.');
+                throw new PublicMessageException('Choose a valid role.');
             }
             $pdo = db();
             $pdo->beginTransaction();
@@ -75,13 +75,13 @@ try {
             $target->execute(['id' => $targetId]);
             $oldRole = $target->fetchColumn();
             if ($oldRole === false) {
-                throw new RuntimeException('The administrator was not found.');
+                throw new PublicMessageException('The administrator was not found.');
             }
             if ($oldRole === 'superadmin' && $role === 'admin') {
                 $superadmins = $pdo->query("SELECT id FROM admins WHERE role = 'superadmin' FOR UPDATE")->fetchAll();
                 $count = count($superadmins);
                 if ($count <= 1) {
-                    throw new RuntimeException('The last superadmin cannot be demoted.');
+                    throw new PublicMessageException('The last superadmin cannot be demoted.');
                 }
             }
             $statement = $pdo->prepare('UPDATE admins SET role = :role WHERE id = :id');
@@ -93,7 +93,7 @@ try {
             $_SESSION['flash'] = 'The administrator role was changed.';
         } elseif ($action === 'delete' && $targetId) {
             if ($targetId === (int) $_SESSION['admin_id']) {
-                throw new RuntimeException('You cannot delete your own signed-in account.');
+                throw new PublicMessageException('You cannot delete your own signed-in account.');
             }
             $pdo = db();
             $pdo->beginTransaction();
@@ -101,13 +101,13 @@ try {
             $target->execute(['id' => $targetId]);
             $role = $target->fetchColumn();
             if ($role === false) {
-                throw new RuntimeException('The administrator was not found.');
+                throw new PublicMessageException('The administrator was not found.');
             }
             if ($role === 'superadmin') {
                 $superadmins = $pdo->query("SELECT id FROM admins WHERE role = 'superadmin' FOR UPDATE")->fetchAll();
                 $count = count($superadmins);
                 if ($count <= 1) {
-                    throw new RuntimeException('The last superadmin cannot be deleted.');
+                    throw new PublicMessageException('The last superadmin cannot be deleted.');
                 }
             }
             $statement = $pdo->prepare('DELETE FROM admins WHERE id = :id');
@@ -115,7 +115,7 @@ try {
             $pdo->commit();
             $_SESSION['flash'] = 'The administrator was deleted.';
         } else {
-            throw new RuntimeException('Invalid administrator action.');
+            throw new PublicMessageException('Invalid administrator action.');
         }
         header('Location: manage-admins.php');
         exit;
@@ -128,8 +128,8 @@ try {
     $admins = db()->query('SELECT id, username, email, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
 } catch (Throwable $exception) {
     if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
-    $error = $exception instanceof RuntimeException ? $exception->getMessage() : 'The administrator request could not be completed.';
-    if (!$exception instanceof RuntimeException) error_log($exception->getMessage());
+    $error = $exception instanceof PublicMessageException ? $exception->getMessage() : 'The administrator request could not be completed.';
+    if (!$exception instanceof PublicMessageException) error_log($exception->getMessage());
     $admins = db()->query('SELECT id, username, email, role, created_at FROM admins ORDER BY created_at, id')->fetchAll();
 }
 ?>

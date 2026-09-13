@@ -213,23 +213,23 @@ function delete_news_image(?string $path): void
 function store_news_image(array $file): string
 {
     if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
-        throw new RuntimeException('The image upload failed.');
+        throw new PublicMessageException('The image upload failed.');
     }
     if (($file['size'] ?? 0) > 8 * 1024 * 1024) {
-        throw new RuntimeException('Images may not be larger than 8 MB.');
+        throw new PublicMessageException('Images may not be larger than 8 MB.');
     }
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
     $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
     if (!isset($extensions[$mime])) {
-        throw new RuntimeException('Please upload a JPG, PNG, or WEBP image.');
+        throw new PublicMessageException('Please upload a JPG, PNG, or WEBP image.');
     }
     $directory = dirname(__DIR__) . '/uploads/news';
     if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
-        throw new RuntimeException('The upload directory could not be created.');
+        throw new PublicMessageException('The upload directory could not be created.');
     }
     $filename = bin2hex(random_bytes(16)) . '.' . $extensions[$mime];
     if (!move_uploaded_file($file['tmp_name'], $directory . '/' . $filename)) {
-        throw new RuntimeException('The image could not be saved.');
+        throw new PublicMessageException('The image could not be saved.');
     }
     return 'uploads/news/' . $filename;
 }

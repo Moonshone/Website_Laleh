@@ -22,7 +22,7 @@ if (isset($_GET['token'])) {
 
     try {
         if (!$validFormat) {
-            throw new RuntimeException('This password reset link is invalid, expired, or has already been used.');
+            throw new PublicMessageException('This password reset link is invalid, expired, or has already been used.');
         }
 
         $pdo = db();
@@ -36,7 +36,7 @@ if (isset($_GET['token'])) {
         $statement->execute(['token_hash' => hash('sha256', $token)]);
         $reset = $statement->fetch();
         if (!$reset) {
-            throw new RuntimeException('This password reset link is invalid, expired, or has already been used.');
+            throw new PublicMessageException('This password reset link is invalid, expired, or has already been used.');
         }
 
         // Claim the database token while holding its row lock. The raw token is
@@ -44,7 +44,7 @@ if (isset($_GET['token'])) {
         $claim = $pdo->prepare('UPDATE password_resets SET used_at = UTC_TIMESTAMP() WHERE id = :id AND used_at IS NULL');
         $claim->execute(['id' => (int) $reset['id']]);
         if ($claim->rowCount() !== 1) {
-            throw new RuntimeException('This password reset link is invalid, expired, or has already been used.');
+            throw new PublicMessageException('This password reset link is invalid, expired, or has already been used.');
         }
         $pdo->commit();
 
@@ -58,7 +58,7 @@ if (isset($_GET['token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         header('Location: /admin/reset-password.php', true, 303);
         exit;
-    } catch (RuntimeException $exception) {
+    } catch (PublicMessageException $exception) {
         if (isset($pdo) && $pdo->inTransaction()) {
             $pdo->rollBack();
         }
@@ -87,15 +87,15 @@ if (isset($_GET['token'])) {
         try {
             verify_csrf();
             if (!$resetIsValid) {
-                throw new RuntimeException('This password reset link is invalid, expired, or has already been used.');
+                throw new PublicMessageException('This password reset link is invalid, expired, or has already been used.');
             }
             $newPassword = (string) ($_POST['new_password'] ?? '');
             $confirmation = (string) ($_POST['new_password_confirmation'] ?? '');
             if (strlen($newPassword) < 12) {
-                throw new RuntimeException('The new password must contain at least 12 characters.');
+                throw new PublicMessageException('The new password must contain at least 12 characters.');
             }
             if (!hash_equals($newPassword, $confirmation)) {
-                throw new RuntimeException('The new passwords do not match.');
+                throw new PublicMessageException('The new passwords do not match.');
             }
 
             $pdo = db();
@@ -110,7 +110,7 @@ if (isset($_GET['token'])) {
                 'admin_id' => (int) $resetState['admin_id'],
             ]);
             if (!$reset->fetch()) {
-                throw new RuntimeException('This password reset link is invalid, expired, or has already been used.');
+                throw new PublicMessageException('This password reset link is invalid, expired, or has already been used.');
             }
             $update = $pdo->prepare('UPDATE admins SET password_hash = :password_hash, session_version = session_version + 1 WHERE id = :id');
             $update->execute([
@@ -118,7 +118,7 @@ if (isset($_GET['token'])) {
                 'id' => (int) $resetState['admin_id'],
             ]);
             if ($update->rowCount() !== 1) {
-                throw new RuntimeException('This administrator account is no longer available.');
+                throw new PublicMessageException('This administrator account is no longer available.');
             }
             // Deletion invalidates this claimed row and every other reset link
             // for the account, including concurrent reset attempts.
@@ -130,7 +130,7 @@ if (isset($_GET['token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             $success = true;
             $resetIsValid = false;
-        } catch (RuntimeException $exception) {
+        } catch (PublicMessageException $exception) {
             if (isset($pdo) && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
