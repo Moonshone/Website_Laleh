@@ -124,8 +124,9 @@ main { min-height: 80vh; }
   left: 2.5vw;
   right: var(--gutter);
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: .35em clamp(.45rem, .8vw, 1rem);
 }
 .home-hero h1 {
@@ -808,7 +809,13 @@ main { min-height: 80vh; }
   .admin-grid { grid-template-columns: 1fr; }
   .admin-header, .admin-post { align-items: flex-start; }
   .site-footer { align-items: flex-end; }
-  .home-hero-heading { left: 1rem; right: 4.5rem; }
+  .home-hero-heading {
+    left: 1rem;
+    right: 4.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
   .home-hero h1 { font-size: clamp(.75264rem, 3.63776vw, 1.568rem); letter-spacing: -.045em; }
   .home-hero-professions { font-size: clamp(.3687936rem, 1.7825024vw, .76832rem); }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
