@@ -468,8 +468,8 @@ main { min-height: 80vh; }
 .film-entry:last-child { margin-bottom: 0; }
 .film-entry-header {
   padding: clamp(1.5rem, 3.5vw, 3.5rem) clamp(1.25rem, 4vw, 4.5rem);
+  border-bottom: 1px solid var(--artwork-border);
 }
-.film-entry-header { border-bottom: 1px solid var(--artwork-border); }
 .film-entry-title {
   margin: 0;
   font-size: clamp(1.35rem, 3vw, 3rem);
@@ -509,7 +509,6 @@ main { min-height: 80vh; }
   object-fit: contain;
 }
 .film-entry-movie { border-top: 1px solid var(--artwork-border); }
-.film-entry-movie video { width: 100%; }
 .film-entry-movie iframe {
   display: block;
   width: 100%;
@@ -793,18 +792,15 @@ main { min-height: 80vh; }
   .gallery-item, .gallery-item:nth-child(n) { width: auto; margin: 0 0 7rem; }
   .gallery-item:nth-child(even) { margin-left: 14vw; }
   .paintings-page { padding-top: 6rem; }
-  .painting-activity { width: 100%; margin-bottom: 3.5rem; }
+  .painting-activity { margin-bottom: 3.5rem; }
   .painting-slide { min-height: 70vw; padding: .65rem; }
   .painting-slideshow-button { width: 2.5rem; height: 2.5rem; }
   .writing-page { padding-top: 6rem; }
-  .book-entry { width: 100%; margin-bottom: 3.5rem; }
+  .book-entry { margin-bottom: 3.5rem; }
   .book-entry-content { grid-template-columns: 1fr; }
-  .book-entry-image { min-height: 0; }
-  .book-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
   .films-page { padding-top: 6rem; }
-  .film-entry { width: 100%; margin-bottom: 3.5rem; }
+  .film-entry { margin-bottom: 3.5rem; }
   .film-entry-content { grid-template-columns: 1fr; }
-  .film-entry-description { border-top: 1px solid var(--artwork-border); border-left: 0; }
   .about-intro, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
   .admin-grid { grid-template-columns: 1fr; }
   .admin-header, .admin-post { align-items: flex-start; }
@@ -838,7 +834,6 @@ main { min-height: 80vh; }
     font-size: clamp(.65rem, 2.4vw, .76832rem);
   }
   .home-scroll-cue { bottom: 1.25rem; width: 3.25rem; }
-  .home-sequence { padding-top: 0; }
   .home-artwork { width: calc(100vw - 2rem); margin-bottom: 5rem; }
   .home-artwork.home-artwork--artist { grid-template-columns: minmax(0, 1fr); }
   .home-artwork--artist .home-artwork-image { width: 67%; }
@@ -846,7 +841,6 @@ main { min-height: 80vh; }
   .home-artwork-image { padding: clamp(.75rem, 3.5vw, 1.25rem); }
   .home-artwork-caption { padding: 2.25rem 0 2.5rem; }
   .home-artwork-caption--empty { min-height: 3.5rem; padding: 0; }
-  .home-footer { align-items: flex-end; }
 }
 
 @media (max-width: 480px) {

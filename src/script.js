@@ -60,29 +60,17 @@ form?.addEventListener('submit', async (event) => {
 
     try {
       result = JSON.parse(responseText);
-    } catch (error) {
-      console.error('Contact form returned invalid JSON.', {
-        endpoint: response.url,
-        status: response.status,
-        response: responseText,
-        error,
-      });
+    } catch {
       throw new Error('Your message could not be sent. Please try again later.');
     }
 
     if (!response.ok || result.success !== true) {
-      console.error('Contact form request failed.', {
-        endpoint: response.url,
-        status: response.status,
-        response: result,
-      });
       throw new Error(result.message || 'Your message could not be sent. Please try again.');
     }
 
     if (note) note.textContent = result.message;
     form.reset();
   } catch (error) {
-    console.error('Contact form submission failed.', error);
     if (note) note.textContent = error.message || 'Your message could not be sent. Please try again.';
   } finally {
     if (submitButton) {

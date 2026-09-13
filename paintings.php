@@ -115,12 +115,13 @@ function paintings_details(array $activity): string
 $images = $paintingActivity['images'];
 $imageCount = count($images);
 $slideshowId = 'painting-slideshow-' . (int) $paintingActivity['id'] . '-' . $activityIndex;
+$details = paintings_details($paintingActivity);
 ?>
 <article class="painting-activity reveal" data-painting-activity-id="<?= (int) $paintingActivity['id'] ?>">
 <header class="painting-activity-header">
 <h2 class="painting-activity-title"><?= paintings_h($paintingActivity['Name']) ?></h2>
-<?php if (paintings_details($paintingActivity) !== ''): ?>
-<p class="painting-activity-meta"><?= paintings_h(paintings_details($paintingActivity)) ?></p>
+<?php if ($details !== ''): ?>
+<p class="painting-activity-meta"><?= paintings_h($details) ?></p>
 <?php endif; ?>
 </header>
 
