@@ -198,7 +198,7 @@ main { min-height: 80vh; }
 }
 .home-artist-text p { margin: 0; font-size: 18.2px; line-height: 1.95; white-space: normal; }
 .home-artwork-caption {
-  padding: clamp(2.25rem, 4.5vw, 5rem) clamp(1.5rem, 8vw, 9rem);
+  padding: clamp(2.25rem, 4.5vw, 5rem) 0;
   border-top: 1px solid var(--artwork-border);
   text-align: center;
 }
@@ -223,7 +223,15 @@ main { min-height: 80vh; }
   font-size: clamp(.95rem, 1.15vw, 1.15rem);
   line-height: 1.7;
 }
-.home-artwork-caption > p.home-artwork-description { font-size: 1.62em; font-weight: 700; }
+.home-artwork-caption > p.home-artwork-description {
+  width: 90%;
+  max-width: none;
+  margin-right: auto;
+  margin-left: auto;
+  font-family: var(--sans);
+  font-size: 1.62em;
+  font-weight: normal;
+}
 .home-footer {
   display: flex;
   justify-content: space-between;
@@ -805,7 +813,7 @@ main { min-height: 80vh; }
   .home-artwork--artist .home-artwork-image { width: 67%; }
   .home-artist-text { padding: 2rem 1rem 0; }
   .home-artwork-image { padding: clamp(.75rem, 3.5vw, 1.25rem); }
-  .home-artwork-caption { padding: 2.25rem 1.25rem 2.5rem; }
+  .home-artwork-caption { padding: 2.25rem 0 2.5rem; }
   .home-artwork-caption--empty { min-height: 3.5rem; padding: 0; }
   .home-footer { align-items: flex-end; }
 }
