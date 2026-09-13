@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/media-security.php';
 
 $artist = [
     'About' => '',
@@ -118,7 +119,8 @@ $selectedCvColumns = array_values(array_filter($selectedCvColumns));
 <div class="about-page">
 <section class="about-intro reveal" aria-labelledby="artist-name">
 <figure class="about-portrait">
-<img src="<?= about_h($artist['Photo_URL']) ?>" alt="Portrait of artist Laleh Barzegar in her studio">
+<?php $artistPhotoUrl = safe_media_url($artist['Photo_URL']); ?>
+<?php if ($artistPhotoUrl !== null): ?><img src="<?= about_h($artistPhotoUrl) ?>" alt="Portrait of artist Laleh Barzegar in her studio"><?php endif; ?>
 </figure>
 <article class="about-copy">
 <h2 id="artist-name">Laleh Barzegar</h2>

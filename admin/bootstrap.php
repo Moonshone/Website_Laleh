@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/config.php';
 require_once dirname(__DIR__) . '/includes/rate-limit.php';
+require_once dirname(__DIR__) . '/includes/media-security.php';
 
 const ADMIN_SESSION_IDLE_TIMEOUT_SECONDS = 60 * 60;
 const ADMIN_SESSION_MAX_LIFETIME_SECONDS = 12 * 60 * 60;
@@ -212,22 +213,12 @@ function delete_news_image(?string $path): void
 
 function store_news_image(array $file): string
 {
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
-        throw new PublicMessageException('The image upload failed.');
-    }
-    if (($file['size'] ?? 0) > 8 * 1024 * 1024) {
-        throw new PublicMessageException('Images may not be larger than 8 MB.');
-    }
-    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-    $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-    if (!isset($extensions[$mime])) {
-        throw new PublicMessageException('Please upload a JPG, PNG, or WEBP image.');
-    }
+    $extension = validate_news_image_upload($file);
     $directory = dirname(__DIR__) . '/uploads/news';
     if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
         throw new PublicMessageException('The upload directory could not be created.');
     }
-    $filename = bin2hex(random_bytes(16)) . '.' . $extensions[$mime];
+    $filename = bin2hex(random_bytes(16)) . '.' . $extension;
     if (!move_uploaded_file($file['tmp_name'], $directory . '/' . $filename)) {
         throw new PublicMessageException('The image could not be saved.');
     }

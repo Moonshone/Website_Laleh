@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/navigation.php';
+require_once __DIR__ . '/includes/media-security.php';
 
 $films = [];
 $filmsUnavailable = false;
@@ -40,39 +41,6 @@ function films_is_video_file(string $url): bool
     return in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['mp4', 'webm', 'mov'], true);
 }
 
-function films_youtube_embed_url(string $url): ?string
-{
-    $parts = parse_url(trim($url));
-    if ($parts === false || !isset($parts['host'])) {
-        return null;
-    }
-
-    $host = strtolower(rtrim($parts['host'], '.'));
-    if (str_starts_with($host, 'www.')) {
-        $host = substr($host, 4);
-    }
-
-    $videoId = null;
-    $path = trim((string) ($parts['path'] ?? ''), '/');
-
-    if ($host === 'youtu.be') {
-        $videoId = explode('/', $path, 2)[0];
-    } elseif (in_array($host, ['youtube.com', 'm.youtube.com'], true)) {
-        if ($path === 'watch') {
-            parse_str((string) ($parts['query'] ?? ''), $query);
-            $videoId = isset($query['v']) && is_string($query['v']) ? $query['v'] : null;
-        } elseif (str_starts_with($path, 'embed/')) {
-            $videoId = explode('/', substr($path, 6), 2)[0];
-        }
-    }
-
-    $videoId = rawurldecode(trim((string) $videoId));
-    if ($videoId === '' || preg_match('/^[A-Za-z0-9_-]+$/D', $videoId) !== 1) {
-        return null;
-    }
-
-    return 'https://www.youtube.com/embed/' . $videoId;
-}
 ?>
 <!doctype html>
 <html lang="en">
@@ -98,8 +66,11 @@ function films_youtube_embed_url(string $url): ?string
 
 <?php foreach ($films as $film): ?>
 <?php
-$movieUrl = trim((string) ($film['Mov_URL'] ?? ''));
-$youtubeEmbedUrl = films_youtube_embed_url($movieUrl);
+$imageUrl = safe_media_url($film['URL'] ?? null);
+$movieUrl = safe_media_url($film['Mov_URL'] ?? null);
+$movieUrl = $movieUrl ?? '';
+$youtubeEmbedUrl = safe_youtube_embed_url($movieUrl);
+$isVideoFile = films_is_video_file($movieUrl);
 $metadata = array_values(array_filter([
     trim((string) ($film['Year'] ?? '')),
     trim((string) ($film['Genre'] ?? '')),
@@ -120,22 +91,20 @@ $metadata = array_values(array_filter([
 
 <div class="film-entry-content">
 <div class="film-entry-media">
-<?php if (films_has_value($film['URL'])): ?>
+<?php if ($imageUrl !== null): ?>
 <div class="film-entry-image">
-<img src="<?= films_h($film['URL']) ?>" alt="">
+<img src="<?= films_h($imageUrl) ?>" alt="">
 </div>
 <?php endif; ?>
 
-<?php if ($movieUrl !== ''): ?>
+<?php if ($youtubeEmbedUrl !== null || $isVideoFile): ?>
 <div class="film-entry-movie">
 <?php if ($youtubeEmbedUrl !== null): ?>
-<iframe src="<?= films_h($youtubeEmbedUrl) ?>" title="<?= films_h($film['Name']) ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-<?php elseif (films_is_video_file($movieUrl)): ?>
+<iframe src="<?= films_h($youtubeEmbedUrl) ?>" title="<?= films_h($film['Name']) ?>" loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation" allow="autoplay; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<?php elseif ($isVideoFile): ?>
 <video controls preload="metadata">
 <source src="<?= films_h($movieUrl) ?>">
 </video>
-<?php else: ?>
-<iframe src="<?= films_h($movieUrl) ?>" title="<?= films_h($film['Name']) ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
 <?php endif; ?>
 </div>
 <?php endif; ?>

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/media-security.php';
 
 $homePictures = [];
 $artistFirstPage = '';
@@ -90,9 +91,11 @@ function home_h(?string $value): string
 </figcaption>
 </figure>
 <?php foreach ($homePictures as $homePicture): ?>
+<?php $homeImageUrl = safe_media_url($homePicture['URL'] ?? null); ?>
+<?php if ($homeImageUrl !== null): ?>
 <figure class="home-artwork reveal">
 <div class="home-artwork-image">
-<img src="<?= home_h($homePicture['URL']) ?>" alt="Artwork by Laleh Barzegar" loading="lazy">
+<img src="<?= home_h($homeImageUrl) ?>" alt="Artwork by Laleh Barzegar" loading="lazy">
 </div>
 <?php if (trim((string) ($homePicture['Description'] ?? '')) !== ''): ?>
 <figcaption class="home-artwork-caption">
@@ -100,6 +103,7 @@ function home_h(?string $value): string
 </figcaption>
 <?php endif; ?>
 </figure>
+<?php endif; ?>
 <?php endforeach; ?>
 </section>
 </main>
