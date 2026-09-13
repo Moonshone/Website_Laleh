@@ -38,22 +38,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $statement->execute(['username' => $username]);
             $admin = $statement->fetch();
             if ($admin && password_verify($password, $admin['password_hash'])) {
+                // Rate-limit bookkeeping is deliberately best-effort. In
+                // particular, a missing/outdated rate_limits table must not
+                // turn valid credentials into a failed first login.
+                try {
+                    rate_limit_clear($pdo, 'admin_login_username_ip', $loginLimitKey);
+                } catch (Throwable $exception) {
+                    error_log($exception->getMessage());
+                }
                 session_regenerate_id(true);
                 $_SESSION['admin_id'] = (int) $admin['id'];
                 $_SESSION['username'] = (string) $admin['username'];
                 $_SESSION['role'] = (string) $admin['role'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                rate_limit_clear($pdo, 'admin_login_username_ip', $loginLimitKey);
                 header('Location: dashboard.php');
                 exit;
             }
         } catch (RuntimeException $exception) {
             error_log($exception->getMessage());
-            if ($exception->getMessage() === 'DB_PASSWORD is not configured.') {
-                $error = 'DB_PASSWORD is not configured.';
-            }
+            $error = 'Administration is temporarily unavailable. Please try again later.';
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
+            $error = 'Administration is temporarily unavailable. Please try again later.';
         }
     }
     if (!$limited && $error === '') {
