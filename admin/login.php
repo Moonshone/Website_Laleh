@@ -12,8 +12,24 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     $username = trim((string) ($_POST['username'] ?? ''));
+    $normalizedUsername = strtolower($username);
     $password = (string) ($_POST['password'] ?? '');
-    if ($username !== '' && $password !== '') {
+    $ipAddress = client_ip_address();
+    $limited = false;
+    try {
+        $pdo = db();
+        $ipLimit = rate_limit_status($pdo, 'admin_login_ip', $ipAddress);
+        $usernameLimit = rate_limit_status($pdo, 'admin_login_username', $normalizedUsername);
+        if (!$ipLimit['allowed'] || !$usernameLimit['allowed']) {
+            $retryAfter = max($ipLimit['retry_after'], $usernameLimit['retry_after']);
+            send_rate_limit_headers($retryAfter);
+            $error = 'Too many login attempts. Please try again later.';
+            $limited = true;
+        }
+    } catch (Throwable $exception) {
+        error_log($exception->getMessage());
+    }
+    if (!$limited && $username !== '' && $password !== '') {
         try {
             $statement = db()->prepare('SELECT id, username, password_hash, role FROM admins WHERE username = :username LIMIT 1');
             $statement->execute(['username' => $username]);
@@ -24,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['username'] = (string) $admin['username'];
                 $_SESSION['role'] = (string) $admin['role'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                rate_limit_clear($pdo, 'admin_login_username', $normalizedUsername);
                 header('Location: dashboard.php');
                 exit;
             }
@@ -36,7 +53,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log($exception->getMessage());
         }
     }
-    if ($error === '') {
+    if (!$limited && $error === '') {
+        try {
+            $pdo = db();
+            $ipLimit = rate_limit_consume($pdo, 'admin_login_ip', $ipAddress, 20, 900, 900);
+            $usernameLimit = rate_limit_consume($pdo, 'admin_login_username', $normalizedUsername, 8, 900, 900);
+            if (!$ipLimit['allowed'] || !$usernameLimit['allowed']) {
+                send_rate_limit_headers(max($ipLimit['retry_after'], $usernameLimit['retry_after']));
+                $error = 'Too many login attempts. Please try again later.';
+            }
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+        }
+    }
+    if (!$limited && $error === '') {
         $error = 'Invalid username or password.';
     }
 }
