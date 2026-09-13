@@ -18,6 +18,15 @@ function rate_limit_key(string $value): string
     return hash('sha256', $value);
 }
 
+/**
+ * Build a login limiter key without making either an account or an address a
+ * permanent access requirement. The NUL separator prevents ambiguous pairs.
+ */
+function admin_login_rate_limit_key(string $username, string $ipAddress): string
+{
+    return strtolower(trim($username)) . "\0" . $ipAddress;
+}
+
 /** @return array{allowed: bool, retry_after: int} */
 function rate_limit_status(PDO $pdo, string $scope, string $key): array
 {
@@ -58,7 +67,15 @@ function rate_limit_consume(PDO $pdo, string $scope, string $key, int $limit, in
             return ['allowed' => false, 'retry_after' => max(1, (int) $row['blocked_until'] - $now)];
         }
 
-        $attempts = $row && (int) $row['window_started'] > $now - $windowSeconds
+        // Once a temporary block has elapsed, start clean rather than making
+        // the very next typo immediately trigger another block.
+        $blockExpired = $row
+            && $row['blocked_until'] !== null
+            && (int) $row['blocked_until'] <= $now;
+        $restartWindow = !$row
+            || $blockExpired
+            || (int) $row['window_started'] <= $now - $windowSeconds;
+        $attempts = !$restartWindow
             ? (int) $row['attempts'] + 1
             : 1;
         $blocked = $attempts >= $limit;
@@ -72,7 +89,7 @@ function rate_limit_consume(PDO $pdo, string $scope, string $key, int $limit, in
             );
             $update->execute([
                 'attempts' => $attempts,
-                'restart_window' => (int) ((int) $row['window_started'] <= $now - $windowSeconds),
+                'restart_window' => (int) $restartWindow,
                 'blocked' => (int) $blocked,
                 'block_seconds' => $blockSeconds,
                 'scope' => $scope,
