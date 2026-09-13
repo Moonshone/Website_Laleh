@@ -15,19 +15,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $submitted = true;
     if (valid_admin_email($email)) {
         try {
-            $statement = db()->prepare('SELECT id, email FROM admins WHERE email = :email LIMIT 1');
-            $statement->execute(['email' => $email]);
-            $admin = $statement->fetch();
-            if ($admin) {
-                $token = bin2hex(random_bytes(32));
-                $tokenHash = hash('sha256', $token);
-                $pdo = db();
-                $pdo->beginTransaction();
-                $insert = $pdo->prepare('INSERT INTO password_resets (admin_id, token_hash, expires_at) VALUES (:admin_id, :token_hash, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 30 MINUTE))');
-                $insert->execute(['admin_id' => (int) $admin['id'], 'token_hash' => $tokenHash]);
-                $pdo->commit();
-                if (!send_password_reset_email((string) $admin['email'], $token)) {
-                    error_log('Password reset email delivery failed for admin ID ' . (int) $admin['id']);
+            $pdo = db();
+            $ipLimit = rate_limit_consume($pdo, 'password_reset_ip', client_ip_address(), 12, 3600, 3600);
+            $accountLimit = rate_limit_consume($pdo, 'password_reset_account', $email, 4, 3600, 3600);
+            if (!$ipLimit['allowed'] || !$accountLimit['allowed']) {
+                send_rate_limit_headers(max($ipLimit['retry_after'], $accountLimit['retry_after']));
+            } else {
+                $statement = $pdo->prepare('SELECT id, email FROM admins WHERE email = :email LIMIT 1');
+                $statement->execute(['email' => $email]);
+                $admin = $statement->fetch();
+                if ($admin) {
+                    $token = bin2hex(random_bytes(32));
+                    $tokenHash = hash('sha256', $token);
+                    $pdo->beginTransaction();
+                    $cleanup = $pdo->prepare('DELETE FROM password_resets WHERE expires_at <= UTC_TIMESTAMP() OR used_at IS NOT NULL OR admin_id = :admin_id');
+                    $cleanup->execute(['admin_id' => (int) $admin['id']]);
+                    $insert = $pdo->prepare('INSERT INTO password_resets (admin_id, token_hash, expires_at) VALUES (:admin_id, :token_hash, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 30 MINUTE))');
+                    $insert->execute(['admin_id' => (int) $admin['id'], 'token_hash' => $tokenHash]);
+                    $pdo->commit();
+                    if (!send_password_reset_email((string) $admin['email'], $token)) {
+                        error_log('Password reset email delivery failed for admin ID ' . (int) $admin['id']);
+                    }
                 }
             }
         } catch (Throwable $exception) {

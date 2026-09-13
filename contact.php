@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/rate-limit.php';
+
 const CONTACT_ADDRESS = 'laleh.barzegar.art@gmail.com';
 
 function respond(int $status, bool $success, string $message): never
@@ -20,6 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Bots commonly fill this visually hidden field; return success without sending.
 if (trim((string) ($_POST['website'] ?? '')) !== '') {
     respond(200, true, 'Thank you. Your message has been sent.');
+}
+
+try {
+    $contactLimit = rate_limit_consume(db(), 'contact_ip', client_ip_address(), 8, 600, 600);
+    if (!$contactLimit['allowed']) {
+        header('Retry-After: ' . $contactLimit['retry_after']);
+        respond(429, false, 'Too many messages have been submitted. Please try again later.');
+    }
+} catch (Throwable $exception) {
+    error_log($exception->getMessage());
+    respond(503, false, 'The contact form is temporarily unavailable. Please try again later.');
 }
 
 $name = trim((string) ($_POST['name'] ?? ''));
